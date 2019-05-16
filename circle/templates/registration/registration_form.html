@@ -1,0 +1,18 @@
+
+{% extends "layout.html" %}
+
+{% block title_tag %}Sign Up | {{ block.super }}{% endblock %}
+{% block body %}
+	<!-- SIGN UP PAGE -->
+	<!-- Used to show the form users will fill out to register. -->
+  <div class="bounds">
+    <div class="grid-30 centered">
+      <h2>Sign Up</h2>
+	  <form action="" method="POST">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Sign Up" class "btn btn-default">
+	  </form>
+    </div>
+  </div>
+{% endblock %}

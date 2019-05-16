@@ -1,0 +1,23 @@
+
+{% extends "layout.html" %}
+{% load i18n %}
+
+{% block title_tag %}{% trans "Account Activated" %} | {{ block.super }}{% endblock %}
+{% block body %}
+	<!-- ACTIVATION FAILURE -->
+	<!-- Used if account activation fails. With the default setup, has the following context:
+	
+	activation_key
+	The activation key used during the activation attempt. -->
+  <div class="bounds">
+    <div class="grid-30 centered">
+      <h2>{% trans "Account Activated" %}</h2>
+	  <p>
+		  {% trans "Your account is now activated." %}
+		  {% if not user.is_authenticated %}
+		    {% trans "You can log in." %}
+		  {% endif %}
+	  </p>
+    </div>
+  </div>
+{% endblock %}

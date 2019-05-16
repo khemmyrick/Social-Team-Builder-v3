@@ -1,0 +1,18 @@
+
+{% extends "layout.html" %}
+
+{% block title_tag %}Activation Failed | {{ block.super }}{% endblock %}
+{% block body %}
+	<!-- ACTIVATION FAILURE -->
+	<!-- Used if account activation fails. With the default setup, has the following context:
+	
+	activation_key
+	The activation key used during the activation attempt. -->
+  <div class="bounds">
+    <div class="grid-30 centered">
+      <h2>Almost there!</h2>
+	  <!-- May not need any form at all.  Link to -->
+	  <p>"Account activation failed"</p>
+    </div>
+  </div>
+{% endblock %}

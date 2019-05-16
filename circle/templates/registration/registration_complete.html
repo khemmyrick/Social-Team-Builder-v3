@@ -1,0 +1,19 @@
+
+{% extends "layout.html" %}
+
+{% block title_tag %}Registration Complete | {{ block.super }}{% endblock %}
+{% block body %}
+	<!-- SIGN UP CONFIRMATION -->
+	<!-- 
+	Used after successful completion of the registration form. 
+	This template has no context variables of its own, 
+	and should simply inform the user that an email containing account-activation information has been sent. -->
+  <div class="bounds">
+    <div class="grid-30 centered">
+      <h2>Almost there!</h2>
+	  <!-- May not need any form at all.  Link to -->
+	  <p>We will be sending you an email with an activation link which you'll need to click to verify this account. If you choose not to activate your account it will eventually become disabled.</p>
+	  <p>Please, check your email.</p>
+    </div>
+  </div>
+{% endblock %}
