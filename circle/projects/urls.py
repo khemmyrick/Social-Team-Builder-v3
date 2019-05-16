@@ -4,6 +4,7 @@ from django.urls import path
 from . import views
 
 app_name = 'projects'
+
 urlpatterns = [
     # url(r'new/', views.CreateProjectView.as_view(), name='new'),
     path('search/', views.ProjectListView.as_view(), name='search'),
