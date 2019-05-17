@@ -34,11 +34,11 @@ def profile_update_view(request, pk):
 
     # Create the formset, specifying the form and formset we want to use.
     # SkillFormSet = formset_factory(forms.SkillForm, formset=forms.BaseSkillFormSet)
-    SkillFormSet = forms.SkillFormSet(queryset=user.skill_set, prefix="skillset")
+    SkillFormSet = forms.SkillFormSet(queryset=user.skills, prefix="skillset")
     print("2. Skill Formset factory should be created.")
 
     # Get our existing skill data for this user.  This is used as initial data.
-    user_skills = user.skill_set.order_by('name')
+    user_skills = user.skills.order_by('name')
     skill_data = [{'name': skill.name} for skill in user_skills]
     
     print("3. Getting existing user skill data. In total: {}".format(len(user_skills)))
@@ -89,13 +89,19 @@ def profile_update_view(request, pk):
                     with transaction.atomic():
                         # Delete existing skills.
                         for skill in skill_data:
-                            obj = Skill.objects.get(name=skill['name'])
-                            obj.users.remove(user.id)
+                            user.skills.remove(
+                                Skill.objects.get(
+                                    name=skill['name']
+                                ).id
+                            )
+                            # More lines fewer variables? Or more variables fewer lines?
+                            # obj = Skill.objects.get(name=skill['name'])
+                            # user.skills.remove(obj.id)
                         # Create new skills.
                         for skill in new_skills:
                             skill.save()
                             print("Creating/opening. {}".format(skill.name))
-                            skill.users.add(user.id)
+                            user.skills.add(skill.id)
                             # Using add() on a relation that already exists won’t duplicate the relation,
                             print("Added {} to {}'s skills.".format(
                                 skill.name, user.display_name

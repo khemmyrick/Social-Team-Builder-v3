@@ -29,6 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
             'display_name',
             'bio',
             'avatar',
+            'skills',
             'is_active',
             'is_staff'
         )
@@ -36,4 +37,4 @@ class UserSerializer(serializers.ModelSerializer):
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Skill
-        fields = ('name', 'users')
+        fields = ('name',)

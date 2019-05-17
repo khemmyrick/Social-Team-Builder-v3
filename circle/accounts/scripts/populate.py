@@ -1,6 +1,7 @@
 import json
 from os import environ
 from os import path
+# how 2.2 urls does it. . .  from django.urls import path
 import sys
 
 import django
@@ -78,14 +79,14 @@ def load_data():
     htmlskill = acct_models.Skill.objects.get(name="HTML")
     cssskill = acct_models.Skill.objects.get(name="CSS")
     javaskill = acct_models.Skill.objects.get(name="JavaScript")
-    connie.skill_set.add(djangoskill, pyskill, htmlskill, cssskill, javaskill)
+    connie.skills.add(djangoskill, pyskill, htmlskill, cssskill, javaskill)
     connie.save()
     
     perry = acct_models.User.objects.get(username="PerryKinder")
     print("Arming Perry.")
     perry.save()
     sqlskill = acct_models.Skill.objects.get(name="SQL")
-    perry.skill_set.add(djangoskill, pyskill, sqlskill)
+    perry.skills.add(djangoskill, pyskill, sqlskill)
     perry.save()    
 
     # Load Project Serializer.
@@ -104,7 +105,9 @@ def load_data():
         itera = 1
         for item in data:
             print(str(itera) + ': ' + item['name'])
-            item['creator'] = acct_models.User.objects.get(name=item['creator'])
+            item['creator'] = acct_models.User.objects.get(
+                username=item['creator']
+            ).id
             print('Created by {}.'.format(item['creator'].display_name))
             itera += 1
 
@@ -136,8 +139,12 @@ def load_data():
                 item['filled'] = True
             else:
                 item['filled'] = False
-            item['project'] = proj_models.Project.objects.get(name=item['project'])
-            item['user'] = acct_models.User.objects.get(name=item['user'])
+            item['project'] = proj_models.Project.objects.get(
+                name=item['project']
+            ).id
+            item['user'] = acct_models.User.objects.get(
+                name=item['user']
+            ).id
             item['skills'] = None
             # Pass nothing to skills here. Must save first.
             itera += 1
@@ -155,17 +162,14 @@ def load_data():
     print("Getting Full Stack Django Specialist.")
     fsds.save()
     fsds.skills.add(djangoskill, pyskill, htmlskill, cssskill, javaskill)
-    fsds.save()
     beds = proj_models.Position.objects.get(name="Backend Django Specialist")
     print("Getting Backend Django Specialist.")
     beds.save()
     beds.skills.add(djangoskill, pyskill, sqlskill)
-    beds.save()
     feds = proj_models.Position.objects.get(name="Front End Django Specialist")
     print("Getting Front End Django Specialist.")
     feds.save()
     feds.skills.add(htmlskill, cssskill, javaskill)
-    feds.save()
 
     # Load Applicant Serializer.
     try:

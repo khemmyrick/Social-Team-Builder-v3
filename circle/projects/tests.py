@@ -32,6 +32,8 @@ class ModelSetUp(object):
             password='project12'
         )
         self.user1.save()
+        self.skill1 = self.user1.skills.create(name='Skill1')
+        self.skill1.save()
 
         self.user2 = acmodels.User(
             email='user2@example.com',
@@ -57,35 +59,25 @@ class ModelSetUp(object):
         )
         self.user3.save()
 
-        # Skill Models
-        self.skill1 = acmodels.Skill(
-            name='Skill1',
-        )
-        self.skill1.save()
-        self.skill1.users.add(
-            self.user1,
-            self.user2,
-            self.user3
-        )
-        self.skill1.save()
-
+        # Additional Skill Models
         self.skill2 = acmodels.Skill(
             name='Skill2',
         )
         self.skill2.save()
-        self.skill2.users.add(
-            self.user2,
+        self.user2.skills.add(
+            self.skill1,
+            self.skill2
         )
-        self.skill2.save()
 
         self.skill3 = acmodels.Skill(
             name='Skill3',
         )
         self.skill3.save()
-        self.skill3.users.add(
-            self.user3,
+        self.user3.skills.add(
+            self.skill1,
+            self.skill2,
+            self.skill3
         )
-        self.skill3.save()
 
         # 2. Project Models
         # Project Models
@@ -152,6 +144,7 @@ class AccountModelTests(ModelSetUp, TestCase):
         self.assertEqual(self.skill1.name, 'Skill1')
         self.assertNotEqual(self.skill1.name, self.skill2.name)
         self.assertIn(self.user1, self.skill1.users.all())
+        self.assertIn(self.skill3, self.user3.skills.all())
 
 
 class ProjectModelTests(ModelSetUp, TestCase):
@@ -238,11 +231,11 @@ class AccountSerializersTests(ModelSetUp, TestCase):
                               'display_name',
                               'is_staff',
                               'is_active',
-                              'avatar']))
+                              'avatar',
+                              'skills']))
 
         self.assertEqual(set(skill_serializer.data.keys()),
-                         set(['name',
-                              'users']))
+                         set(['name']))
 
 
 class ProjectSerializersTests(ModelSetUp, TestCase):

@@ -41,6 +41,12 @@ class UserManager(BaseUserManager):
         return user
 
 
+class Skill(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    # users = models.ManyToManyField(User, blank=True)
+    # skill.users = queuryset of all users with this skill.
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     # Yes, PermissionsMixin comes 2nd in the docs, so that's how we do it.
     email = models.EmailField(unique=True)
@@ -50,6 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     avatar = models.ImageField(blank=True, null=True,
                                upload_to=user_directory_path)
     # avatars upload to media/accounts/<user.id>/
+    skills = models.ManyToManyField(Skill, related_name='users', blank=True)
     date_joined = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -75,9 +82,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_long_name(self):
         return "{} (@{})".format(self.display_name, self.username)
-
-
-class Skill(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    users = models.ManyToManyField(User, blank=True)
-    # skill.users = queuryset of all users with this skill.
