@@ -41,7 +41,8 @@ class Position(models.Model):
                              blank=True,
                              null=True)
     # user field will be blank until position is filled
-    skills = models.ManyToManyField(Skill)
+    skills = models.ManyToManyField(Skill, blank=True)
+    # Require skills in the form, but not here.
     # skills = foreign key for skills required
     time = models.CharField(max_length=100, blank=True)
 
