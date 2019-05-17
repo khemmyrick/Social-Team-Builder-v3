@@ -155,14 +155,9 @@ def load_data():
             except acct_models.User.DoesNotExist:
                 item['user'] = None
                 print('Attempting to assign unfilled position.')
+            # Copy skills logic on position model from user model.
 
-            item['skills'] = None
-            # Pass nothing to skills here. Must save first.
-            # skills field in models set to blank.
-            # Will set skills req in forms.
-            itera += 1
-
-        serializer = ProjectSerializer(data=data, many=True)
+        serializer = PositionSerializer(data=data, many=True)
         if serializer.is_valid():
             serializer.save()
             print('Positions loaded.')
@@ -201,7 +196,7 @@ def load_data():
         for item in data:
             print(str(itera) + ' Applicant: ' + item['user'])
             item['user'] = acct_models.User.objects.get(
-                name=item['user']
+                username=item['user']
             ).id
             item['position'] = proj_models.Position.objects.get(
                 name=item['position']
