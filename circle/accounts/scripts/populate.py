@@ -108,7 +108,11 @@ def load_data():
             item['creator'] = acct_models.User.objects.get(
                 username=item['creator']
             ).id
-            print('Created by {}.'.format(item['creator'].display_name))
+            print('Created by {}.'.format(
+                acct_models.User.objects.get(
+                    id=item['creator']
+                ).display_name)
+            )
             itera += 1
 
         serializer = ProjectSerializer(data=data, many=True)
@@ -135,6 +139,7 @@ def load_data():
         itera = 1
         for item in data:
             print(str(itera) + ': ' + item['name'])
+
             if item['filled'] == 'True':
                 item['filled'] = True
             else:
@@ -142,9 +147,15 @@ def load_data():
             item['project'] = proj_models.Project.objects.get(
                 name=item['project']
             ).id
-            item['user'] = acct_models.User.objects.get(
-                name=item['user']
-            ).id
+
+            try:
+                item['user'] = acct_models.User.objects.get(
+                    username=item['user']
+                ).id
+            except User.DoesNotExist:
+                item['user'] = None
+                print('Attempting to assign unfilled position.')
+
             item['skills'] = None
             # Pass nothing to skills here. Must save first.
             itera += 1
@@ -187,8 +198,12 @@ def load_data():
         itera = 1
         for item in data:
             print(str(itera) + ' Applicant: ' + item['user'])
-            item['user'] = acct_models.User.objects.get(name=item['user'])
-            item['position'] = proj_models.Position.objects.get(name=item['position'])
+            item['user'] = acct_models.User.objects.get(
+                name=item['user']
+            ).id
+            item['position'] = proj_models.Position.objects.get(
+                name=item['position']
+            ).id
             if item['status'] == 'True':
                 item['status'] = True
             else:
@@ -199,6 +214,11 @@ def load_data():
         if serializer.is_valid():
             serializer.save()
             print('Applicants loaded.')
+            print("""
+!@#$%^&*()_+_)(*&^%$#@!
+!!!!!!!!!!!!!!!!!!ALL DATA SHOULD BE LOADED SUCCESSFULLY!!!!!!!!!!!!!!!!!!!!!!
+!@#$%^&*()_+_)(*&^%$#@!
+""")
         else:
             print(serializer.errors)
             print('load_data unsuccessful.')
