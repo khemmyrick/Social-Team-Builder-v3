@@ -16,7 +16,7 @@
   <div class="bounds circle--page">
     <div class="circle--page--header circle--fluid">
       <div class="circle--fluid--cell circle--fluid--primary">
-        <h2>Profile</h2>
+        <h2>Profile. USER IS {{ user.display_name}}, BROWSER IS {{ context.browswer.display_name }}</h2>
       </div>
 	  <!-- REMINDER: is_authenticated == signed in.  "authenticated" means the system knows who this specific user is RN  -->
 	  {% if user.is_authenticated %}
@@ -44,7 +44,7 @@
 		  <!-- Iterate through projects queryset here.  -->
 
 		  {% for position in user.positions.all %}
-          <tr class="clickable-row" data-href="{% url 'projects:project' pk=position.project.id %}">
+          <tr class="clickable-row" data-href="{% url 'projects:details' pk=position.project.id %}">
             <td>
               <h3>{{ position.project.name }}</h3>
             </td>

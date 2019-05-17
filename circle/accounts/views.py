@@ -194,7 +194,7 @@ class ProfileDetailView(generic.DetailView):
         model = self.request.user
         # print('Avatar Path: {}'.format(model.avatar))
         context['browser'] = self.request.user
-        context['projects'] = Project.objects.filter(creator_id=model.id)
+        # context['projects'] = Project.objects.filter(creator_id=model.id)
         # Should be able to query this from the user?
         # if so, no reason to query projects at all.
         return context

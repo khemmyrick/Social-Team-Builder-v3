@@ -17,3 +17,7 @@ A Treehouse Python Web Development Techdegree Capstone Project
 ## Creating a Superuser
 - Create a superuser with username, email and password.  
 `python manage.py createsuperuser`
+
+## Populating Database
+- Load model objects from populate module in accounts/scripts directory.
+`python accounts/scripts/populate.py`
