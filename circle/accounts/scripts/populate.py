@@ -148,6 +148,7 @@ def load_data():
                 name=item['project']
             ).id
 
+            itera += 1
             try:
                 item['user'] = acct_models.User.objects.get(
                     username=item['user']

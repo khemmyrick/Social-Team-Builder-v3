@@ -16,6 +16,7 @@ class Project(models.Model):
                                 related_name="projects",
                                 on_delete=models.PROTECT)
     requirements = models.CharField(max_length=500, blank=True)
+    # Should project HAVE positions, rather than vice versa?
     # project.positions to query positions.
 
     def __str__(self):
@@ -38,8 +39,7 @@ class Position(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              related_name="positions",
                              on_delete=models.PROTECT,
-                             blank=True,
-                             null=True)
+                             blank=True)
     # user field will be blank until position is filled
     skills = models.ManyToManyField(
         Skill,
