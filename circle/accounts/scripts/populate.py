@@ -149,13 +149,13 @@ def load_data():
             ).id
 
             itera += 1
-            try:
-                item['user'] = acct_models.User.objects.get(
-                    username=item['user']
-                ).id
-            except acct_models.User.DoesNotExist:
-                item['user'] = None
-                print('Attempting to assign unfilled position.')
+            # try:
+            #    item['user'] = acct_models.User.objects.get(
+            #        username=item['user']
+            #    ).id
+            # except acct_models.User.DoesNotExist:
+            #    item['user'] = None
+            #    print('Attempting to assign unfilled position.')
             # Copy skills logic on position model from user model.
 
         serializer = PositionSerializer(data=data, many=True)
@@ -171,11 +171,15 @@ def load_data():
     print("Getting Full Stack Django Specialist.")
     fsds.save()
     fsds.skills.add(djangoskill, pyskill, htmlskill, cssskill, javaskill)
+    fsds.user = connie
+    fsds.save()
     beds = proj_models.Position.objects.get(name="Backend Django Specialist")
     print("Getting Backend Django Specialist.")
     beds.save()
     beds.skills.add(djangoskill, pyskill, sqlskill)
-    feds = proj_models.Position.objects.get(name="Front End Django Specialist")
+    beds.user = perry
+    beds.save()
+    feds = proj_models.Position.objects.get(name="Frontend Django Specialist")
     print("Getting Front End Django Specialist.")
     feds.save()
     feds.skills.add(htmlskill, cssskill, javaskill)

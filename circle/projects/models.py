@@ -38,8 +38,9 @@ class Position(models.Model):
                                 on_delete=models.CASCADE) 
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              related_name="positions",
-                             on_delete=models.PROTECT,
-                             blank=True)
+                             on_delete=models.SET_NULL,
+                             blank=True,
+                             null=True)
     # user field will be blank until position is filled
     skills = models.ManyToManyField(
         Skill,
