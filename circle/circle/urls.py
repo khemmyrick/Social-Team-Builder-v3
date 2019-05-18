@@ -15,26 +15,37 @@ Including another URLconf
 """
 import os
 
-from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-
 from django.views.static import serve
-
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
+
 from . import views
 
-urlpatterns = [
-    path('', views.home, name='home'),
-    path('admin/', admin.site.urls),
-    path('v3/accounts/', include('accounts.urls', namespace='accounts')),
-    path('v3/accounts/', include('django.contrib.auth.urls')),
-    # path('v3/accounts/', include('registration.backends.hmac.urls')),
-    path('v3/projects/', include('projects.urls', namespace='projects'))
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += staticfiles_urlpatterns()
-# urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if settings.DEBUG:
+    import debug_toolbar
+
+    urlpatterns = [
+        path('', views.home, name='home'),
+        path('admin/', admin.site.urls),
+        path('v3/accounts/', include('accounts.urls', namespace='accounts')),
+        path('v3/accounts/', include('django.contrib.auth.urls')),
+        # path('v3/accounts/', include('registration.backends.hmac.urls')),
+        path('v3/projects/', include('projects.urls', namespace='projects')),
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    urlpatterns += staticfiles_urlpatterns() + urlpatterns
+    # urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+
+
+
+            # For django versions before 2.0:
+            # url(r'^__debug__/', include(debug_toolbar.urls)),
+
+    #    ] + urlpatterns
