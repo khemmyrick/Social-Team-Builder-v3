@@ -142,6 +142,25 @@ def profile_update_view(request, pk):
     # User form context working.
     # Adjust skill formset context next.
 
+def profile_detail_view(request, pk):
+    """
+    Allows a user to update their own profile.
+    """
+    user = request.user
+    print("1. Session user object.")
+    target_user = User.objects.get(id=pk)
+    print("2. Getting profile user.")
+    # user_skills = user.skills.order_by('name')
+    # print("Geting skill data for target user.")
+    context = {
+        'user': user,
+        'target_user': target_user,
+    }
+    print("3. Context is created.")
+    # Is this the initial load of the edit template?
+
+    return render(request, 'accounts/user_detail.html', context)
+
 
 class LogInView(generic.FormView):
     form_class = AuthenticationForm

@@ -43,6 +43,16 @@ def load_data():
         else:
             print(serializer.errors)
             print('load_data unsuccessful.')
+        # Users generated. Passwords unhashed.
+        # Has passwords before moving on. . . 
+        usernames = []
+        for item in data:
+            usernames.append(item['username'])
+        all_users = acct_models.User.objects.all()
+        for user in all_users:
+            if user.username in usernames:
+                user.set_password(user.password)
+                user.save()
 
     # Load Skill Serializer.
     try:

@@ -2,7 +2,7 @@
 
 {% block title_tag %}{{ project.name }} | {{ block.super }}{% endblock %}
 {% block body %}
-
+{% if user == project.creator %}
   <div class="circle--actions--bar">
     <div class="bounds">
       <div class="grid-100">
@@ -11,7 +11,7 @@
       </div>
     </div>
   </div>
-
+{% endif %}
   <div class="bounds circle--page circle--article">
     <div class="grid-70">
       <div class="circle--article--header">
@@ -21,7 +21,7 @@
       </div>
 
       <div class="circle--article--body">
-		{{ project.description.as_p }}
+		{{ project.description }}
 		<!--
 		ADDITIONAL CODE TO FORMAT LONG TEXT STRING EITHER IN TEMPLATE TAG OR IN VIEWS.
 		-->
@@ -37,10 +37,16 @@
 			<li>
 				<h3>{{ position.name }}</h3>
 				<p>{{ position.description }}</p>
-				{% if position.filled %}
+				{% if position.user = user %}
+				<a class="button button-primary button-inactive">YOU currently have this position.</a>
+				{% elif position.filled %}
 				<a class="button button-primary button-inactive">Position Filled</a>
+				{% elif applicant in project.applicants %}<!-- This should be checking if user has an application for this. -->
+				<a class="button button-primary button-inactive">Your application is being processed.</a>
 				{% else %}
 				<a href="" class="button button-primary">Apply</a>
+				<!-- Request view to send in application, and reload this page with an applied text here.
+				Use elseif block? -->
 				{% endif %}
 			</li>
 			{% endfor %}

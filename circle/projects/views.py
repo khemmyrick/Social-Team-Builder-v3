@@ -4,12 +4,12 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView
 from django.views.generic.detail import DetailView
 
-from . import models
+from . import models as promodels
 
 
 # Create your views here.
 class ProjectDetailView(DetailView):
-    model = models.Project
+    model = promodels.Project
     def get_context_data(self, pk=model.pk):
         # Call the base implementation first to get a context
         context = super(
@@ -25,6 +25,23 @@ class ProjectDetailView(DetailView):
         return context
 
 
+def project_detail_view(request, pk):
+    """
+    Allows a user to view a project.
+    """
+    user = request.user
+    project = promodels.Project.objects.get(id=pk)
+    applicant = user.applicants.filter(position__in=project.positions).first()
+    # user_skills = user.skills.order_by('name')
+    # print("Geting skill data for target user.")
+    context = {
+        'user': user,
+        'project': project,
+        'applicant': applicant
+    }
+
+    return render(request, 'projects/project_detail.html', context)
+
 
 class ProjectListView(ListView):
     """
@@ -32,7 +49,7 @@ class ProjectListView(ListView):
     `self.queryset` can actually be any iterable of items, not just a queryset.
     """
     # model = models.Project
-    queryset = models.Project.objects.all()
+    queryset = promodels.Project.objects.all()
 
     # def get_context_data(self, object_list=queryset,**kwargs):
     #    context = super(ArticleListView, self).get_context_data(**kwargs)
