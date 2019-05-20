@@ -31,7 +31,10 @@ def project_detail_view(request, pk):
     """
     user = request.user
     project = promodels.Project.objects.get(id=pk)
-    applicant = user.applicants.filter(position__in=project.positions).first()
+    p_list = []
+    for position in project.positions.all():
+        p_list.append(position)
+    applicant = user.applicants.filter(position__in=p_list).first()
     # user_skills = user.skills.order_by('name')
     # print("Geting skill data for target user.")
     context = {
@@ -42,6 +45,19 @@ def project_detail_view(request, pk):
 
     return render(request, 'projects/project_detail.html', context)
 
+
+def position_list_view(request):
+    """
+    Allows users to view project list.
+    """
+    user = request.user
+    positions = promodels.Position.objects.filter(filled=False)
+    context = {
+        'user': user,
+        'positions': positions,
+    }
+    
+    return render(request, 'projects/project_list.html', context)
 
 class ProjectListView(ListView):
     """

@@ -33,11 +33,11 @@
         <ul class="circle--group--list">
 		<!-- 
 		Use Django forloop to LIST Position titles and brief descriptions of positions. -->
-			{% for position in project.positions %}
+			{% for position in project.positions.all%}
 			<li>
 				<h3>{{ position.name }}</h3>
 				<p>{{ position.description }}</p>
-				{% if position.user = user %}
+				{% if position.user == user %}
 				<a class="button button-primary button-inactive">YOU currently have this position.</a>
 				{% elif position.filled %}
 				<a class="button button-primary button-inactive">Position Filled</a>
@@ -64,7 +64,7 @@
         <h3>Project Needs</h3>
         <ul class="circle--link--list">
 		<!-- Link goes to applications page with position as context -->
-		  {% for position in project.positions %}
+		  {% for position in project.positions.all %}
           <li><a>{{ position.name }}</a></li>
           {% endfor %}
         </ul>

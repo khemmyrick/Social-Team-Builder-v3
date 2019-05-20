@@ -39,7 +39,8 @@ if settings.DEBUG:
         path('__debug__/', include(debug_toolbar.urls)),
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-    urlpatterns += staticfiles_urlpatterns() + urlpatterns
+    urlpatterns += staticfiles_urlpatterns() # + urlpatterns
+    # Commenting out '+ urlpatterns' seems to stop avatars from saving?
     # urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 

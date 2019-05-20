@@ -40,9 +40,8 @@
 		  <!--
 		  Link takes project as context to reload current page.
 		  -->
-		  {% for project in user.projects %}
+		  {% for project in user.projects.all %}
           <li><a>{{ project.name }}</a></li>
-          <li><a>Twitter Client</a></li>
 		  {% endfor %}
 		  <!-- endfor -->
         </ul>
@@ -62,17 +61,10 @@
 		  These links will display a list of applicants for this position
 		  across all projects.
 		  -->
-		  {% for position in position_set %}
+		  {% for position in positions %}
 
-          <li><a href="#">{{ position.name }}</a></li>
+          <li><a>{{ position.name }}</a></li>
 		  <!-- Link should clarify context. -->
-          <li><a>Designer</a></li>
-          <li><a>Java Developer</a></li>
-          <li><a>PHP Developer</a></li>
-          <li><a>Python Developer</a></li>
-          <li><a>Rails Developer</a></li>
-          <li><a>WordPress Developer</a></li>
-          <li><a>iOS Developer</a></li>
 		  {% endfor %}
 		  <!-- endfor -->
         </ul>
@@ -89,7 +81,7 @@
           </tr>
         </thead>
         <tbody>
-		  {% for applicant in applicant_set %}
+		  {% for applicant in applicants %}
           <tr class="clickable-row" data-href="{% url 'accounts:details' pk=applicant.user.id %}">
             <td>
               <h3>{{ applicant.user.name }}</h3>

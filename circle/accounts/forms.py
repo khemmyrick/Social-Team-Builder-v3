@@ -89,7 +89,7 @@ class SkillForm(ModelForm):
 
 SkillFormSet = forms.modelformset_factory(
     models.Skill,
-    SkillForm
+    SkillForm # form = SkillForm
 ) # This bit may be "explicitly prohibited."?
 
 

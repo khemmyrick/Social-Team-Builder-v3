@@ -33,6 +33,8 @@ class Position(models.Model):
     # related_skill
     # like UserPref in pugorugh, regulates who can apply.
     filled = models.BooleanField(default=False)
+    # filled becomes True if an applicant is chosen.
+    # if user isn't null and/or blank, filled is True
     project = models.ForeignKey(Project,
                                 related_name="positions",
                                 on_delete=models.CASCADE) 

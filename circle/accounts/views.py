@@ -19,7 +19,7 @@ from rest_framework.response import Response
 
 from . import forms
 from accounts.models import User, Skill
-from projects.models import Project
+from projects.models import Project, Applicant
 
 
 # Create your views here.
@@ -34,13 +34,13 @@ def profile_update_view(request, pk):
 
     # Create the formset, specifying the form and formset we want to use.
     # SkillFormSet = formset_factory(forms.SkillForm, formset=forms.BaseSkillFormSet)
-    SkillFormSet = forms.SkillFormSet(queryset=user.skills, prefix="skillset")
+    SkillFormSet = forms.SkillFormSet(queryset=user.skills.all(), prefix="skillset")
     print("2. Skill Formset factory should be created.")
 
     # Get our existing skill data for this user.  This is used as initial data.
     user_skills = user.skills.order_by('name')
     skill_data = [{'name': skill.name} for skill in user_skills]
-    
+
     print("3. Getting existing user skill data. In total: {}".format(len(user_skills)))
     # Make sure we're logged in as user editing this profile.
     if session_user.id == user.id:
@@ -77,6 +77,7 @@ def profile_update_view(request, pk):
 
                 for skill_form in formset:
                     name = skill_form.cleaned_data.get('name')
+                    # should this be: name = skill_form.cleaned_date['name']
                     if name:
                         skill, _ = Skill.objects.get_or_create(name=name)
                         print("Getting or creating {}".format(skill.name))
@@ -119,7 +120,6 @@ def profile_update_view(request, pk):
                 print("Profile form is invalid.")
 
         else:
-            # We haven't made it to this block yet.
             print("1. Else block runs when template is first loaded?")
             print("This is the initial load.")
             # form = forms.UserUpdateForm(user=user)
@@ -141,6 +141,7 @@ def profile_update_view(request, pk):
     return render(request, 'accounts/user_form.html', context)
     # User form context working.
     # Adjust skill formset context next.
+
 
 def profile_detail_view(request, pk):
     """
@@ -229,3 +230,22 @@ class ApplicationsView():
     by status, and/or projects, and/or positions.
     '''
     pass
+
+
+@login_required
+def applications_view(request, pk):
+    user = request.user
+    project_list = user.projects.all()
+    position_list = []
+    for project in project_list:
+        for position in project.positions.all():
+            position_list.append(position)
+
+    applicants = Applicant.objects.filter(position__in=position_list)
+    context = {
+        'user': user,
+        'applicants': applicants,
+        'positions': position_list
+    }
+
+    return render(request, 'accounts/applications.html', context)
