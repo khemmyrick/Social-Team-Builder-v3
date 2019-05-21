@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title_tag %}{{ target_user.username }} Details | {{ block.super }}{% endblock %}
-{% block body %}
+{% block body %}{% if user.is_authenticated %}
   <div class="circle--actions--bar">
     <nav class="bounds">
       <ul class="circle--pill--list">
@@ -10,11 +10,12 @@
       </ul>
     </nav>
   </div>
+  {% endif %}
 
   <div class="bounds circle--page">
     <div class="circle--page--header circle--fluid">
       <div class="circle--fluid--cell circle--fluid--primary">
-        <h2>Profile. USER IS {{ target_user.display_name}}, BROWSER IS {{ user.display_name }}</h2>
+        <h2>{{ target_user.display_name}}'s Profile</h2>
       </div>
 	  <!-- REMINDER: is_authenticated == signed in.  "authenticated" means the system knows who this specific user is RN  -->
 	  {% if user.is_authenticated %}

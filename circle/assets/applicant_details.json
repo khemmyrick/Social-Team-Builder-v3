@@ -13,5 +13,15 @@
     "user": "RobertLazuli",
 	"position": "Backend Django Specialist",
 	"status": "True"
+  },
+  {
+    "user": "GarnetDarling",
+	"position": "Mobile Developer",
+	"status": "True"
+  },
+  {
+    "user": "AmyDietz",
+	"position": "Designer",
+	"status": "True"
   }
 ]

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render
 from django.views import generic
 from django.views.generic.list import ListView
@@ -34,7 +35,10 @@ def project_detail_view(request, pk):
     p_list = []
     for position in project.positions.all():
         p_list.append(position)
-    applicant = user.applicants.filter(position__in=p_list).first()
+    if user.is_authenticated:
+        applicant = user.applicants.filter(position__in=p_list).first()
+    else:
+        applicant = None
     # user_skills = user.skills.order_by('name')
     # print("Geting skill data for target user.")
     context = {
@@ -48,13 +52,29 @@ def project_detail_view(request, pk):
 
 def position_list_view(request):
     """
-    Allows users to view project list.
+    Allows users to view list of project positions.
     """
+    term = request.GET.get('q')
     user = request.user
-    positions = promodels.Position.objects.filter(filled=False)
+    # positions = promodels.Position.objects.filter(filled=False)
+    if term:
+        positions = promodels.Position.objects.filter(
+            filled=False
+        ).filter(
+            Q(name__icontains=term)|
+            Q(description__icontains=term)|
+            Q(time__icontains=term)|
+            Q(project__name__icontains=term)|
+            Q(project__description__icontains=term)|
+            Q(project__creator__display_name__icontains=term)
+        )
+    else:
+        positions = promodels.Position.objects.filter(filled=False)
+        term = ''
     context = {
         'user': user,
         'positions': positions,
+        'term': term
     }
     
     return render(request, 'projects/project_list.html', context)

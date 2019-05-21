@@ -1,7 +1,6 @@
 import json
 from os import environ
 from os import path
-# how 2.2 urls does it. . .  from django.urls import path
 import sys
 
 import django
@@ -91,13 +90,37 @@ def load_data():
     javaskill = acct_models.Skill.objects.get(name="JavaScript")
     connie.skills.add(djangoskill, pyskill, htmlskill, cssskill, javaskill)
     connie.save()
-    
+
     perry = acct_models.User.objects.get(username="PerryKinder")
     print("Arming Perry.")
     perry.save()
     sqlskill = acct_models.Skill.objects.get(name="SQL")
     perry.skills.add(djangoskill, pyskill, sqlskill)
     perry.save()    
+
+    garnet = acct_models.User.objects.get(username="GarnetDarling")
+    print("Arming Garnet.")
+    cpp = acct_models.Skill.objects.get(name="C++")
+    java = acct_models.Skill.objects.get(name="Java")
+    xcode = acct_models.Skill.objects.get(name="Xcode")
+    obj_c = acct_models.Skill.objects.get(name="Objective-C")
+    garnet.skills.add(cpp, java, xcode, obj_c)
+    garnet.save()
+
+    amy = acct_models.User.objects.get(username="AmyDietz")
+    print("Arming Amy")
+    amy.save()
+    jqskill = acct_models.Skill.objects.get(name="jQuery")
+    amy.skills.add(jqskill, htmlskill, xcode, sqlskill)
+    amy.save()
+
+    bob = acct_models.User.objects.get(username="RobertLazuli")
+    print("Arming Bob")
+    bob.save()
+    flaskskill = acct_models.Skill.objects.get(name="Flask")
+    phpskill = acct_models.Skill.objects.get(name="PHP")
+    bob.skills.add(phpskill, flaskskill, pyskill, sqlskill)
+    bob.save()
 
     # Load Project Serializer.
     try:

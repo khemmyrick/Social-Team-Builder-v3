@@ -19,5 +19,19 @@
 	"filled": "False",
 	"project": "Socializer",
 	"time": "10 hours/week"
+  },
+  {
+    "name": "Mobile Developer",
+	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+	"filled": "False",
+	"project": "SugarFans",
+	"time": "18 hours/week"
+  },
+  {
+    "name": "Designer",
+	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+	"filled": "False",
+	"project": "Gemtech",
+	"time": "25 hours/week"
   }
 ]

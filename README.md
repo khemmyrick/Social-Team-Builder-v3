@@ -9,7 +9,7 @@ A Treehouse Python Web Development Techdegree Capstone Project
 `env\scripts\activate`  
 - Use pip to install requirements.  
 `pip install -r requirements.txt`  
-- From the primary backend folder, make migrations.  
+- From the primary circle folder (the one containing manage.py), make migrations.  
 `python manage.py makemigrations`
 - Apply migrations.  
 `python manage.py migrate`

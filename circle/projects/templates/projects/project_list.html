@@ -1,17 +1,13 @@
 {% extends "layout.html" %}
 
-{% comment %}<!-- If search context: -->
-{% block title_tag %}Search | {{ block.super }} {% endblock %}
-{% endcomment %}<!-- Else: -->
-{% block title_tag %}Home | {{ block.super }} {% endblock %}
-<!-- endif -->
+{% block title_tag %}Home - Project List | {{ block.super }} {% endblock %}
 {% block body %}
   <div class="bounds circle--page">
     <div class="circle--page--header circle--fluid">
       <div class="circle--fluid--cell circle--fluid--primary">
-	  <!-- If search context: -->{% if search %} <!-- Find real name for variable later-->
+	  <!-- If search context: -->{% if term %} <!-- Find real name for variable later-->
         <h2>Search</h2>
-        <p>Search research for: <span class="secondary-label">sass</span></p>
+        <p>Search research for: <span class="secondary-label">{{ term }}</span></p>
 	  <!-- Else -->{% else %}
 	    <h2>Projects</h2>
 	  <!-- End If -->{% endif %}
@@ -46,6 +42,7 @@
         <thead>
           <tr>
             <th>Project Title</th>
+			<th>Project Creator</th>
             <th class="circle--cell--right">Project Needs</th>
           </tr>
         </thead>
@@ -55,6 +52,8 @@
             <td>
               <h3>{{ position.project.name }}</h3>
             </td>
+			<td><h4>{{ position.project.creator.display_name }}</h4>
+			</td>
             <td class="circle--cell--right">
               <span class="secondary-label">{{ position.name }}</span>
             </td>
