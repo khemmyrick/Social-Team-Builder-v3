@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -38,15 +39,15 @@ def project_detail_view(request, pk):
     for position in project.positions.all():
         p_list.append(position)
     if user.is_authenticated:
-        applicant = user.applicants.filter(position__in=p_list).first()
+        applicants = user.applicants.filter(position__in=p_list)
     else:
-        applicant = None
+        applicants = ''
     # user_skills = user.skills.order_by('name')
     # print("Geting skill data for target user.")
     context = {
         'user': user,
         'project': project,
-        'applicant': applicant
+        'applicants': applicants
     }
 
     return render(request, 'projects/project_detail.html', context)
@@ -122,6 +123,30 @@ def position_list_view(request):
     }
     
     return render(request, 'projects/project_list.html', context)
+
+
+def application_create_view(request, pk):
+    user = request.user
+    position = promodels.Position.objects.get(id=pk)
+    try:
+        applicant = promodels.Applicant(
+            user=user,
+            position=position
+        )
+        applicant.save()
+    except ValidationError:
+        messages.error(request, "You've already applied for this position.")
+        return HttpResponseRedirect(reverse('home'))
+
+    messages.success(
+        request,
+        'You applied for the {} role!'.format(position.name)
+    )
+    # context = {
+    #    
+    # }
+    return HttpResponseRedirect(reverse('home'))
+
 
 class ProjectListView(ListView):
     """

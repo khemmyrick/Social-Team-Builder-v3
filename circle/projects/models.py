@@ -68,9 +68,9 @@ class Applicant(models.Model):
     Object for storing applicants to a specific project position.
 
     attrs:
-        user: foreignkey user who may apply to position.
-        position: foreignkey position user may apply for.
-        status: bool indicating that the user has submitted application.
+        user: ForeignKey user who may apply to position.
+        position: ForeignKey position user may apply for.
+        status: bool indicating that the user hasn't been rejected/accepted.
         applied: time this object was created.
     """
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -95,3 +95,9 @@ class Applicant(models.Model):
 
     class Meta:
         ordering = ('-applied',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'position'],
+                name='unique_attempt'
+            )
+        ]

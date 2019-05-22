@@ -59,7 +59,9 @@
           <nav>
             <ul class="circle--inline">
 				{% if user.is_authenticated %}
-					<!--<li><a href="#">Notifications</a></li> -->
+					{% if messages %}
+						<li><a href="" onclick="showMess()">Hide/Show Notifications</a></li>
+					{% endif %}
 					<li><a href="{% url 'accounts:details' pk=user.id %}">My Profile</a></li>
 					<li><a href="{% url 'accounts:logout' %}">Sign Out</a></li>
 				{% else %}
@@ -72,7 +74,25 @@
       </div>
     </div>
   </header>
-
+		  {% if messages %}
+		  <div id="djangomess">
+			  <ul class="messages">
+				{% for message in messages %}
+				  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+				{% endfor %}
+			  </ul>
+		  </div>
+		  {% endif %}
 {% block body %}{% endblock %}
+<script>
+function showMess() {
+  var x = document.getElementById("djangomess");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+</script>
 </body>
 </html>

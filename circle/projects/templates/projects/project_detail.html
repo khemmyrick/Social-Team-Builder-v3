@@ -41,10 +41,14 @@
 				<a class="button button-primary button-inactive">YOU currently have this position.</a>
 				{% elif position.filled %}
 				<a class="button button-primary button-inactive">Position Filled</a>
-				{% elif applicant in project.applicants %}<!-- This should be checking if user has an application for this. -->
-				<a class="button button-primary button-inactive">Your application is being processed.</a>
+				{% elif applicants %}<!-- This should be checking if user has an application for this. -->
+					{% for applicant in applicants %}
+						{% if applicant.position == position %}
+							<a class="button button-primary button-inactive">Your application is being processed.</a>
+						{% endif %}
+					{% endfor %}
 				{% else %}
-				<a href="" class="button button-primary">Apply</a>
+				<a href="{% url 'projects:apply' pk=position.id %}" class="button button-primary">Apply</a>
 				<!-- Request view to send in application, and reload this page with an applied text here.
 				Use elseif block? -->
 				{% endif %}
