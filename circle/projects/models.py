@@ -29,6 +29,7 @@ class Position(models.Model):
     a description, and related skill.
     '''
     name = models.CharField(max_length=100)
+    # Multiple projects should be able to have positions with identical names.
     description = models.CharField(max_length=500, blank=True)
     # related_skill
     # like UserPref in pugorugh, regulates who can apply.

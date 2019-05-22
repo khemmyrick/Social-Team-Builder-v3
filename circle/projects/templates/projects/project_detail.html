@@ -6,7 +6,7 @@
   <div class="circle--actions--bar">
     <div class="bounds">
       <div class="grid-100">
-        <a class="button" href="{% url 'projects:edit' pk=project.id %}">Edit Project</a>
+        <a class="button" href="{% url 'projects:update' pk=project.id %}">Edit Project</a>
         <a class="button button-text" href="{% url 'projects:delete' pk=project.id %}">Delete Project</a>
       </div>
     </div>

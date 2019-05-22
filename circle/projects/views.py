@@ -1,5 +1,7 @@
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
 from django.views import generic
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView
@@ -50,6 +52,38 @@ def project_detail_view(request, pk):
     return render(request, 'projects/project_detail.html', context)
 
 
+def project_update_view(request, pk):
+    return HttpResponseRedirect(reverse('projects:details', args=pk))
+
+
+def project_delete_view(request, pk):
+    return HttpResponseRedirect(reverse('projects:details', args=pk))
+
+
+def position_name_view(request, term):
+    """
+    Allows users to view list of each project needing a certain position.
+    """
+    term = term
+    user = request.user
+    positions = promodels.Position.objects.filter(
+        name=term
+    )
+    p_names = [position.name for position in positions]
+    p_names = set(p_names)
+    p_names = list(p_names)
+    positions = positions.filter(filled=False)
+    context = {
+        'user': user,
+        'positions': positions,
+        'term': term,
+        'p_names': p_names
+    }
+    
+    return render(request, 'projects/project_list.html', context)
+    
+    
+
 def position_list_view(request):
     """
     Allows users to view list of project positions.
@@ -67,14 +101,24 @@ def position_list_view(request):
             Q(project__name__icontains=term)|
             Q(project__description__icontains=term)|
             Q(project__creator__display_name__icontains=term)
-        )
+        ) # .values(
+        #    'name',
+        #    'project.name',
+        #    'project.id',
+        #    'project.creator.display_name'
+        # )
     else:
         positions = promodels.Position.objects.filter(filled=False)
         term = ''
+    all_pos = promodels.Position.objects.all()
+    p_names = [position.name for position in all_pos]
+    p_names = set(p_names)
+    p_names = list(p_names)
     context = {
         'user': user,
         'positions': positions,
-        'term': term
+        'term': term,
+        'p_names': p_names
     }
     
     return render(request, 'projects/project_list.html', context)
