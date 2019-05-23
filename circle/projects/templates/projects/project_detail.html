@@ -44,7 +44,12 @@
 				{% elif applicants %}<!-- This should be checking if user has an application for this. -->
 					{% for applicant in applicants %}
 						{% if applicant.position == position %}
-							<a class="button button-primary button-inactive">Your application is being processed.</a>
+							{% if applicant.status == 'u' %}
+								<!-- 'u' is for undecided.  'r' is for rejected... -->
+								<a class="button button-primary button-inactive">Your application is being processed.</a>
+							{% else %}
+								<a class="button button-primary button-inactive">This position is unavailable.</a>
+							{% endif %}
 						{% endif %}
 					{% endfor %}
 				{% else %}

@@ -10,7 +10,8 @@ class ProjectSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'creator',
-            'requirements'
+            'requirements',
+            'time'
         )
         model = Project
 

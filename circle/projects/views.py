@@ -39,7 +39,9 @@ def project_detail_view(request, pk):
     for position in project.positions.all():
         p_list.append(position)
     if user.is_authenticated:
-        applicants = user.applicants.filter(position__in=p_list)
+        applicants = user.applicants.filter(
+            position__in=p_list
+        )
     else:
         applicants = ''
     # user_skills = user.skills.order_by('name')

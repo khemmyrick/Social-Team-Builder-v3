@@ -199,9 +199,13 @@ def load_data():
             print(serializer.errors)
             print('load_data unsuccessful.')
         
-    # Add skills to positions.
-    fsds = proj_models.Position.objects.get(name="Full Stack Django Specialist")
-    print("Getting Full Stack Django Specialist.")
+    # Add skills/users to positions.
+    fsds = proj_models.Position.objects.filter(
+        project__name="Socializer"
+    ).get(
+        name="Full Stack Django Specialist"
+    )
+    print("Getting Socializer's Full Stack Django Specialist.")
     fsds.save()
     fsds.skills.add(djangoskill, pyskill, htmlskill, cssskill, javaskill)
     fsds.user = connie
@@ -239,10 +243,10 @@ def load_data():
             item['position'] = proj_models.Position.objects.get(
                 name=item['position']
             ).id
-            if item['status'] == 'True':
-                item['status'] = True
-            else:
-                item['status'] = False
+            # if item['status'] == 'True':
+            #    item['status'] = True
+            # else:
+            #    item['status'] = False
             itera += 1
 
         serializer = ApplicantSerializer(data=data, many=True)

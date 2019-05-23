@@ -79,7 +79,7 @@
 			{{ formset.management_form }}
 
 			{% for skill in formset %}
-			  <li>
+			  <li class="link-formset">
 			    {{ skill.name }}
 				{{ skill.id }}
 				{% if skill.name.errors %}
@@ -123,4 +123,13 @@
 
 	  </div>
   </form>
+  {% comment %}
+  <!-- 
+  <script>
+    $('.link-formset').formset({
+        addText: 'add link',
+        deleteText: 'remove'
+    });
+  </script>  -->
+  {% endcomment %}
 {% endblock %}

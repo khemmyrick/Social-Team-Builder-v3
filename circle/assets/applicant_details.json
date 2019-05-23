@@ -2,26 +2,36 @@
   {
     "user": "EarlRose",
 	"position": "Frontend Django Specialist",
-	"status": "True"
+	"status": "u"
   },
   {
     "user": "PerryKinder",
 	"position": "Frontend Django Specialist",
-	"status": "True"
+	"status": "r"
+  },
+  {
+    "user": "PerryKinder",
+	"position": "Backend Django Specialist",
+	"status": "a"
   },
   {
     "user": "RobertLazuli",
 	"position": "Backend Django Specialist",
-	"status": "True"
+	"status": "r"
   },
   {
     "user": "GarnetDarling",
 	"position": "Mobile Developer",
-	"status": "True"
+	"status": "u"
   },
   {
     "user": "AmyDietz",
 	"position": "Designer",
-	"status": "True"
+	"status": "u"
+  },
+  {
+    "user": "ConnieRolek",
+	"position": "Full Stack Django Specialist",
+	"status": "a"
   }
 ]

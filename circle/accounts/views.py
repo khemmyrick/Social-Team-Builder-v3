@@ -76,8 +76,8 @@ def profile_update_view(request, pk):
                 new_skills = []
 
                 for skill_form in formset:
-                    name = skill_form.cleaned_data.get('name')
-                    # should this be: name = skill_form.cleaned_date['name']
+                    # name = skill_form.cleaned_data.get('name')
+                    name = skill_form.cleaned_date['name']
                     if name:
                         skill, _ = Skill.objects.get_or_create(name=name)
                         print("Getting or creating {}".format(skill.name))

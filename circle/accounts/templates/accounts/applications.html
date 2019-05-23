@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% load humanize %}
 
 {% block title_tag %}Applicant List | {{ block.super }}{% endblock %}
 {% block body %}
@@ -76,8 +77,10 @@
       <table class="u-full-width circle--table">
         <thead>
           <tr>
-            <th>Applicant</th>
-            <th class="circle--cell--right">Applicant Position</th>
+            <th><h4>Applicant</h4><br><h4>Project</h4></th>
+			<th><h4>Position<h4></th>
+            <th><h4>Applied</h4></th>
+            <th class="circle--cell--right"><h4>Status</h4></th>
           </tr>
         </thead>
         <tbody>
@@ -87,9 +90,21 @@
               <h3>{{ applicant.user.display_name }}</h3>
               <p>{{ applicant.position.project.name }}</p>
             </td>
-            <td class="circle--cell--right">
+            <td>
               <span class="secondary-label">{{ applicant.position.name }}</span>
             </td>
+			<td>
+				<span class="secondary-label">{{ applicant.applied|naturaltime }}</span>
+			</td>
+			<td class="circle--cell--right">
+				{% if applicant.status == 'a' %}
+					<h4 style="color: green;">APPROVED.</h4>
+				{% elif applicant.status == 'r' %}
+					<h4 style="color: red;">DENIED.</h4>
+				{% else %}
+					<h4 style="color: orange;">UNDECIDED.</h4>
+				{% endif %}
+			</td>
           </tr>
 		  {% endfor %}
         </tbody>

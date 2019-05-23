@@ -16,6 +16,7 @@ class Project(models.Model):
                                 related_name="projects",
                                 on_delete=models.PROTECT)
     requirements = models.CharField(max_length=500, blank=True)
+    time = models.CharField(max_length=100, blank=True)
     # Should project HAVE positions, rather than vice versa?
     # project.positions to query positions.
 
@@ -55,7 +56,7 @@ class Position(models.Model):
     time = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
-        return self.name
+        return "{} for {}.".format(self.name, self.project.name)
 
 
 class Applicant(models.Model):
@@ -73,6 +74,7 @@ class Applicant(models.Model):
         status: bool indicating that the user hasn't been rejected/accepted.
         applied: time this object was created.
     """
+    # Revisit on_delete options later.
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE,
                              related_name='applicants')
@@ -80,13 +82,20 @@ class Applicant(models.Model):
                                  on_delete=models.CASCADE,
                                  related_name='applicants')
     applied = models.DateTimeField(default=timezone.now)
-    status = models.BooleanField(default=True)
-    # status becomes False if a candidate has been rejected.
+    # status = models.BooleanField(default=True)
+    # DEPRECATE THIS.... status becomes False if a candidate has been rejected.
+    status = models.CharField(default='u', max_length=10)
+    # status should be CHAR Field.  'a' = approved. 'r' = rejected. 'u' = processing.
     def __str__(self):
-        if self.status is True:
+        if self.status is 'u':
             return "USER {} being considered for {}.".format(
                 self.user.display_name,
-                self.position
+                self.position.name
+            )
+        elif self.status is 'a':
+            return "USER {} is our new {}".format(
+                self.user.display_name,
+                self.position.name
             )
         else:
             return "{} is invited to pursue other oppportunities.".format(
