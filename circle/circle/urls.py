@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import django
 import os
 
 from django.contrib import admin
@@ -26,10 +27,15 @@ from django.urls import include, path
 from . import views
 
 
+def custom_page_not_found(request, term=None, pk=None):
+    return django.views.defaults.page_not_found(request, None)
+
+
 if settings.DEBUG:
     import debug_toolbar
 
     urlpatterns = [
+        path('404/', custom_page_not_found),
         path('', views.home, name='home'),
         path('admin/', admin.site.urls),
         path('v3/accounts/', include('accounts.urls', namespace='accounts')),
@@ -37,6 +43,7 @@ if settings.DEBUG:
         # path('v3/accounts/', include('registration.backends.hmac.urls')),
         path('v3/projects/', include('projects.urls', namespace='projects')),
         path('__debug__/', include(debug_toolbar.urls)),
+        path('<term>', custom_page_not_found),
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
     urlpatterns += staticfiles_urlpatterns() # + urlpatterns

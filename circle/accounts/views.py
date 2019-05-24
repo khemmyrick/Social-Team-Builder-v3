@@ -50,14 +50,16 @@ def profile_update_view(request, pk):
                 print("5. Profile form and skill formset are valid!")
                 # Save user info
                 # user.display_name = form.cleaned_data.get('display_name')
-                user.display_name = form.cleaned_data['display_name']
-                print("6. We got a display name!")
+                if form.cleaned_data['display_name']:
+                    user.display_name = form.cleaned_data['display_name']
+                    print("6. We got a display name!")
                 # user.bio = form.cleaned_data.get('bio')
-                user.bio = form.cleaned_data['bio']
-                print("7. We got a bio!")
+                if form.cleaned_data['bio']:
+                    user.bio = form.cleaned_data['bio']
+                    print("7. We got a bio!")
                 # user.avatar = form.cleaned_data.get('avatar')
-                user.avatar = form.cleaned_data['avatar']
-                if user.avatar:
+                if form.cleaned_data['avatar']:
+                    user.avatar = form.cleaned_data['avatar']
                     print("8. We got an avatar.")
                 user.save()
                 print("This user should be in the database.")

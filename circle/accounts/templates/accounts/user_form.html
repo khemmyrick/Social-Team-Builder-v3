@@ -33,6 +33,7 @@
 		  <div class="circle--article--body">
 			<!-- FORM bio field -->{{ form.bio.help_text }}{{ form.bio }}{% comment %}<textarea placeholder="{{ form.bio }}" form="profile">{{ form.bio }}</textarea>{% endcomment %}
 		  </div>
+		  {% comment %}
 		  <h2>Past Projects</h2>
 		  <table class="u-full-width circle--table">
 			<thead>
@@ -42,24 +43,19 @@
 			  </tr>
 			</thead>
 			<tbody>
-			  <tr class="clickable-row" data-href="project.html">
+			  {% for project in user.projects %}
+			  <tr class="clickable-row" data-href="{% url 'projects:details' pk=project.id %}" target="_blank">
 				<td>
-				  <h3>Invoice Delivery Tool</h3>
+				  <h3>{{ user.project.name }}</h3>
 				</td>
 				<td class="circle--cell--right">
-				  <span class="secondary-label">Rails Developer</span>
+				  <span class="secondary-label">{% for position in project.positions %}{{ position.name }}<br>{% endfor %}</span>
 				</td>
 			  </tr>
-			  <tr class="clickable-row" data-href="project.html">
-				<td>
-				  <h3>Twitter Client</h3>
-				</td>
-				<td class="circle--cell--right">
-				  <span class="secondary-label">Designer</span>
-				</td>
-			  </tr>
+			  {% endfor %}
 			</tbody>
 		  </table>
+		  {% endcomment %}
 		</div>
 
 		<div class="grid-25 grid-push-5">

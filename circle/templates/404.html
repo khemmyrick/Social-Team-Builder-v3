@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+
+{% block title_tag %}404 IDK | {{ block.super }}{% endblock %}
+{% block body %}
+{% if user.is_authenticated %}
+  <div class="circle--actions--bar">
+    <nav class="bounds">
+      <ul class="circle--pill--list">
+        <li><a href="{% url 'accounts:applications' pk=user.id %}">Applications</a></li>
+        <li><a class="selected" href="{% url 'accounts:details' pk=user.id %}">Profile</a></li>
+      </ul>
+    </nav>
+  </div>
+{% endif %}
+	<a href="{% url 'home' %}">
+    <div class="circle--page--header circle--fluid">
+      <div class="circle--fluid--cell circle--fluid--primary">
+	  <h2>404: We couldn't find that.</h2>
+	  <p>We apologize.  The link or input you entered appears to be broken.  Please try a different one.</p>
+      </div>
+	</div></a>
+{% endblock %}
