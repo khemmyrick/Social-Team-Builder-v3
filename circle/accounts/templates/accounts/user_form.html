@@ -6,16 +6,14 @@
   <div class="circle--actions--bar">
     <nav class="bounds">
       <ul class="circle--pill--list">
-	  {% comment %}
-        <li><a href="applications.html">Applications</a></li>
-	  {% endcomment %}
+        <li><a href="{% url 'accounts:applications' pk=user.id %}">Applications</a></li>
         <li><a class="selected" href="{% url 'accounts:details' pk=user.id %}">Profile</a></li>
       </ul>
     </nav>
   </div>
-  <form method="POST" enctype="multipart/form-data" action="{% url 'accounts:edit' pk=user.id %}" id="profile">{% comment %}action="{% url 'accounts:edit' pk=user.pk %}" {% endcomment %}
+  <form method="POST" enctype="multipart/form-data" action="{% url 'accounts:edit' pk=user.id %}" id="profile">
     {% csrf_token %}
-	{% comment %}{{ form.as_p }}{% endcomment %}
+	{% comment %}{{ form }}{% endcomment %}
 	  <div class="bounds circle--page">
 		<div class="circle--page--header circle--fluid">
 		  <div class="circle--fluid--cell circle--fluid--primary">
@@ -28,10 +26,12 @@
 		<div class="grid-70">
 		  <!-- FORM display_name field -->
 		  {{ form.display_name.errors }}
+		  {{ form.display_name.help_text }}
 		  {{ form.display_name }}
+		  <!-- Put html below in display_name widget options -->
 		  {% comment %}<input type="text" placeholder="{{ form.display_name }}" value="{{ form.display_name }}" class="circle--input--h1" form="profile">{% endcomment %}
 		  <div class="circle--article--body">
-			<!-- FORM bio field -->{{ form.bio }}{% comment %}<textarea placeholder="{{ form.bio }}" form="profile">{{ form.bio }}</textarea>{% endcomment %}
+			<!-- FORM bio field -->{{ form.bio.help_text }}{{ form.bio }}{% comment %}<textarea placeholder="{{ form.bio }}" form="profile">{{ form.bio }}</textarea>{% endcomment %}
 		  </div>
 		  <h2>Past Projects</h2>
 		  <table class="u-full-width circle--table">
@@ -73,6 +73,7 @@
 			  </a> -->
 			</div>
 		  </div>
+		  {% comment %}
 		  <div class="circle--secondary--module">
 			<h4>My Skills</h4>
 			<ul class="circle--clone--list">
@@ -89,13 +90,13 @@
 				{% endif %}
 				<a class="circle--clone--add">Add Skill</a>
 				<a class="circle--clone--remove">Remove</a>
-				{% comment %}
+
 				<!---------------------------------
-				<input type="text" placeholder="{{ skill.name }}" form="profile" />
+				<input type="text" placeholder="django.skill.name" form="profile" />
 				<a class="circle--clone--add">Add Skill</a>
 				<a class="circle--clone--remove">Remove</a>
 				------------------------------------------------>
-				{% endcomment %}
+
 			  </li>
 			{% endfor %}
 			</ul>
@@ -104,7 +105,9 @@
 					{{ error|escape }}
 				{% endfor %}
 			{% endif %}
+			
 		  </div>
+		  {% endcomment %}
 			<!-- HIDE PROJECTS LIST FOR NOW #############################
 		  <div class="circle--secondary--module">
 			<h4>My Projects</h4>

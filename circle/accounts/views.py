@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.forms.formsets import formset_factory
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 from django.views import generic
 
 from rest_framework import generics, permissions, status
@@ -27,7 +28,75 @@ from projects.models import Project, Applicant
 def profile_update_view(request, pk):
     """
     Allows a user to update their own profile.
+    Skill form functionality not included.
     """
+    session_user = request.user
+    print("1. Getting user object.")
+    user = User.objects.get(id=pk)
+    formset = ''
+    # Make sure we're logged in as user editing this profile.
+    if session_user.id == user.id:
+        print('2. {} is indeed {}'.format(user.display_name,
+                                       session_user.display_name))
+        if request.method == 'POST':
+            print("3. Request method is post.")
+            form = forms.UserUpdateForm(request.POST, request.FILES)
+            # form = forms.UserUpdateForm(request.POST, request.FILES, instance=user)
+            # form needs instance, else it makes new instance??
+            # We aren't getting the new form data yet?
+            print("4. form should be created.")
+
+            if form.is_valid():
+                print("5. Profile form and skill formset are valid!")
+                # Save user info
+                # user.display_name = form.cleaned_data.get('display_name')
+                user.display_name = form.cleaned_data['display_name']
+                print("6. We got a display name!")
+                # user.bio = form.cleaned_data.get('bio')
+                user.bio = form.cleaned_data['bio']
+                print("7. We got a bio!")
+                # user.avatar = form.cleaned_data.get('avatar')
+                user.avatar = form.cleaned_data['avatar']
+                if user.avatar:
+                    print("8. We got an avatar.")
+                user.save()
+                print("This user should be in the database.")
+
+                # And notify our users that it worked
+                messages.success(request, 'You have updated your profile!')
+                print("You have updated your profile.")
+
+                return HttpResponseRedirect(reverse('home'))
+
+            else:
+                print(form.errors)
+                print("Profile form is INVALID.")
+                messages.error(request, 'Invalid form!')
+                return HttpResponseRedirect(reverse('home'))
+
+        else:
+            print("Request is Get. . . ")
+            # form = forms.UserUpdateForm(user=user)
+            form = forms.UserUpdateForm()
+            print("User form is created.")
+            # unexpected keyword argument 'user'
+            # For your Initial data loading near the bottom
+
+    context = {
+        'form': form,
+        'formset': formset,
+    }
+    print("4. Context is created.")
+    # Is this the initial load of the edit template?
+
+    return render(request, 'accounts/user_form.html', context)
+
+"""
+@login_required
+def profile_update_view(request, pk):
+    '''
+    Allows a user to update their own profile.
+    '''
     session_user = request.user
     print("1. Getting user object.")
     user = User.objects.get(id=pk)
@@ -48,7 +117,8 @@ def profile_update_view(request, pk):
                                        session_user.display_name))
         if request.method == 'POST':
             print("4. Request method is post.")
-            form = forms.UserUpdateForm(request.POST, request.FILES, instance=user)
+            form = forms.UserUpdateForm(request.POST, request.FILES)
+            # form = forms.UserUpdateForm(request.POST, request.FILES, instance=user)
             # form needs instance, else it makes new instance.
             # We aren't getting the new form data yet?
             print("5. form should be created.")
@@ -118,6 +188,8 @@ def profile_update_view(request, pk):
                     return HttpResponseRedirect(reverse('accounts:details', pk=pk))
             else:
                 print("Profile form is invalid.")
+                messages.error(request, 'Invalid form!')
+                return HttpResponseRedirect(reverse('accounts:details', pk=pk))
 
         else:
             print("1. Else block runs when template is first loaded?")
@@ -141,6 +213,7 @@ def profile_update_view(request, pk):
     return render(request, 'accounts/user_form.html', context)
     # User form context working.
     # Adjust skill formset context next.
+"""
 
 
 def profile_detail_view(request, pk):

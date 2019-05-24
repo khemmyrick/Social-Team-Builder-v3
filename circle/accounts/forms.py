@@ -45,13 +45,26 @@ class UserCreateForm(MegaBuster, UserCreationForm):
 
 
 class UserUpdateForm(MegaBuster, UserChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     display_name = forms.CharField(max_length=140,
+                                   initial='PREEXISTING DISPLAY NAME HERE',
+                                   help_text='Display Name',
                                    widget=forms.TextInput(attrs={
-                                        'placeholder': 'Display Name',
+                                        'placeholder': 'PREXISTING DISPLAYNAME HERE',
                                         'class': 'circle--input--h1'
                                         # 'value': '{{ form.display_name.value }}'
                                    }),
                                    required=False)
+    bio = forms.CharField(
+        max_length=9999999999999999999999999999999999999999999999999999999999,
+        initial='PREEXISTING BIO HERE',
+        help_text='Biography',
+        widget=forms.Textarea(attrs={
+            'placeholder': 'PREEXISTING BIO HERE'
+        })
+    )
     avatar = forms.ImageField(widget=forms.ClearableFileInput(),
                               required=False)
     password = None
@@ -59,8 +72,6 @@ class UserUpdateForm(MegaBuster, UserChangeForm):
     class Meta:
         model = get_user_model()
         fields = ("display_name", "bio", "avatar")
-        # def clean(self) would only be needed IF 
-        # we were comparing 2 or more fields to eachother.
 
 
 class SkillCreateForm(ModelForm):
