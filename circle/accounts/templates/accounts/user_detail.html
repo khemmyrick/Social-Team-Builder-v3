@@ -28,8 +28,7 @@
     <div class="grid-70">
       <h1>{{ target_user.display_name }}</h1>
       <div class="circle--article--body">
-		{{ target_user.bio.formatted_markdown|safe }}
-		{{ target_user.bio }}
+		{{ target_user.formatted_markdown|safe }}
       </div>
 
       <h2>Past Projects</h2>
