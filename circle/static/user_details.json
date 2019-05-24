@@ -1,0 +1,56 @@
+[
+  {
+    "email": "amydietz@example.com",
+	"username": "AmyDietz",
+	"password": "project12",
+	"display_name": "Amy Dietz",
+	"bio": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Fusce id velit ut tortor. Pharetra convallis posuere morbi leo urna molestie at.",
+    "is_active": "True",
+    "is_staff": "False"
+  },
+  {
+    "email": "garnetdarling@example.com",
+	"username": "GarnetDarling",
+	"password": "project12",
+	"display_name": "Garnet Darling",
+	"bio": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Fusce id velit ut tortor. Pharetra convallis posuere morbi leo urna molestie at.",
+    "is_active": "True",
+    "is_staff": "False"
+  },
+  {
+    "email": "earlrose@example.com",
+	"username": "EarlRose",
+	"password": "project12",
+	"display_name": "Earl Rose",
+	"bio": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Fusce id velit ut tortor. Pharetra convallis posuere morbi leo urna molestie at.",
+    "is_active": "True",
+    "is_staff": "False"
+  },
+  {
+    "email": "connierolek@example.com",
+	"username": "ConnieRolek",
+	"password": "project12",
+	"display_name": "Connie Rolek",
+	"bio": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Fusce id velit ut tortor. Pharetra convallis posuere morbi leo urna molestie at.",
+    "is_active": "True",
+    "is_staff": "False"
+  },
+  {
+    "email": "perrykinder@example.com",
+	"username": "PerryKinder",
+	"password": "project12",
+	"display_name": "Perry Kinder",
+	"bio": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Fusce id velit ut tortor. Pharetra convallis posuere morbi leo urna molestie at.",
+    "is_active": "True",
+    "is_staff": "False"
+  },
+  {
+    "email": "robertlazuli@example.com",
+	"username": "RobertLazuli",
+	"password": "project12",
+	"display_name": "Robert Lazuli",
+	"bio": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Fusce id velit ut tortor. Pharetra convallis posuere morbi leo urna molestie at.",
+    "is_active": "True",
+    "is_staff": "False"
+  }
+]

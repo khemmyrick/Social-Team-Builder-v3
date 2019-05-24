@@ -1,0 +1,13 @@
+/* edit.css */ 
+/* Apply custom css to Django form widgets. */
+
+@import 'global.css';
+
+
+input {
+  line-height: normal;
+  font-weight: bold;
+  color: #222;
+  font-family: "Work Sans", sans-serif;
+}
+

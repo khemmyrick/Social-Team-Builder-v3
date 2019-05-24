@@ -38,6 +38,7 @@ if settings.DEBUG:
         path('404/', custom_page_not_found),
         path('', views.home, name='home'),
         path('admin/', admin.site.urls),
+        path('markdownx/', include('markdownx.urls')),
         path('v3/accounts/', include('accounts.urls', namespace='accounts')),
         path('v3/accounts/', include('django.contrib.auth.urls')),
         # path('v3/accounts/', include('registration.backends.hmac.urls')),
@@ -49,8 +50,6 @@ if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns() # + urlpatterns
     # Commenting out '+ urlpatterns' seems to stop avatars from saving?
     # urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-
 
 
             # For django versions before 2.0:

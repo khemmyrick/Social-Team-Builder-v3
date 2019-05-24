@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Socializer",
+	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+	"creator": "PerryKinder",
+	"requirements": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+	"time": "2 weeks."
+  },
+  {
+    "name": "RueFire",
+	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+	"creator": "GarnetDarling",
+	"requirements": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+	"time": "5 days."
+  },
+  {
+    "name": "ScholarFlair",
+	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+	"creator": "ConnieRolek",
+	"requirements": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+	"time": "3 months."
+  },
+  {
+    "name": "Gemtech",
+	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+	"creator": "EarlRose",
+	"requirements": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+	"time": "4 hours."
+  },
+  {
+    "name": "SugarFans",
+	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+	"creator": "AmyDietz",
+	"requirements": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+	"time": "1 year."
+  }
+]

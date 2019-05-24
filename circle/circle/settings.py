@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'markdownx',
     'debug_toolbar',
     'accounts',
     'projects'
@@ -156,6 +157,7 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
 AUTH_USER_MODEL = "accounts.User"
 
+MARKDOWNX_MARKDOWNIFY_FUNCTION = 'markdownx.utils.markdownify'
 
 DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": lambda x: True

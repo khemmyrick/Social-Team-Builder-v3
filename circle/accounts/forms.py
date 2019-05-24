@@ -8,6 +8,8 @@ from django.forms import ModelForm
 from django.forms.formsets import BaseFormSet
 from django.utils.translation import ugettext, ugettext_lazy as _
 
+from markdownx.fields import MarkdownxFormField
+
 from . import models
 
 
@@ -57,7 +59,15 @@ class UserUpdateForm(MegaBuster, UserChangeForm):
                                         # 'value': '{{ form.display_name.value }}'
                                    }),
                                    required=False)
-    bio = forms.CharField(
+    # bio = forms.CharField(
+    #    max_length=9999999999999999999999999999999999999999999999999999999999,
+    #    initial='PREEXISTING BIO HERE',
+    #    help_text='Biography',
+    #    widget=forms.Textarea(attrs={
+    #        'placeholder': 'PREEXISTING BIO HERE'
+    #    })
+    # )
+    bio = MarkdownxFormField(
         max_length=9999999999999999999999999999999999999999999999999999999999,
         initial='PREEXISTING BIO HERE',
         help_text='Biography',

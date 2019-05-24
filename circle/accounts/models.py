@@ -5,6 +5,9 @@ from django.contrib.auth.models import (
 )
 from django.db import models
 from django.utils import timezone
+
+from markdownx.models import MarkdownxField
+from markdownx.utils import markdownify
 # Create your models here.
 
 def user_directory_path(instance, filename):
@@ -52,7 +55,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=40, unique=True)
     display_name = models.CharField(max_length=140, blank=True)
-    bio = models.CharField(max_length=500, blank=True, default="")
+    # bio = models.CharField(max_length=999999999999999, blank=True, default="")
+    bio = MarkdownxField()
     avatar = models.ImageField(blank=True, null=True,
                                upload_to=user_directory_path)
     # avatars upload to media/accounts/<user.id>/
@@ -82,3 +86,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_long_name(self):
         return "{} (@{})".format(self.display_name, self.username)
+
+    @property
+    def formatted_markdown(self):
+        return markdownify(self.bio)
