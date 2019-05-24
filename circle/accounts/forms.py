@@ -51,7 +51,7 @@ class UserUpdateForm(MegaBuster, UserChangeForm):
         super().__init__(*args, **kwargs)
 
     display_name = forms.CharField(max_length=140,
-                                   initial='PREEXISTING DISPLAY NAME HERE',
+                                   initial='',
                                    help_text='Display Name',
                                    widget=forms.TextInput(attrs={
                                         'placeholder': 'PREXISTING DISPLAYNAME HERE',

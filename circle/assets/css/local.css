@@ -26,3 +26,11 @@
 .circle--article--body h4 {
   font-size: 1.4rem;
 }
+
+/* HOW CAN I GET RID OF THE LI CIRCLE STYLE IN MY PROJECT DETAIL VIEW?
+The following adds a second disc bullet atop the existing circle bullet.
+No bullet at all would be ideal.  Failing that, I prefer the filled-in disc to the hollow circle.
+.circle--group--list li {
+  list-style-type: disc;
+}
+*/

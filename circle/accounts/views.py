@@ -33,6 +33,11 @@ def profile_update_view(request, pk):
     session_user = request.user
     print("1. Getting user object.")
     user = User.objects.get(id=pk)
+    userdata = {
+        'display_name': user.display_name,
+        'bio': user.bio,
+    }
+    # PASS USERDATA A DICT FOR INITIAL DATA
     formset = ''
     # Make sure we're logged in as user editing this profile.
     if session_user.id == user.id:
@@ -78,11 +83,8 @@ def profile_update_view(request, pk):
 
         else:
             print("Request is Get. . . ")
-            # form = forms.UserUpdateForm(user=user)
-            form = forms.UserUpdateForm()
+            form = forms.UserUpdateForm(initial=userdata)
             print("User form is created.")
-            # unexpected keyword argument 'user'
-            # For your Initial data loading near the bottom
 
     context = {
         'form': form,
