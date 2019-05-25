@@ -9,12 +9,31 @@ $( document ).ready(function() {
   //parent.after(copy) inserts copy after the parent.
   //
   $(".circle--clone--list").on("click", ".circle--clone--add", function(){
-    var parent = $(this).parent("li");
-	var num = parseInt(parent.prop("id").match(/\d+/g), 10 ) +1;
-    var copy = parent.clone().prop("id", "id_skillset-" + num + "name" );
-    parent.after(copy);
-    copy.find("input, textarea, select").val("");
-    copy.find("*:first-child").focus();
+	  //when the add button ispressed
+	  var parent = $(this).parent("li");
+	  console.log(parent);
+	  //get parent first list item ancestor of our anchor tag
+	  var newid = parent.find("*:first-child").prop("id");
+	  console.log(newid);
+	  var numarray = newid.match(/[0-9]?/g);
+	  console.log(numarray);
+	  var numstr = numarray.join();
+	  console.log(numstr);
+	  var foo = numstr.replace(/,/g, "");
+	  console.log(foo);
+	  var num = parseInt(foo) + 1;
+	  console.log(num);
+	  var bar = num.toString();
+	  console.log(bar);
+	  var copy = parent.clone();
+	  parent.after(copy);
+	  //put new clone with new id after original
+	  copy.find("input").prop("id", "id_skillset-" + bar + "-name");
+	  copy.find("input").prop("name", "skillset-" + bar + "-id");
+	  copy.find("input, textarea, select").val("");
+	  //find the clone, set input value to empty
+	  copy.find("*:first-child").focus();
+	  //focus on empty input
   });
 
   $(".circle--clone--list").on("click", "li:not(:only-child) .circle--clone--remove", function(){

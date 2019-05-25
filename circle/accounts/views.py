@@ -108,6 +108,7 @@ def profile_update_view(request, pk):
                             skill.save()
                             print("Creating/opening. {}".format(skill.name))
                             user.skills.add(skill.id)
+                            user.save()
                             # Using add() on a relation that already exists won’t duplicate the relation,
                             print("Added {} to {}'s skills.".format(
                                 skill.name, user.display_name
