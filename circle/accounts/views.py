@@ -38,11 +38,16 @@ def profile_update_view(request, pk):
         'bio': user.bio,
     }
     # PASS USERDATA A DICT FOR INITIAL DATA
-    formset = ''
+    # formset = ''
     # Make sure we're logged in as user editing this profile.
     if session_user.id == user.id:
         print('2. {} is indeed {}'.format(user.display_name,
                                        session_user.display_name))
+        # SkillFormSet = forms.SkillFormSet(queryset=user.skills.all(), prefix="skillset")
+        print("2.5 Skill Formset factory should be created.")
+        # Get our initial skill data for this user.
+        user_skills = user.skills.order_by('name')
+        skill_data = [{'name': skill.name} for skill in user_skills]
         if request.method == 'POST':
             print("3. Request method is post.")
             form = forms.UserUpdateForm(request.POST, request.FILES)
@@ -50,8 +55,10 @@ def profile_update_view(request, pk):
             # form needs instance, else it makes new instance??
             # We aren't getting the new form data yet?
             print("4. form should be created.")
+            formset = forms.SkillFormSet(request.POST, prefix='skillset')
+            print("4.5 formset should be created.")
 
-            if form.is_valid():
+            if form.is_valid() and formset.is_valid():
                 print("5. Profile form and skill formset are valid!")
                 # Save user info
                 # user.display_name = form.cleaned_data.get('display_name')
@@ -68,6 +75,50 @@ def profile_update_view(request, pk):
                     print("8. We got an avatar.")
                 user.save()
                 print("This user should be in the database.")
+                
+                # Now save the data for each form in the formset
+                new_skills = []
+
+                for skill_form in formset:
+                    # name = skill_form.cleaned_data.get('name')
+                    name = skill_form.cleaned_data['name']
+                    if name:
+                        skill, _ = Skill.objects.get_or_create(name=name)
+                        print("Getting or creating {}".format(skill.name))
+                        new_skills.append(skill)
+                        # Prepare to instantiate skills without m2m values.
+                        # Must save instances first.
+
+                try:
+                    print("Entering atomic block.")
+                    with transaction.atomic():
+                        # "Delete" existing skills.
+                        for skill in skill_data:
+                            user.skills.remove(
+                                Skill.objects.get(
+                                    name=skill['name']
+                                ).id
+                            )
+                            # More lines fewer variables? Or more variables fewer lines?
+                            # obj = Skill.objects.get(name=skill['name'])
+                            # user.skills.remove(obj.id)
+                        # Create new skills.
+                        user.save()
+                        for skill in new_skills:
+                            skill.save()
+                            print("Creating/opening. {}".format(skill.name))
+                            user.skills.add(skill.id)
+                            # Using add() on a relation that already exists won’t duplicate the relation,
+                            print("Added {} to {}'s skills.".format(
+                                skill.name, user.display_name
+                            ))
+                        user.save()
+
+                except IntegrityError: #If the transaction failed
+                    messages.error(request, 'There was an error saving your profile.')
+                    print("There was an error saving your profile.")
+                    # Should this be reloading the edit template????
+                    return HttpResponseRedirect(reverse('accounts:details', pk=pk))
 
                 # And notify our users that it worked
                 messages.success(request, 'You have updated your profile!')
@@ -82,9 +133,14 @@ def profile_update_view(request, pk):
                 return HttpResponseRedirect(reverse('home'))
 
         else:
-            print("Request is Get. . . ")
+            # Else if request == get
+            print("Request is get.")
             form = forms.UserUpdateForm(initial=userdata)
             print("User form is created.")
+            formset = forms.SkillFormSet(queryset=user.skills.all(), prefix='skillset')
+            # formset = forms.SkillFormSet(initial=skill_data, prefix='skillset')
+            # commented out code above loaded ALL skills.
+            # formset = SkillFormSet(initial=skill_data)
 
     context = {
         'form': form,

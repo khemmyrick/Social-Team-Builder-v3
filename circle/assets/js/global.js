@@ -4,9 +4,14 @@ $( document ).ready(function() {
 
 
   //Cloner for infinite input lists
+  //Add id iterating logic. . .
+  //Use SETTER for id iteration.
+  //parent.after(copy) inserts copy after the parent.
+  //
   $(".circle--clone--list").on("click", ".circle--clone--add", function(){
     var parent = $(this).parent("li");
-    var copy = parent.clone();
+	var num = parseInt(parent.prop("id").match(/\d+/g), 10 ) +1;
+    var copy = parent.clone().prop("id", "id_skillset-" + num + "name" );
     parent.after(copy);
     copy.find("input, textarea, select").val("");
     copy.find("*:first-child").focus();
