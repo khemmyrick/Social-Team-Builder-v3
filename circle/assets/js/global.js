@@ -13,6 +13,15 @@ $( document ).ready(function() {
 	  var parent = $(this).parent("li");
 	  console.log(parent);
 	  //get parent first list item ancestor of our anchor tag
+	  var stf = $("#id_skillset-TOTAL_FORMS").prop("value");
+	  console.log("Skillset Total Forms pre-button: ")
+	  console.log(stf);
+	  //get hidden total forms input value
+	  stf++;
+	  $("#id_skillset-TOTAL_FORMS").prop("value", stf);
+	  //increment total forms value
+	  console.log("Skillset Total Forms post-button: ")
+	  console.log(stf);
 	  var newid = parent.find("*:first-child").prop("id");
 	  console.log(newid);
 	  var numarray = newid.match(/[0-9]?/g);

@@ -43,7 +43,7 @@ def profile_update_view(request, pk):
     if session_user.id == user.id:
         print('2. {} is indeed {}'.format(user.display_name,
                                        session_user.display_name))
-        # SkillFormSet = forms.SkillFormSet(queryset=user.skills.all(), prefix="skillset")
+        formset = forms.SkillFormSet(queryset=user.skills.all(), prefix="skillset")
         print("2.5 Skill Formset factory should be created.")
         # Get our initial skill data for this user.
         user_skills = user.skills.order_by('name')
@@ -55,7 +55,7 @@ def profile_update_view(request, pk):
             # form needs instance, else it makes new instance??
             # We aren't getting the new form data yet?
             print("4. form should be created.")
-            formset = forms.SkillFormSet(request.POST, prefix='skillset')
+            formset = forms.SkillFormSet(request.POST, queryset=user.skills.all(), prefix='skillset')
             print("4.5 formset should be created.")
 
             if form.is_valid() and formset.is_valid():
@@ -81,39 +81,43 @@ def profile_update_view(request, pk):
 
                 for skill_form in formset:
                     # name = skill_form.cleaned_data.get('name')
-                    name = skill_form.cleaned_data['name']
+                    # if skill_form.cleaned_data['name']:
+                    name = skill_form.cleaned_data.get('name')
+                    print("We got a cleaned name: {}".format(name))
                     if name:
                         skill, _ = Skill.objects.get_or_create(name=name)
                         print("Getting or creating {}".format(skill.name))
+                        skill.save()
+                        print("Saving {}".format(skill.name))
                         new_skills.append(skill)
                         # Prepare to instantiate skills without m2m values.
                         # Must save instances first.
 
                 try:
-                    print("Entering atomic block.")
-                    with transaction.atomic():
+                    # print("Entering atomic block.")
+                    # with transaction.atomic():
                         # "Delete" existing skills.
-                        for skill in skill_data:
-                            user.skills.remove(
-                                Skill.objects.get(
-                                    name=skill['name']
-                                ).id
-                            )
-                            # More lines fewer variables? Or more variables fewer lines?
-                            # obj = Skill.objects.get(name=skill['name'])
-                            # user.skills.remove(obj.id)
-                        # Create new skills.
+                    for skill in skill_data:
+                        user.skills.remove(
+                            Skill.objects.get(
+                                name=skill['name']
+                            ).id
+                        )
+                        # More lines fewer variables? Or more variables fewer lines?
+                        # obj = Skill.objects.get(name=skill['name'])
+                        # user.skills.remove(obj.id)
+                    # Create new skills.
+                    user.save()
+                    for skill in new_skills:
+                        skill.save()
+                        print("Creating/opening. {}".format(skill.name))
+                        user.skills.add(skill.id)
                         user.save()
-                        for skill in new_skills:
-                            skill.save()
-                            print("Creating/opening. {}".format(skill.name))
-                            user.skills.add(skill.id)
-                            user.save()
-                            # Using add() on a relation that already exists won’t duplicate the relation,
-                            print("Added {} to {}'s skills.".format(
-                                skill.name, user.display_name
-                            ))
-                        user.save()
+                        # Using add() on a relation that already exists won’t duplicate the relation,
+                        print("Added {} to {}'s skills.".format(
+                            skill.name, user.display_name
+                        ))
+                    user.save()
 
                 except IntegrityError: #If the transaction failed
                     messages.error(request, 'There was an error saving your profile.')
@@ -124,7 +128,6 @@ def profile_update_view(request, pk):
                 # And notify our users that it worked
                 messages.success(request, 'You have updated your profile!')
                 print("You have updated your profile.")
-
                 return HttpResponseRedirect(reverse('home'))
 
             else:
