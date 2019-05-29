@@ -26,10 +26,124 @@ from projects.models import Project, Applicant
 # Create your views here.
 @login_required
 def profile_update_view(request, pk):
-    """
+    session_user = request.user
+    user = User.objects.get(id=pk)
+    userdata = {
+        'display_name': user.display_name,
+        'bio': user.bio,
+    }
+    if session_user.id != user.id:
+        messages.error(request,
+                       "You must be logged in as THAT USER to do this.")
+        return HttpResponseRedirect(reverse('home'))
+
+    extra_forms = 2
+    formset = forms.SkillFormSet(queryset=user.skills.all(), prefix="skillset")
+    user_skills = user.skills.order_by('name')
+    skill_data = [{'name': skill.name} for skill in user_skills]
+    if request.method == 'POST':
+        if 'additems' in request.POST and request.POST['additems'] == 'true':
+            formset_dict_copy = request.POST.copy()
+            formset_dict_copy['form-TOTAL_FORMS'] = int(
+                formset_dict_copy['form-TOTAL_FORMS']
+            ) + extra_forms
+            form = forms.UserUpdateForm(request.POST, request.FILES)
+            formset = SkillFormSet(formset_dict_copy)
+        else:
+            formset = SkillFormSet(request.POST)
+            if form.is_valid() and formset.is_valid():
+                if form.cleaned_data['display_name']:
+                    user.display_name = form.cleaned_data['display_name']
+                    print("6. We got a display name!")
+                if form.cleaned_data['bio']:
+                    user.bio = form.cleaned_data['bio']
+                    print("7. We got a bio!")
+                if form.cleaned_data['avatar']:
+                    user.avatar = form.cleaned_data['avatar']
+                    print("8. We got an avatar.")
+                user.save()
+                print("This user should be in the database.")
+                # Now save the data for each form in the formset
+                new_skills = []
+
+                for skill_form in formset:
+                    # name = skill_form.cleaned_data.get('name')
+                    # if skill_form.cleaned_data['name']:
+                    name = skill_form.cleaned_data.get('name')
+                    print("We got a cleaned name: {}".format(name))
+                    if name:
+                        skill, _ = Skill.objects.get_or_create(name=name)
+                        print("Getting or creating {}".format(skill.name))
+                        skill.save()
+                        print("Saving {}".format(skill.name))
+                        new_skills.append(skill)
+                        # Prepare to instantiate skills without m2m values.
+                        # Must save instances first.
+                try:
+                    # print("Entering atomic block.")
+                    # with transaction.atomic():
+                        # "Delete" existing skills.
+                    for skill in skill_data:
+                        user.skills.remove(
+                            Skill.objects.get(
+                                name=skill['name']
+                            ).id
+                        )
+                        # More lines fewer variables? Or more variables fewer lines?
+                        # obj = Skill.objects.get(name=skill['name'])
+                        # user.skills.remove(obj.id)
+                    # Create new skills.
+                    user.save()
+                    for skill in new_skills:
+                        skill.save()
+                        print("Creating/opening. {}".format(skill.name))
+                        user.skills.add(skill.id)
+                        user.save()
+                        # Using add() on a relation that already exists won’t duplicate the relation,
+                        print("Added {} to {}'s skills.".format(
+                            skill.name, user.display_name
+                        ))
+                    user.save()
+
+                except IntegrityError: #If the transaction failed
+                    messages.error(request, 'There was an error saving your profile.')
+                    print("There was an error saving your profile.")
+                    # Should this be reloading the edit template????
+                    return HttpResponseRedirect(reverse('accounts:details', pk=pk))
+
+                messages.success(request, 'You have updated your profile!')
+                return HttpResponseRedirect(reverse('home'))
+
+            else:
+                print(form.errors)
+                print("Profile form is INVALID.")
+                messages.error(request, 'Invalid form!')
+                return HttpResponseRedirect(reverse('home'))
+    else:
+        # Else if request == get
+        print("Request is get.")
+        form = forms.UserUpdateForm(initial=userdata)
+        print("User form is created.")
+        formset = forms.SkillFormSet(queryset=user.skills.all(), prefix='skillset')
+        # formset = forms.SkillFormSet(initial=skill_data, prefix='skillset')
+        # commented out code above loaded ALL skills?
+        # formset = SkillFormSet(initial=skill_data)
+
+    context = {
+        'form': form,
+        'formset': formset,
+    }
+    print("4. Context is created.")
+    return render(request, 'accounts/user_form.html', context)
+
+
+"""
+@login_required
+def profile_update_view(request, pk):
+    '''
     Allows a user to update their own profile.
     Skill form functionality not included.
-    """
+    '''
     session_user = request.user
     print("1. Getting user object.")
     user = User.objects.get(id=pk)
@@ -154,6 +268,8 @@ def profile_update_view(request, pk):
     # Is this the initial load of the edit template?
 
     return render(request, 'accounts/user_form.html', context)
+"""
+
 
 """
 @login_required

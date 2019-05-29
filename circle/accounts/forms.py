@@ -113,7 +113,12 @@ SkillFormSet = forms.modelformset_factory(
     form=SkillForm # form = SkillForm
 ) # This bit may be "explicitly prohibited."?
 
-
+'''
+SkillFormSet = forms.formset_factory(
+    SkillForm,
+    max_num=20
+)
+'''
 class BaseSkillFormSet(BaseFormSet):
     # SELF-DEPRECATION NOTE: Am I using this?
     def clean(self):
