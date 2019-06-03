@@ -71,31 +71,10 @@
 		  </div>
 		  <div class="circle--secondary--module">
 			<h4>My Skills</h4>
-			<>
-			<!-- <ul class="circle--clone--list"> -->
+			<ul class="circle--clone--list">
 			{{ formset.management_form }}
 
 			{% for skill in formset %}
-			<div class="row form-row spacer">
-				<div class="col-2">
-					<label>{{ skill.name.label }}</label>
-				</div>
-				<div class="col-4">
-					<div class="input-group">
-						{{ skill.name }}
-						{{ skill.id }}
-						{% if skill.name.errors %}
-							{% for errors in skill.name.errors %}
-								{{ error|escape }}
-							{% endfor %}
-						{% endif %}
-						<div class="input-group-append">
-							<button class="btn btn-success add-form-row">Add</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			{% endfor %}{% comment %}<!--
 			  <li class="link-formset">
 			    {{ skill.name }}
 				{{ skill.id }}
@@ -108,7 +87,7 @@
 				<a class="circle--clone--remove">Remove</a>
 			  </li>
 			{% endfor %}
-			</ul> -->{% endcomment %}
+			</ul>
 			<input type="hidden" value="false" name="additems" id="additems">
 			{% if formset.non_form_errors %}
 				{% for error in formset.non_form_errors %}
@@ -135,5 +114,12 @@
 
 	  </div>
   </form>
-
+  {{ form.media }}
+  <script>
+    $(document).ready(function() {
+        $(".circle--clone--add").on('click',function(event) {
+         $("#additems").val("true");
+        });
+    });
+  </script>
 {% endblock %}

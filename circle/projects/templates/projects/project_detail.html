@@ -52,10 +52,10 @@
 							{% endif %}
 						{% endif %}
 					{% endfor %}
-				{% else %}
+				{% elif user.is_authenticated %}
 				<a href="{% url 'projects:apply' pk=position.id %}" class="button button-primary">Apply</a>
-				<!-- Request view to send in application, and reload this page with an applied text here.
-				Use elseif block? -->
+				{% else %}
+				<a class="button button-primary" href="{% url 'accounts:login' %}">Sign In to apply.</a>
 				{% endif %}
 			</li>
 			{% endfor %}

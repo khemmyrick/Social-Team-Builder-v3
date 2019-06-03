@@ -108,10 +108,25 @@ class SkillForm(ModelForm):
         fields = ("name",)
 
 
+'''
 SkillFormSet = forms.modelformset_factory(
     model=models.Skill,
     form=SkillForm # form = SkillForm
 ) # This bit may be "explicitly prohibited."?
+'''
+
+# Based on https://medium.com/all-about-django/adding-forms-dynamically-to-a-django-formset-375f1090c2b0
+SkillFormSet = forms.modelformset_factory(
+    models.Skill,
+    fields=('name', ),
+    extra=1,
+    widgets={'name': forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter skill here'
+        })
+    }
+)
+
 
 '''
 SkillFormSet = forms.formset_factory(
