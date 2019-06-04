@@ -82,7 +82,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # outside of the entry passed to USERNAME_FIELD (email) and password.
 
     def __str__(self):
-        return "@{}".format(self.username)
+        return self.username
 
     def get_short_name(self):
         return self.display_name

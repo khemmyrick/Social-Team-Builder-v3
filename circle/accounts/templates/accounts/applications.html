@@ -85,9 +85,9 @@
         </thead>
         <tbody>
 		  {% for applicant in applicants %}
-          <tr class="clickable-row" data-href="{% url 'accounts:details' pk=applicant.user.id %}">
+          <tr>
             <td>
-              <h3>{{ applicant.user.display_name }}</h3>
+              <h3><a href="{% url 'accounts:details' pk=applicant.user.id %}">{{ applicant.user.display_name }}</a></h3>
               <p>{{ applicant.position.project.name }}</p>
             </td>
             <td>
@@ -98,11 +98,11 @@
 			</td>
 			<td class="circle--cell--right">
 				{% if applicant.status == 'a' %}
-					<h4 style="color: green;">APPROVED.</h4>
+					<a class="button button-primary button-inactive" style="color: green;">ACCEPTED</a>
 				{% elif applicant.status == 'r' %}
-					<h4 style="color: red;">DENIED.</h4>
+					<a class="button button-primary button-inactive" style="color: gray;">RUNNER-UP</a>
 				{% else %}
-					<h4 style="color: orange;">UNDECIDED.</h4>
+					<a class="button button-primary" href="{% url 'projects:hire' pk=applicant.id %}">ACCEPT APPLICANT</a>
 				{% endif %}
 			</td>
           </tr>

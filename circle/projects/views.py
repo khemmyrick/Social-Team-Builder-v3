@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -127,6 +128,7 @@ def position_list_view(request):
     return render(request, 'projects/project_list.html', context)
 
 
+@login_required
 def application_create_view(request, pk):
     user = request.user
     position = promodels.Position.objects.get(id=pk)
@@ -144,10 +146,37 @@ def application_create_view(request, pk):
         request,
         'You applied for the {} role!'.format(position.name)
     )
-    # context = {
-    #    
-    # }
     return HttpResponseRedirect(reverse('home'))
+
+
+@login_required
+def application_accept_view(request, pk):
+    session_user = request.user
+    applicant = promodels.Applicant.objects.get(id=pk)
+    # Make sure signed-in user is project creator.
+    if applicant.project.creator != session_user:
+        messages.error(
+            request,
+            "You must be the project creator to do that!"
+        )
+        return HttpResponseRedirect(reverse('home'))
+    # If session_user is project.creator, accept applicant for position.
+    applicant.status = 'a'
+    applicant.save()
+    position = applicant.position
+    position.user = applicant.user
+    position.filled = True
+    position.save()
+    messages.success(
+        request,
+        "You accepted {} as {}.".format(position.user, position.name)
+    )
+    return HttpResponseRedirect(
+        reverse(
+            'accounts:applications',
+            pk=session_user.id
+        )
+    )
 
 
 class ProjectListView(ListView):

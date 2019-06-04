@@ -10,6 +10,7 @@ from django.urls import reverse_lazy
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.forms.formsets import formset_factory
+from django.forms import inlineformset_factory
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
@@ -28,6 +29,33 @@ from projects.models import Project, Applicant
 # Create your views here.
 @login_required
 def profile_update_view(request, pk):
+    user = User.objects.get(id=pk)
+    session_user = request.user
+    # 1. Make sure user is editing their own details.
+    if session_user.id != user.id:
+        messages.error(
+            request,
+            "You must be logged in as {} to do that!".format(user.username)
+        )
+        return HttpResponseRedirect(reverse('home'))
+    # 2. Create formset.
+    SkillFormset = inlineformset_factory(User, Skill, fields=('name',))
+    if request.method == 'POST':
+        formset = SkillFormset(request.POST, instance=user)
+        if formset.is_valid():
+            formset.save()
+            return redirect('accounts:details', pk=pk)
+            
+
+    formset = SkillFormset(instance=user)
+    context = {
+        # 'form': form,
+        'formset': formset,
+    }
+    return render(request, 'accounts/user_form.html', context)
+'''
+@login_required
+def profile_update_view(request, pk):
     session_user = request.user
     user = User.objects.get(id=pk)
     userdata = {
@@ -42,34 +70,29 @@ def profile_update_view(request, pk):
         return HttpResponseRedirect(reverse('home'))
     if request.method == 'GET':
         print("Request is get.")
-        form = forms.UserUpdateForm(initial=userdata)
+        form = forms.UserUpdateForm(initial=userdata, prefix='userform')
         print("User form is created.")
         formset = forms.SkillFormSet(queryset=user.skills.all(), prefix='skillset')
         # GOTO CONTEXT LINE...
     elif request.method == 'POST':
         pdb.set_trace()
-        form = forms.UserUpdateForm(request.POST)
+        form = forms.UserUpdateForm(request.POST, prefix='userform')
         formset = forms.SkillFormSet(request.POST, prefix='skillset')
-        try:
-            formset.is_valid()
-        except ValidationError:
-            formset.is_valid = True
-        finally:
-            if form.is_valid() and formset.is_valid:
-                user = form.save()
-                for skillform in formset:
-                    skill = skillform.save(commit=False)
-                    user.skills.add(skill)
-                    skill.save()
-                    user.save()
-                return redirect('accounts:details', pk=pk)
+        if form.is_valid() and formset.is_valid():
+            user = form.save(update_fields=['display_name', 'bio']) # update_fields=['display_name', 'bio']
+            for skillform in formset:
+                skill = skillform.save(commit=False)
+                user.skills.add(skill)
+                skill.save()
+                user.save()
+            return redirect('accounts:details', pk=pk)
 
     context = {
         'form': form,
         'formset': formset,
     }
     return render(request, 'accounts/user_form.html', context)
-
+'''
 """
 @login_required
 def profile_update_view(request, pk):
