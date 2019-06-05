@@ -8,7 +8,11 @@ from django.forms import ModelForm
 from django.forms.formsets import BaseFormSet
 from django.utils.translation import ugettext, ugettext_lazy as _
 
+from django_registration.forms import RegistrationForm
+
 from markdownx.fields import MarkdownxFormField
+
+import pdb
 
 from . import models
 
@@ -44,6 +48,13 @@ class UserCreateForm(MegaBuster, UserCreationForm):
         self.fields["email"].label = 'Email Address'
         # def clean(self) would only be needed IF 
         # we were comparing 2 or more fields to eachother.
+
+
+class UserRegistrationForm(RegistrationForm):
+    class Meta(RegistrationForm.Meta):
+        model = get_user_model()
+        pdb.set_trace()
+        fields = ('email', 'username', 'password1', 'password2')
 
 
 class UserUpdateForm(MegaBuster, UserChangeForm):

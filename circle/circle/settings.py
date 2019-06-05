@@ -119,6 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://django-registration.readthedocs.io/en/2.0.2/quickstart.html
 
 ACCOUNT_ACTIVATION_DAYS = 7
+REGISTRATION_SALT = 'djengatowers'
 
 
 # Internationalization

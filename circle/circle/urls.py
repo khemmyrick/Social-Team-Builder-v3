@@ -24,6 +24,10 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 from django.urls import include, path
 
+from django_registration.backends.activation.views import (RegistrationView,
+                                                           ActivationView)
+
+from accounts.forms import UserRegistrationForm
 from . import views
 
 
@@ -40,8 +44,16 @@ if settings.DEBUG:
         path('admin/', admin.site.urls),
         path('markdownx/', include('markdownx.urls')),
         path('v3/accounts/', include('accounts.urls', namespace='accounts')),
-        path('v3/accounts/', include('django.contrib.auth.urls')),
-        # path('v3/accounts/', include('registration.backends.hmac.urls')),
+        path(
+            'v3/reg/register/',
+            RegistrationView.as_view(
+                form_class=UserRegistrationForm
+            ), 
+            name='django_registration_register',
+        ),
+        path('v3/reg/activate/<key>', ActivationView.as_view(), name='registration_activate'),
+        path('v3/reg/', include('django_registration.backends.activation.urls')),
+        path('v3/reg/', include('django.contrib.auth.urls')),
         path('v3/projects/', include('projects.urls', namespace='projects')),
         path('__debug__/', include(debug_toolbar.urls)),
         path('<term>', custom_page_not_found),

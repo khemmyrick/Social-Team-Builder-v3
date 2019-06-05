@@ -16,6 +16,8 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
 
+from django_registration.views import ActivationView
+
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
@@ -27,6 +29,12 @@ from projects.models import Project, Applicant
 
 
 # Create your views here.
+'''
+class ActivateView(ActivationView):
+    def activate(*args, **kwargs):
+'''
+
+
 @login_required
 def profile_update_view(request, pk):
     user = User.objects.get(id=pk)
