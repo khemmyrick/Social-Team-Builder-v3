@@ -20,6 +20,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.static import serve
+from django.views.generic.base import TemplateView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 from django.urls import include, path
@@ -44,6 +45,14 @@ if settings.DEBUG:
         path('admin/', admin.site.urls),
         path('markdownx/', include('markdownx.urls')),
         path('v3/accounts/', include('accounts.urls', namespace='accounts')),
+        path('v3/reg/activate/complete/',
+             TemplateView.as_view(
+                template_name='django_registration/activation_complete.html'
+            ),
+            name='django_registration_activation_complete'),
+        path('v3/reg/activate/<str:activation_key>',
+            ActivationView.as_view(),
+            name='registration_activate'),
         path(
             'v3/reg/register/',
             RegistrationView.as_view(
@@ -51,9 +60,21 @@ if settings.DEBUG:
             ), 
             name='django_registration_register',
         ),
-        path('v3/reg/activate/<key>', ActivationView.as_view(), name='registration_activate'),
+        path('v3/reg/register/complete/',
+            TemplateView.as_view(
+                template_name='django_registration/registration_complete.html'
+            ),
+            name='django_registration_complete'),
+        path('v3/reg/register/closed/',
+            TemplateView.as_view(
+                template_name='django_registration/registration_closed.html'
+            ),
+            name='django_registration_disallowed'),
         path('v3/reg/', include('django_registration.backends.activation.urls')),
         path('v3/reg/', include('django.contrib.auth.urls')),
+        # path('v3/reg/activate/', ActivationView.as_view(), name='registration_activate'),
+
+        
         path('v3/projects/', include('projects.urls', namespace='projects')),
         path('__debug__/', include(debug_toolbar.urls)),
         path('<term>', custom_page_not_found),

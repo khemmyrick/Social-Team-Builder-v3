@@ -53,7 +53,6 @@ class UserCreateForm(MegaBuster, UserCreationForm):
 class UserRegistrationForm(RegistrationForm):
     class Meta(RegistrationForm.Meta):
         model = get_user_model()
-        pdb.set_trace()
         fields = ('email', 'username', 'password1', 'password2')
 
 

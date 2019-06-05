@@ -70,7 +70,7 @@
 					<li><a href="{% url 'accounts:details' pk=user.id %}">My Profile</a></li>
 					<li><a href="{% url 'accounts:logout' %}">Sign Out</a></li>
 				{% else %}
-					<li><a href="{% url 'accounts:signup' %}">Sign Up</a></li>
+					<li><a href="{% url 'django_registration_register' %}">Sign Up</a></li>
 					<li><a href="{% url 'accounts:login' %}">Sign In</a></li>
 				{% endif %}
             </ul>

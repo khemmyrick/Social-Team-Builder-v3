@@ -39,6 +39,7 @@ class UserManager(BaseUserManager):
             display_name,
             password
         )
+        user.is_active = True
         user.is_staff = True
         user.is_superuser = True
         user.save()
@@ -66,7 +67,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # avatars upload to media/accounts/<user.id>/
     skills = models.ManyToManyField(Skill, related_name='users', blank=True)
     date_joined = models.DateTimeField(default=timezone.now)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     # Reverse foreignkey/manytomany attributes:
     # user.skill_set = allows user to query skills
