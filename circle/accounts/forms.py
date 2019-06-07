@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import (UserCreationForm, UserChangeForm,
                                        ReadOnlyPasswordHashField)
 from django.core import validators
-from django.forms import ModelForm
+from django.forms import ModelForm, formset_factory
 from django.forms.formsets import BaseFormSet
 from django.utils.translation import ugettext, ugettext_lazy as _
 
@@ -101,22 +101,26 @@ class SkillCreateForm(ModelForm):
         exclude = ("name",)
 
 
-# class SkillForm(forms.Form):
-#    """
-#    Form for user skills
-#    """
-#    name = forms.CharField(
-#                    max_length=200,
-#                    widget=forms.TextInput(attrs={
-#                        'placeholder': 'Skill Type',
-#                    }),
-#                    required=False)
+class SkillForm(forms.Form):
+    """
+    Form for user skills
+    """
+    name = forms.CharField(
+                    label='Skill Name',
+                    widget=forms.TextInput(attrs={
+                        'class': 'form-control',
+                        'placeholder': 'Skill Type',
+                    }),
+                    required=False)
 
+
+SkillFormset = formset_factory(SkillForm, extra=1)
+'''
 class SkillForm(ModelForm):
     class Meta:
         model = models.Skill
         fields = ("name",)
-
+'''
 
 '''
 SkillFormSet = forms.modelformset_factory(
@@ -125,6 +129,8 @@ SkillFormSet = forms.modelformset_factory(
 ) # This bit may be "explicitly prohibited."?
 '''
 
+
+'''
 # Based on https://medium.com/all-about-django/adding-forms-dynamically-to-a-django-formset-375f1090c2b0
 SkillFormSet = forms.modelformset_factory(
     models.Skill,
@@ -136,7 +142,7 @@ SkillFormSet = forms.modelformset_factory(
         })
     }
 )
-
+'''
 
 '''
 SkillFormSet = forms.formset_factory(

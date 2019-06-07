@@ -15,19 +15,23 @@
   <div class="bounds circle--page">
     <div class="circle--page--header circle--fluid">
       <div class="circle--fluid--cell circle--fluid--primary">
+	  {% if target_user.display_name %}
         <h2>{{ target_user.display_name}}'s Profile</h2>
+	  {% else %}
+        <h2>{{ target_user.username}}'s Profile</h2>
+	  {% endif %}
       </div>
 	  <!-- REMINDER: is_authenticated == signed in.  "authenticated" means the system knows who this specific user is RN  -->
-	  {% if user.is_authenticated %}
-		{% if target_user.username == user.username %}
-		  <div class="circle--fluid--cell circle--fluid--secondary">
-			<a class="button icon-on-left" href="{% url 'accounts:edit' pk=user.id %}">Edit</a>
-		  </div>
-		{% endif %}
-	  {% endif %}
     </div>
 
     <div class="grid-70">
+	  {% if user.is_authenticated %}
+		{% if target_user.username == user.username %}
+		  <div class="circle--fluid--cell circle--fluid--secondary">
+			<a class="button icon-on-left" href="{% url 'accounts:edit' pk=user.id %}">Edit Your Profile</a>
+		  </div>
+		{% endif %}
+	  {% endif %}
       <h1>{{ target_user.display_name }}</h1>
       <div class="circle--article--body">
 		{{ target_user.formatted_markdown|safe }}
@@ -74,7 +78,10 @@
       </div>
 
       <div class="circle--secondary--module">
-        <h4>My Skills</h4>
+        <h4>Skill Set</h4>
+		{% if target_user.username == user.username %}
+		<a class="button icon-on-left" href="{% url 'accounts:edit_skills' pk=user.id %}">Edit Skill Set</a>
+		{% endif %}
         <ul class="unloaded">
 		  <!-- Begin skills forloopblock here. -->
 
@@ -87,7 +94,14 @@
       </div>
 
       <div class="circle--secondary--module">
-        <h4>My Projects</h4>
+	    {% if target_user.display_name %}
+        <h4>{{ target_user.display_name }}'s Projects</h4>
+		{% else %}
+        <h4>{{ target_user.username }}'s Projects</h4>
+		{% endif %}
+		{% if target_user.username == user.username %}
+		<a class="button icon-on-left">Update Projects</a>
+		{% endif %}
         <ul class="circle--link--list">
 		  <!-- Begin projects where current user is creator forloopblock. -->
   		  {% for project in target_user.projects.all %}

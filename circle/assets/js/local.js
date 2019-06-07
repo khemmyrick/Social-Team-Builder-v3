@@ -10,12 +10,9 @@ $( document ).ready(function() {
 		var newElement = $(selector).clone(true);
 		var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
 		newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function() {
-			var name = $(this).attr('name')
-			if(name) {
-				name = name.replace('-' + (total-1) + '-', '-' + total + '-');
-				var id = 'id_' + name;
-				$(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
-			}
+			var name = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+			var id = 'id_' + name;
+			$(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
 		});
 		newElement.find('label').each(function() {
 			var forValue = $(this).attr('for');
@@ -31,8 +28,7 @@ $( document ).ready(function() {
 		conditionRow.find('.btn.add-form-row')
 		.removeClass('btn-success').addClass('btn-danger')
 		.removeClass('add-form-row').addClass('remove-form-row')
-		.html('Remove');
-		//Above was '-' and I swapped that for 'Remove'.
+		.html('<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>');
 		return false;
 	}
 	function deleteForm(prefix, btn) {
@@ -59,5 +55,4 @@ $( document ).ready(function() {
 		deleteForm('form', $(this));
 		return false;
 	});
-
 });

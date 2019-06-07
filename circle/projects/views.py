@@ -153,8 +153,9 @@ def application_create_view(request, pk):
 def application_accept_view(request, pk):
     session_user = request.user
     applicant = promodels.Applicant.objects.get(id=pk)
+    position = applicant.position
     # Make sure signed-in user is project creator.
-    if applicant.project.creator != session_user:
+    if position.project.creator != session_user:
         messages.error(
             request,
             "You must be the project creator to do that!"
@@ -163,7 +164,6 @@ def application_accept_view(request, pk):
     # If session_user is project.creator, accept applicant for position.
     applicant.status = 'a'
     applicant.save()
-    position = applicant.position
     position.user = applicant.user
     position.filled = True
     position.save()

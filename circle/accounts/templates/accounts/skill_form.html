@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+
+{% block title_tag %}Edit {{ user.username }} Skills | {{ block.super }}{% endblock %}
+{% block body %}
+  <form method="POST" enctype="multipart/form-data" action="{% url 'accounts:edit' pk=user.id %}" id="profile">
+    {% csrf_token %}
+	{% comment %}{{ form }}{% endcomment %}
+	  <div class="bounds circle--page">
+		<div class="circle--page--header circle--fluid">
+		  <div class="circle--fluid--cell circle--fluid--primary">
+			<h2>Your Skills</h2>
+		  </div>
+		  <div class="circle--fluid--cell circle--fluid--secondary">
+			<button type="submit" class="button button-primary" form="profile" action="">Save Changes</button>
+		  </div>
+		</div>
+		<div class="grid-70">
+			{{ formset.management_form }}
+
+			{% for form in formset %}
+			<div class="row form-row spacer">
+				<div class="col-2">
+					<label>{{ form.name.label }}</label>
+				</div>
+				<div class="col-4">
+					<div class="input-group">
+						{{ form.name }}
+						{{ form.id }}
+						<div class="input-group-append">
+							<button class="btn btn-success add-form-row">+</button>
+						</div>
+						{% if form.name.errors %}
+							{% for errors in form.name.errors %}
+								{{ error|escape }}
+							{% endfor %}
+						{% endif %}
+
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+			<input type="hidden" value="false" name="additems" id="additems">
+			{% if formset.non_form_errors %}
+				{% for error in formset.non_form_errors %}
+					{{ error|escape }}
+				{% endfor %}
+			{% endif %}
+	  </div>
+  </form>
+
+{% endblock %}
