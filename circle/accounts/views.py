@@ -84,6 +84,7 @@ def skills_update_view(request, pk):
                         name=name,
                         defaults={'name': name}
                     )
+                    print('Adding {}'.format(skill))
                     skill.users.add(user)
             # once all skills are saved, redirect to skill list view
             user.save()

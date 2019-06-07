@@ -3,7 +3,7 @@
 
 {% block title_tag %}Edit {{ user.username }} Skills | {{ block.super }}{% endblock %}
 {% block body %}
-  <form method="POST" enctype="multipart/form-data" action="{% url 'accounts:edit' pk=user.id %}" id="profile">
+  <form method="POST" enctype="multipart/form-data" action="{% url 'accounts:edit_skills' pk=user.id %}">
     {% csrf_token %}
 	{% comment %}{{ form }}{% endcomment %}
 	  <div class="bounds circle--page">
@@ -12,7 +12,7 @@
 			<h2>Your Skills</h2>
 		  </div>
 		  <div class="circle--fluid--cell circle--fluid--secondary">
-			<button type="submit" class="button button-primary" form="profile" action="">Save Changes</button>
+			<button type="submit" class="button button-primary" action="">Save Changes</button>
 		  </div>
 		</div>
 		<div class="grid-70">
