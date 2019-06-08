@@ -51,12 +51,16 @@ class Position(models.Model):
         related_name='positions',
         blank=True
     )
+    skill_list = models.CharField(max_length=500)
     # Require skills in the form, but not here.
     # skills = foreign key for skills required
     time = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return "{} for {}.".format(self.name, self.project.name)
+
+    def get_skill_list(self):
+        return self.skill_list.split(",")
 
 
 class Applicant(models.Model):

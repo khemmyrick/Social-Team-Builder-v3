@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'extra_views',
     'markdownx',
+    'extra_views',
     'debug_toolbar',
     'accounts',
     'projects'

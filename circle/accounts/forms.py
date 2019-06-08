@@ -15,6 +15,7 @@ from markdownx.fields import MarkdownxFormField
 import pdb
 
 from . import models
+from projects import models as pmodels
 
 
 # to refer to user object use  settings.AUTH_USER_MODEL?
@@ -56,6 +57,7 @@ class UserRegistrationForm(RegistrationForm):
         fields = ('email', 'username', 'password1', 'password2')
 
 
+"""
 class UserUpdateForm(MegaBuster, UserChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -69,16 +71,8 @@ class UserUpdateForm(MegaBuster, UserChangeForm):
                                         # 'value': '{{ form.display_name.value }}'
                                    }),
                                    required=False)
-    # bio = forms.CharField(
-    #    max_length=9999999999999999999999999999999999999999999999999999999999,
-    #    initial='PREEXISTING BIO HERE',
-    #    help_text='Biography',
-    #    widget=forms.Textarea(attrs={
-    #        'placeholder': 'PREEXISTING BIO HERE'
-    #    })
-    # )
     bio = MarkdownxFormField(
-        max_length=9999999999999999999999999999999999999999999999999999999999,
+        max_length=5000,
         initial='PREEXISTING BIO HERE',
         help_text='Biography',
         widget=forms.Textarea(attrs={
@@ -92,13 +86,19 @@ class UserUpdateForm(MegaBuster, UserChangeForm):
     class Meta:
         model = get_user_model()
         fields = ("display_name", "bio", "avatar")
+"""
 
+class UserForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['display_name'].widget.attrs.update(
+            {'class': 'form-control'})
+        self.fields['bio'].widget = forms.Textarea(
+            {'class': 'form-control'})
 
-class SkillCreateForm(ModelForm):
-    # SELF-DEPRECATION NOTE: Am I using this?
     class Meta:
-        model = models.Skill
-        exclude = ("name",)
+        model = get_user_model()
+        fields = ['display_name', 'bio', 'avatar']
 
 
 class SkillForm(forms.Form):
@@ -106,12 +106,11 @@ class SkillForm(forms.Form):
     Form for user skills
     """
     name = forms.CharField(
-                    label='Skill Name',
-                    widget=forms.TextInput(attrs={
-                        'class': 'form-control',
-                        'placeholder': 'Skill Type',
-                    }),
-                    required=False)
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            # 'placeholder': 'Link Name / Anchor Text',
+            }),
+        required=False)
 
 
 SkillFormset = formset_factory(SkillForm, extra=1)
@@ -144,19 +143,28 @@ SkillFormSet = forms.modelformset_factory(
 )
 '''
 
-'''
-SkillFormSet = forms.formset_factory(
-    SkillForm,
-    max_num=20
-)
-'''
+
+class ProjectForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # self.fields['title'].widget.attrs.update(
+        #    {'class': 'form-control'})
+        # self.fields['url'].widget.attrs.update(
+        #    {'class': 'form-control'})
+        # self.fields['description'].widget = forms.Textarea(
+        #    {'class': 'form-control'})
+        # self.fields['timeline'].widget.attrs.update(
+        #    {'class': 'form-control'})
+        # self.fields['applicant_requirements'].widget.attrs.update(
+        #    {'class': 'form-control'})
+
+    class Meta:
+        model = pmodels.Project
+        fields = ['name', 'description', 'requirements', 'time']
+
 class BaseSkillFormSet(BaseFormSet):
-    # SELF-DEPRECATION NOTE: Am I using this?
     def clean(self):
-        """
-        Adds validation to check that no two skills have the same name
-        and that all skills have a name.
-        """
+        """Adds validation to check that no two skills have the same text."""
         if any(self.errors):
             return
 
@@ -167,7 +175,7 @@ class BaseSkillFormSet(BaseFormSet):
             if form.cleaned_data:
                 name = form.cleaned_data['name']
 
-                # Check that no two skills have the same name
+                # Check that no two skills have the same text
                 if name:
                     if name in names:
                         duplicates = True
@@ -175,6 +183,6 @@ class BaseSkillFormSet(BaseFormSet):
 
                 if duplicates:
                     raise forms.ValidationError(
-                        'Skills must have unique names.',
-                        code='duplicate_names'
+                        "You can't have the same skill twice!",
+                        code='duplicate_skills'
                     )

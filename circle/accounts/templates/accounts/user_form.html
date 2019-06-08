@@ -46,7 +46,7 @@
 			  {% for project in user.projects %}
 			  <tr class="clickable-row" data-href="{% url 'projects:details' pk=project.id %}" target="_blank">
 				<td>
-				  <h3>{{ project.name }}</h3>
+				  <h3>{{ user.project.name }}</h3>
 				</td>
 				<td class="circle--cell--right">
 				  <span class="secondary-label">{% for position in project.positions %}{{ position.name }}<br>{% endfor %}</span>
@@ -62,9 +62,42 @@
 
 		  <div class="circle--secondary--module">
 			<div class="circle--primary--avatar">
-				{{ form.avatar }}<br>{{ form.avatar.help_text }}<!--Upload Photo -->
+				{{ form.avatar }}<br>Upload Photo
+			  <!-- <a class="button">
+				Upload Photo
+				<input type="file">
+			  </a> -->
 			</div>
 		  </div>
+		  {% comment %}
+		  <div class="circle--secondary--module">
+			<h4>My Skills</h4>
+			{{ inlines.0.management_form }}
+			<ul class="circle--clone--list">
+			{% for formset in inlines.0 %}
+			  <li class="link-formset">{{ formset }}
+				<a class="circle--clone--add" >Add Skill</a>
+				<a class="circle--clone--remove">Remove</a>
+			  </li>
+			{% endfor %}
+			</ul>
+			
+		  </div>
+
+		  <div class="circle--secondary--module">
+			<h4>My Projects</h4>
+			{{ inlines.1.management_form }}
+			<ul class="circle--clone--list">
+			{% for formset in inlines.1 %}
+			  <li>
+			    {{ formset }}
+				<a class="circle--clone--add">Add Project</a>
+				<a class="circle--clone--remove">Remove</a>
+			  </li>
+			  {% endfor %}
+			</ul>
+		  </div>
+		  {% endcomment %}
 		</div>
 
 	  </div>

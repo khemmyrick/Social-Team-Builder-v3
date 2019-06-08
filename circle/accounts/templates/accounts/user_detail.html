@@ -88,7 +88,10 @@
 		  {% for skill in target_user.skills.all %}
           <li>{{ skill.name }}</li>
 		  {% endfor %}
-
+		  <h5>STR SKILLS!</h5>
+		  {% for skill in skills %}
+		  <li>{{ skill.name }}</li>
+		  {% endfor %}
 		  <!-- End forloopblock. -->
         </ul>
       </div>

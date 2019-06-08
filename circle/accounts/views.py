@@ -19,6 +19,9 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from django_registration.views import ActivationView
 
+from extra_views import (InlineFormSetFactory, CreateWithInlinesView,
+                         UpdateWithInlinesView)
+
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
@@ -31,7 +34,7 @@ from projects.models import Project, Applicant
 
 # Create your views here.
 @login_required
-def profile_update_view(request, pk):
+def user_update_view(request, pk):
     session_user = request.user
     user = User.objects.get(id=pk)
     userdata = {
@@ -58,6 +61,70 @@ def profile_update_view(request, pk):
     return render(request, 'accounts/user_form.html', {'form': form})
 
 
+@login_required
+def skills_update_view(request, pk):
+    """
+    Allows a user to update their own profile.
+    """
+    user = User.objects.get(id=pk)
+    if request.user.id != user.id:
+        messages.error(
+            request,
+            "You must be logged in as {} to do this.".format(user.username)
+        )
+        return HttpResponseRedirect(reverse('home'))
+    # Create the formset, specifying the form and formset we want to use.
+    SkillFormSet = formset_factory(forms.SkillForm, formset=forms.BaseSkillFormSet)
+
+    # Get our existing skill data for this user.  This is used as initial data.
+    # MAKE SKILL A LIST!
+    user_skills = user.get_skill_list()
+    # user_skills = user.skills.all().order_by('name')
+    skill_data = [{'name': skill}
+                   for skill in user_skills]
+
+    if request.method == 'POST':
+        skill_formset = SkillFormSet(request.POST)
+
+        if skill_formset.is_valid():
+            # Save user info
+            # user = form.save()
+            
+            # Now save the data for each form in the formset
+            new_skills = []
+
+            for skill_form in skill_formset:
+                skill_name = skill_form.cleaned_data.get('name')
+
+                if skill_name:
+                    new_skills.append(skill_name)
+
+            try:
+                with transaction.atomic():
+                    #Replace the old with the new
+                    
+                    # UserLink.objects.filter(user=user).delete()
+                    # UserLink.objects.bulk_create(new_links)
+                    # Turn new skill list into comma seperated str
+                    user.skill_list = ', '.join(new_skills)
+                    user.save()
+                    # And notify our users that it worked
+                    messages.success(request, 'You have updated your profile.')
+
+            except IntegrityError: #If the transaction failed
+                messages.error(request, 'There was an error saving your profile.')
+                return redirect(reverse('profile-settings'))
+
+    else:
+        skill_formset = SkillFormSet(initial=skill_data)
+
+    context = {
+        'formset': skill_formset,
+    }
+
+    return render(request, 'accounts/skill_form.html', context)
+
+"""
 @login_required
 def skills_update_view(request, pk):
     user = User.objects.get(id=pk)
@@ -93,21 +160,63 @@ def skills_update_view(request, pk):
         'formset': formset,
         'heading': heading_message,
     })
+"""
 
+"""
+@login_required
+def skills_update_view(request, pk):
+    user = User.objects.get(id=pk)
+    if request.user.id != user.id:
+        messages.error(
+            request,
+            "You must be logged in as {} to do this.".format(user.username)
+        )
+        return HttpResponseRedirect(reverse('home'))
+    template_name = 'accounts/skill_form.html'
+    heading_message = 'Skill Formset'
+    if request.method == 'GET':
+        formset = forms.SkillFormset(request.GET or None)
+    elif request.method == 'POST':
+        formset = forms.SkillFormset(request.POST)
+        if formset.is_valid():
+            for form in formset:
+                # extract name from each form and save
+                name = form.cleaned_data.get('name')
+                # save skill instance
+                if name:
+                    # Skill(name=name).save()
+                    skill, _ = Skill.objects.update_or_create(
+                        name=name,
+                        defaults={'name': name}
+                    )
+                    print('Adding {}'.format(skill))
+                    skill.users.add(user)
+            # once all skills are saved, redirect to skill list view
+            user.save()
+            return redirect('accounts:details', pk=user.id)
+    return render(request, template_name, {
+        'formset': formset,
+        'heading': heading_message,
+    })
+"""
 
-def profile_detail_view(request, pk):
+def user_detail_view(request, pk):
     """
-    Allows a user to update their own profile.
+    Allows a user to update their own user.
     """
     user = request.user
     print("1. Session user object.")
     target_user = User.objects.get(id=pk)
-    print("2. Getting profile user.")
+    print("2. Getting user user.")
+    user_skills = target_user.get_skill_list()
+    skill_data = [{'name': skill}
+                   for skill in user_skills]
     # user_skills = user.skills.order_by('name')
     # print("Geting skill data for target user.")
     context = {
         'user': user,
         'target_user': target_user,
+        'skills': skill_data
     }
     print("3. Context is created.")
     # Is this the initial load of the edit template?
@@ -162,12 +271,12 @@ class SignUpView(generic.CreateView):
     # *MUST ADD* actual validation email when deploying to live website. #####
 
 
-class ProfileDetailView(generic.DetailView):
+class UserDetailView(generic.DetailView):
     permission_classes = (permissions.IsAuthenticated,)
     model = get_user_model()
 
     def get_context_data(self, **kwargs):
-        context = super(ProfileDetailView, self).get_context_data(**kwargs)
+        context = super(UserDetailView, self).get_context_data(**kwargs)
         # Add in projects context.
         model = self.request.user
         # print('Avatar Path: {}'.format(model.avatar))
