@@ -74,22 +74,25 @@ def skills_update_view(request, pk):
         )
         return HttpResponseRedirect(reverse('home'))
     # Create the formset, specifying the form and formset we want to use.
-    SkillFormSet = formset_factory(forms.SkillForm, formset=forms.BaseSkillFormSet)
+    SkillFormSet = formset_factory(forms.SkillForm,
+                                   formset=forms.BaseSkillFormSet)
 
     # Get our existing skill data for this user.  This is used as initial data.
     # MAKE SKILL A LIST!
-    user_skills = user.get_skill_list()
-    # user_skills = user.skills.all().order_by('name')
-    skill_data = [{'name': skill}
+    # user_skills = user.get_skill_list()
+    user_skills = user.skills.all().order_by('name')
+    # skill_data = [{'name': skill}
+    #               for skill in user_skills]
+    skill_data = [{'name': skill.name}
                    for skill in user_skills]
 
     if request.method == 'POST':
         skill_formset = SkillFormSet(request.POST)
 
+        old_skills = []
+        for skill in user.skills.all():
+            old_skills.append(skill.name)
         if skill_formset.is_valid():
-            # Save user info
-            # user = form.save()
-            
             # Now save the data for each form in the formset
             new_skills = []
 
@@ -106,14 +109,25 @@ def skills_update_view(request, pk):
                     # UserLink.objects.filter(user=user).delete()
                     # UserLink.objects.bulk_create(new_links)
                     # Turn new skill list into comma seperated str
-                    user.skill_list = ', '.join(new_skills)
+                    # user.skill_list = ', '.join(new_skills)
+                    for skill in new_skills:
+                        add_skill, _ = Skill.objects.get_or_create(name=skill)
+                        add_skill.save()
+                        add_skill.users.add(user)
+                    for skill in old_skills:
+                        if skill not in new_skills:
+                            old_skill = Skill.objects.get(name=skill)
+                            old_skill.save()
+                            old_skill.users.remove(user)
                     user.save()
                     # And notify our users that it worked
-                    messages.success(request, 'You have updated your profile.')
+                    messages.success(request,
+                                     'You have updated your profile.')
 
             except IntegrityError: #If the transaction failed
-                messages.error(request, 'There was an error saving your profile.')
-                return redirect(reverse('profile-settings'))
+                messages.error(request,
+                               'There was an error saving your profile.')
+                return redirect(reverse('home'))
 
     else:
         skill_formset = SkillFormSet(initial=skill_data)

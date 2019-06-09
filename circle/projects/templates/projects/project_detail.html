@@ -36,6 +36,7 @@
 			{% for position in project.positions.all%}
 			<li>
 				<h3>{{ position.name }}</h3>
+				{% comment %}<a href="{% url 'projects:position' pk=position.id %}" class="button">Edit Position</a>{% endcomment %}
 				<p>{{ position.description }}</p>
 				{% if position.user == user %}
 				<a class="button button-primary button-inactive">YOU currently have this position.</a>
