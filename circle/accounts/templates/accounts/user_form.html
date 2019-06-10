@@ -13,6 +13,7 @@
   </div>
   <form method="POST" enctype="multipart/form-data" action="{% url 'accounts:edit' pk=user.id %}" id="profile">
     {% csrf_token %}
+	{{ formset.management_form }}
 	{% comment %}{{ form }}{% endcomment %}
 	  <div class="bounds circle--page">
 		<div class="circle--page--header circle--fluid">
@@ -69,38 +70,66 @@
 			  </a> -->
 			</div>
 		  </div>
-		  {% comment %}
-		  <div class="circle--secondary--module">
-			<h4>My Skills</h4>
-			{{ inlines.0.management_form }}
-			<ul class="circle--clone--list">
-			{% for formset in inlines.0 %}
-			  <li class="link-formset">{{ formset }}
-				<a class="circle--clone--add" >Add Skill</a>
-				<a class="circle--clone--remove">Remove</a>
-			  </li>
-			{% endfor %}
-			</ul>
-			
-		  </div>
 
-		  <div class="circle--secondary--module">
-			<h4>My Projects</h4>
-			{{ inlines.1.management_form }}
-			<ul class="circle--clone--list">
-			{% for formset in inlines.1 %}
-			  <li>
-			    {{ formset }}
-				<a class="circle--clone--add">Add Project</a>
-				<a class="circle--clone--remove">Remove</a>
-			  </li>
-			  {% endfor %}
-			</ul>
+		  <div class="circle--fluid--cell circle--fluid--secondary">
+			<h4>Your Skills</h4>
+			{% for form in formset %}
+				<div class="skill-formset">
+					{{ form.name }}
+					{% if form.name.errors %}
+						{% for error in form.name.errors %}
+							{{ error|escape }}
+						{% endfor %}
+					{% endif %}
+				</div>
+			{% endfor %}
+
+			{% if formset.non_form_errors %}
+				{% for error in formset.non_form_errors %}
+					{{ error|escape }}
+				{% endfor %}
+			{% endif %}
+			<br><br>
 		  </div>
+		  {% comment %}<!--
+		  <div class="circle--fluid--secondary">
+			<h4>Your Projects</h4>
+			{% for form in proformset %}
+			  <div class="project-formset">
+			    {{ form.name }}
+				{% if form.name.errors %}
+					{% for error in form.name.errors %}
+						{{ error|escape }}
+					{% endfor %}
+				{% endif %}
+				{{ form.url }}
+				{% if form.url.errors %}
+					{% for error in form.url.errors %}
+						{{ error|escape }}
+					{% endfor %}
+				{% endif %}
+			  </div>
+			{% endfor %}
+
+			{% if proformset.non_form_errors %}
+				{% for error in proformset.non_form_errors %}
+					{{ error|escape }}
+				{% endfor %}
+			{% endif %}
+		  </div> -->
 		  {% endcomment %}
 		</div>
 
 	  </div>
   </form>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.formset/1.2.2/jquery.formset.js"></script>
+<script>
+    $('.skill-formset').formset({
+        addText: 'Add New Skill',
+        deleteText: 'Remove'
+    });
+	$(".skill-formset").find('.delete-row, .add-row').addClass('button button-primary');
+</script>
   {{ form.media }}
 {% endblock %}

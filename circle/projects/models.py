@@ -11,11 +11,14 @@ class Project(models.Model):
         max_length=150,
         default='Project {}'.format(str(id)),
         unique=True)
-    description = models.CharField(max_length=500, blank=True)
+    url = models.URLField(max_length=255, blank=True)
+    # max_length of CharField classes cannot exceed 255 in certain cases.
+    description = models.TextField(max_length=500, blank=True)
+    # max_length of TextField CAN exceed 255.
     creator = models.ForeignKey(settings.AUTH_USER_MODEL,
                                 related_name="projects",
                                 on_delete=models.PROTECT)
-    requirements = models.CharField(max_length=500, blank=True)
+    requirements = models.CharField(max_length=255, blank=True)
     time = models.CharField(max_length=100, blank=True)
     # Should project HAVE positions, rather than vice versa?
     # project.positions to query positions.
@@ -31,7 +34,7 @@ class Position(models.Model):
     '''
     name = models.CharField(max_length=100)
     # Multiple projects should be able to have positions with identical names.
-    description = models.CharField(max_length=500, blank=True)
+    description = models.TextField(max_length=500, blank=True)
     # related_skill
     # like UserPref in pugorugh, regulates who can apply.
     filled = models.BooleanField(default=False)

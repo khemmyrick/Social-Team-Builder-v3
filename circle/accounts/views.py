@@ -47,18 +47,72 @@ def user_update_view(request, pk):
             "You must be logged in as {} to do this.".format(user.username)
         )
         return HttpResponseRedirect(reverse('home'))
+
+    SkillFormSet = formset_factory(forms.SkillForm,
+                                   formset=forms.BaseSkillFormSet)
+    user_skills = user.skills.all().order_by('name')
+    skill_data = [{'name': skill.name}
+                   for skill in user_skills]
     if request.method == 'GET':
         print("Request is get.")
-        form = forms.UserUpdateForm(initial=userdata)
+        form = forms.UserForm(initial=userdata)
         print("User form is created.")
+        formset = SkillFormSet(initial=skill_data)
         # GOTO BOTTOM "RETURN" LINE...
-    elif request.method == 'POST':
-        form = forms.UserUpdateForm(request.POST, request.FILES, instance=user) #instance=user?
-        if form.is_valid():
-            user = form.save() # args? update_fields=['display_name', 'bio']
-            return redirect('accounts:details', pk=pk)
 
-    return render(request, 'accounts/user_form.html', {'form': form})
+    elif request.method == 'POST':
+        form = forms.UserForm(request.POST, request.FILES, instance=user) #instance=user?
+        formset = SkillFormSet(request.POST, request.FILES)
+        old_skills = []
+        for skill in user.skills.all():
+            old_skills.append(skill.name)
+
+        if form.is_valid() and formset.is_valid():
+            print('Forms valid.')
+            user = form.save() # args? update_fields=['display_name', 'bio']
+            new_skills = []
+
+            for skill_form in formset:
+                skill_name = skill_form.cleaned_data.get('name')
+
+                if skill_name:
+                    new_skills.append(skill_name)
+
+            try:
+                with transaction.atomic():
+                    for skill in new_skills:
+                        add_skill, _ = Skill.objects.get_or_create(name=skill)
+                        add_skill.save()
+                        add_skill.users.add(user)
+                        if skill not in old_skills:
+                            messages.success(
+                                request,
+                                '{} added to skills!'.format(skill)
+                            )
+                    for skill in old_skills:
+                        if skill not in new_skills:
+                            old_skill = Skill.objects.get(name=skill)
+                            old_skill.save()
+                            old_skill.users.remove(user)
+                            messages.success(
+                                request,
+                                '{} removed from skills!'.format(skill)
+                            )
+                    user.save()
+
+                    messages.success(request,
+                                     'You have updated your profile.')
+
+            except IntegrityError: #If the transaction failed
+                messages.error(request,
+                               'There was an error saving your profile.')
+                return redirect('accounts:details', pk=pk)
+
+    return render(
+        request,
+        'accounts/user_form.html',
+        {'form': form, 'formset': formset}
+    )
 
 
 @login_required
@@ -78,7 +132,6 @@ def skills_update_view(request, pk):
                                    formset=forms.BaseSkillFormSet)
 
     # Get our existing skill data for this user.  This is used as initial data.
-    # MAKE SKILL A LIST!
     # user_skills = user.get_skill_list()
     user_skills = user.skills.all().order_by('name')
     # skill_data = [{'name': skill}

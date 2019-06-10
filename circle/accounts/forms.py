@@ -93,8 +93,10 @@ class UserForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['display_name'].widget.attrs.update(
             {'class': 'form-control'})
-        self.fields['bio'].widget = forms.Textarea(
-            {'class': 'form-control'})
+        # self.fields['bio'].widget = forms.Textarea(
+        #    {'class': 'form-control'})
+        self.fields['avatar'].widget.attrs.update(
+            {'class': 'form-control'}) # class was formerlly form-control
 
     class Meta:
         model = get_user_model()
@@ -108,59 +110,34 @@ class SkillForm(forms.Form):
     name = forms.CharField(
         max_length=100,
         widget=forms.TextInput(attrs={
-            # 'placeholder': 'Link Name / Anchor Text',
+            'placeholder': 'Skill',
             }),
         required=False)
 
 
-SkillFormset = formset_factory(SkillForm, extra=1)
-'''
-class SkillForm(ModelForm):
-    class Meta:
-        model = models.Skill
-        fields = ("name",)
-'''
-
-'''
-SkillFormSet = forms.modelformset_factory(
-    model=models.Skill,
-    form=SkillForm # form = SkillForm
-) # This bit may be "explicitly prohibited."?
-'''
-
-
-'''
-# Based on https://medium.com/all-about-django/adding-forms-dynamically-to-a-django-formset-375f1090c2b0
-SkillFormSet = forms.modelformset_factory(
-    models.Skill,
-    fields=('name', ),
-    extra=1,
-    widgets={'name': forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Enter skill here'
-        })
-    }
-)
-'''
+# SkillFormset = formset_factory(SkillForm, extra=1)
 
 
 class ProjectForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.fields['title'].widget.attrs.update(
-        #    {'class': 'form-control'})
-        # self.fields['url'].widget.attrs.update(
-        #    {'class': 'form-control'})
-        # self.fields['description'].widget = forms.Textarea(
-        #    {'class': 'form-control'})
-        # self.fields['timeline'].widget.attrs.update(
-        #    {'class': 'form-control'})
-        # self.fields['applicant_requirements'].widget.attrs.update(
-        #    {'class': 'form-control'})
 
     class Meta:
         model = pmodels.Project
         fields = ['name', 'description', 'requirements', 'time']
+
+
+class ProjectQuickForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = pmodels.Project
+        fields = ['name', 'url']
+
+
+# ProjectFormSet = formset_factory(ProjectForm, extra=1)
+
 
 class BaseSkillFormSet(BaseFormSet):
     def clean(self):
@@ -185,4 +162,51 @@ class BaseSkillFormSet(BaseFormSet):
                     raise forms.ValidationError(
                         "You can't have the same skill twice!",
                         code='duplicate_skills'
+                    )
+
+
+class BaseProjectFormSet(BaseFormSet):
+    def clean(self):
+        """
+        Adds validation to check that no two links have the same anchor or URL
+        and that all links have both an anchor and URL.
+        """
+        if any(self.errors):
+            return
+
+        names = []
+        urls = []
+        duplicates = False
+
+        for form in self.forms:
+            if form.cleaned_data:
+                name = form.cleaned_data['name']
+                url = form.cleaned_data['url']
+
+                # Check that no two links have the same anchor or URL
+                if name and url:
+                    if name in names:
+                        duplicates = True
+                    names.append(name)
+
+                    if url in urls:
+                        duplicates = True
+                    urls.append(url)
+
+                if duplicates:
+                    raise forms.ValidationError(
+                        'Projects must have unique names and URLs.',
+                        code='duplicate_links'
+                    )
+
+                # Check that all links have both an anchor and URL
+                if url and not name:
+                    raise forms.ValidationError(
+                        'All projects must have a name.',
+                        code='missing_name'
+                    )
+                elif name and not url:
+                    raise forms.ValidationError(
+                        'All projects must have a URL.',
+                        code='missing_URL'
                     )
