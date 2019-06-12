@@ -3,6 +3,9 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
 
+from markdownx.models import MarkdownxField
+from markdownx.utils import markdownify
+
 from accounts.models import Skill
 
 
@@ -13,7 +16,7 @@ class Project(models.Model):
         unique=True)
     url = models.URLField(max_length=255, blank=True)
     # max_length of CharField classes cannot exceed 255 in certain cases.
-    description = models.TextField(max_length=500, blank=True)
+    description = MarkdownxField()
     # max_length of TextField CAN exceed 255.
     creator = models.ForeignKey(settings.AUTH_USER_MODEL,
                                 related_name="projects",
@@ -25,6 +28,10 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def formatted_markdown(self):
+        return markdownify(self.description)
 
 
 class Position(models.Model):
@@ -89,7 +96,6 @@ class Applicant(models.Model):
                                  on_delete=models.CASCADE,
                                  related_name='applicants')
     applied = models.DateTimeField(default=timezone.now)
-    # status = models.BooleanField(default=True)
     # DEPRECATE THIS.... status becomes False if a candidate has been rejected.
     status = models.CharField(default='u', max_length=10)
     # status should be CHAR Field.  'a' = approved. 'r' = rejected. 'u' = processing.

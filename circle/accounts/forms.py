@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import (UserCreationForm, UserChangeForm,
                                        ReadOnlyPasswordHashField)
 from django.core import validators
-from django.forms import ModelForm, formset_factory
+from django.forms import ModelForm, formset_factory, inlineformset_factory
 from django.forms.formsets import BaseFormSet
 from django.utils.translation import ugettext, ugettext_lazy as _
 
@@ -57,37 +57,6 @@ class UserRegistrationForm(RegistrationForm):
         fields = ('email', 'username', 'password1', 'password2')
 
 
-"""
-class UserUpdateForm(MegaBuster, UserChangeForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    display_name = forms.CharField(max_length=140,
-                                   initial='',
-                                   help_text='Display Name',
-                                   widget=forms.TextInput(attrs={
-                                        'placeholder': 'PREXISTING DISPLAYNAME HERE',
-                                        'class': 'circle--input--h1'
-                                        # 'value': '{{ form.display_name.value }}'
-                                   }),
-                                   required=False)
-    bio = MarkdownxFormField(
-        max_length=5000,
-        initial='PREEXISTING BIO HERE',
-        help_text='Biography',
-        widget=forms.Textarea(attrs={
-            'placeholder': 'PREEXISTING BIO HERE'
-        })
-    )
-    avatar = forms.ImageField(widget=forms.ClearableFileInput(),
-                              required=False)
-    password = None
-
-    class Meta:
-        model = get_user_model()
-        fields = ("display_name", "bio", "avatar")
-"""
-
 class UserForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -115,7 +84,24 @@ class SkillForm(forms.Form):
         required=False)
 
 
-# SkillFormset = formset_factory(SkillForm, extra=1)
+class PositionShortForm(forms.Form):
+    """
+    Form for user skills
+    """
+    name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Position',
+            }),
+        required=False)
+    description = forms.CharField(
+        max_length=500,
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Description',
+        })
+    )
+    pk = forms.IntegerField()
+
 
 
 class ProjectForm(forms.ModelForm):
@@ -124,7 +110,73 @@ class ProjectForm(forms.ModelForm):
 
     class Meta:
         model = pmodels.Project
-        fields = ['name', 'description', 'requirements', 'time']
+        fields = ['name', 'url', 'description', 'requirements', 'time']
+
+
+class ProjectCreateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Project Title',
+            }),
+        required=False
+    )
+    url = forms.URLField(
+        widget=forms.URLInput(attrs={
+            'placeholder': 'https://www.example.com',
+            }),
+        required=False
+    )
+    description = forms.CharField(
+        max_length=500,
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Description. . . ',
+        }),
+        required=False
+    )
+    time = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Time Estimate',
+        }),
+        required=False
+    )
+    requirements = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Applicants must be at least 18 years old. . .',
+        }),
+        required=False
+    )
+    class Meta:
+        model = pmodels.Project
+        fields = ['name', 'url', 'description', 'requirements', 'time']
+
+
+
+'''
+class ProjectForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs.update(
+            {'class': 'form-control'})
+        self.fields['time'].widget.attrs.update(
+            {'class': 'form-control'}) # class was formerlly form-control
+        self.fields['requirements'].widget.attrs.update(
+            {'class': 'form-control'})
+
+    class Meta:
+        model = pmodels.Project
+        fields = ['name', 'description', 'time', 'requirements']
+'''
+
+PositionFormSet = inlineformset_factory(pmodels.Project, pmodels.Position, fields=('name', 'description'))
+# prefix = 'positions'
+# project = Project.objects.get(name='Foo')
+# formset = PositionFormSet(instance=project)
 
 
 class ProjectQuickForm(forms.ModelForm):
@@ -163,6 +215,37 @@ class BaseSkillFormSet(BaseFormSet):
                         "You can't have the same skill twice!",
                         code='duplicate_skills'
                     )
+
+
+class BasePositionFormSet(BaseFormSet):
+    def clean(self):
+        """
+        Adds validation to check that no two positions have the same name or
+        description.
+        """
+        if any(self.errors):
+            return
+        return BaseFormSet
+        # descriptions = []
+        # duplicates = False
+
+        # for form in self.forms:
+        #    if form.cleaned_data:
+        #        description = form.cleaned_data['description']
+
+                # Check that no two links have the same anchor or URL
+        #        if description:
+        #            if description in descriptions:
+        #                duplicates = True
+        #            descriptions.append(description)
+
+        #        if duplicates:
+        #            raise forms.ValidationError(
+        #                'Positions must have unique descriptions.',
+        #                code='duplicate_positions'
+        #            )
+
+                # Check that all links have both an anchor and URL
 
 
 class BaseProjectFormSet(BaseFormSet):

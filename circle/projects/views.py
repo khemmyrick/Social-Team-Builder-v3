@@ -1,14 +1,17 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.db import IntegrityError, transaction
+from django.forms import inlineformset_factory, formset_factory
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.views.generic.list import ListView
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.detail import DetailView
 
+from accounts import forms
 from . import models as promodels
 
 
@@ -29,6 +32,16 @@ class ProjectDetailView(DetailView):
         # )
         return context
 
+"""
+class ProjectEditView(UpdateView):
+    form_class = forms.ProjectForm
+    model = promodels.Project
+    # fields = ['name', 'url', 'description', 'time', 'requirements']
+    template_name_suffix = '_edit'
+
+    def get_success_url(self):
+        return redirect('projects:details', pk=model.pk)
+"""
 
 def project_detail_view(request, pk):
     """
@@ -179,6 +192,37 @@ def application_accept_view(request, pk):
     )
 
 
+@login_required
+def application_deny_view(request, pk):
+    session_user = request.user
+    applicant = promodels.Applicant.objects.get(id=pk)
+    position = applicant.position
+    # Make sure signed-in user is project creator.
+    if position.project.creator != session_user:
+        messages.error(
+            request,
+            "You must be the project creator to do that!"
+        )
+        return HttpResponseRedirect(reverse('home'))
+    # If session_user is project.creator, rejectt applicant for position.
+    applicant.status = 'r'
+    applicant.save()
+    position.user = applicant.user
+    position.filled = True
+    position.save()
+    messages.success(
+        request,
+        "{} won't be joining the team as {}.".format(
+            position.user,
+            position.name
+        )
+    )
+    return redirect(
+        'accounts:applications',
+        pk=session_user.id
+    )
+
+
 class ProjectListView(ListView):
     """
     Render list of projects, set by `self.model` or `self.queryset`.
@@ -192,3 +236,169 @@ class ProjectListView(ListView):
     #    # context['now'] = timezone.now()
     #    # What would context['now'] have done?
     #    return context
+
+
+@login_required
+def project_create_view(request):
+    user = request.user
+    project_data = {'creator': user}
+    if request.method == 'GET':
+        form = forms.ProjectCreateForm(initial=project_data)
+    elif request.method == 'POST':
+        form = forms.ProjectCreateForm(request.POST, request.FILES)
+        if form.is_valid():
+            print('Form is valid.')
+            # manually save object
+            project_data['name'] = form.cleaned_data.get('name')
+            project_data['url'] = form.cleaned_data.get('url')
+            project_data['description'] = form.cleaned_data.get('description')
+            project_data['time'] = form.cleaned_data.get('time')
+            project_data['requirements'] = form.cleaned_data.get('requirements')
+            project = promodels.Project(
+                name=project_data['name'],
+                url=project_data['url'],
+                description=project_data['description'],
+                creator=project_data['creator'],
+                requirements=project_data['requirements'],
+                time=project_data['time']                
+            )
+            project.save()
+            messages.success(
+                request,
+                'You have created a new project!'
+            )
+            return redirect('projects:details', pk=project.id)
+    context = {'form': form}
+    return render(
+        request,
+        'projects/project_create.html',
+        {'form': form}
+    )
+
+@login_required
+def project_update_view(request, pk):
+    project = promodels.Project.objects.get(id=pk)
+    if request.user != project.creator:
+        messages.error(
+            request,
+            "You must be logged in as {} to do this.".format(project.creator)
+        )
+        return HttpResponseRedirect(reverse('home'))
+    print('User is {}'.format(project.creator))
+    projectdata = {
+        'name': project.name,
+        'url': project.url,
+        'description': project.description,
+        'requirements': project.requirements,
+        'time': project.time
+    }
+
+    # PositionFormSet = formset_factory(
+    #    forms.PositionShortForm,
+    #    formset=forms.BasePositionFormSet,
+    #    extra=0
+    # )
+    project_positions = project.positions.all().order_by('name')
+    # position_data = [{'name': position.name, 
+    #                  'description': position.description,
+    #                  'pk': position.id}
+    #                 for position in project_positions]
+    # print(position_data)
+    if request.method == 'GET':
+        print("Request is get.")
+        form = forms.ProjectForm(initial=projectdata)
+        print("Project form is created.")
+        # formset = PositionFormSet(initial=position_data)
+        # print('Position formset created.')
+        # GOTO BOTTOM "RETURN" LINE...
+
+    elif request.method == 'POST':
+        form = forms.ProjectForm(request.POST, request.FILES, instance=project)
+        setattr(form, 'name', project.name)
+        print('Project Name: {}'.format(getattr(form, 'name')))
+        # formset = PositionFormSet(request.POST, request.FILES)
+        # print('Project form and position formset created.')
+        # countit = 1
+        # for pform in formset:
+        #    print('=' * 45)
+        #    print(str(countit) + ' ' + str(pform.fields['name']))
+        #    countit += 1
+
+        # position_data is our list of dicts for initial positions
+        if form.is_valid():
+            print('Form is valid.')
+            project = form.save()
+            messages.success(
+                request,
+                'You have updated your project.'
+            )
+            return redirect('projects:details', pk=pk)
+            # for position in position_data:
+            #    for form in formset:
+            #        if form.cleaned_data.get('description'):
+            #            if position['id'] == form.cleaned_data.get('pk'):
+            #                print('{} == {}'.format(position['id'], form.cleaned_data.get('pk')))
+            #                position['description'] = form.cleaned_data.get(
+            #                    'description'
+            #                )
+            #                position['name'] = position['name']
+            #                print(
+            #                    "{} added to dict.".format(
+            #                        position['description']
+            #                    )
+            #                )
+            #            else:
+            #                print('{} != {}'.format(position['id'], form.cleaned_data.get('pk')))
+            #        else:
+            #            if position['id'] == form.cleaned_data.get('id'):
+            #                position['description'] = position['description']
+            #                position['name'] = position['name']
+
+            # try:
+            #    with transaction.atomic():
+            #        for position in position_data:
+            #            print('Checking {} for update'.format(position['name']))
+            #            p_save = promodels.Position.objects.get(id=position['id'])
+            #            print('Getting {}'.format(p_save))
+            #            print('{} vs {}'.format(p_save.description, position['description']))
+            #            if p_save.description != position['description']:
+            #                print('Updating {}'.format(position['name']))
+            #                p_save.description = position['description']
+            #                p_save.save()
+            #                messages.success(
+            #                    request,
+            #                    '{} has been updated!'.format(p_save.name)
+            #                )
+            #        project.save()
+            #        messages.success(request,
+            #                         'You have updated your project.')
+            #        return redirect('projects:details', pk=pk)
+            # except IntegrityError: #If the transaction failed
+            #    print("There was an integrity error!")
+            #    messages.error(request,
+            #                   'There was an error saving your project.')
+            #    return redirect('projects:details', pk=pk)
+
+        else:
+            print('Form: {}'.format(form))
+            print('#' * 80)
+            # print('Formset: {}'.format(formset))
+            
+    return render(
+        request,
+        'projects/project_edit.html',
+        {'form': form,
+         # 'formset': formset,
+         # 'positions': project_positions,
+         'project': project}
+    )
+
+
+class ProjectCreateView(CreateView):
+    model = promodels.Project
+    # self.object.creator = request.user
+    fields = ['name', 'url', 'description', 'time', 'requirements']
+    template_name_suffix = '_create'
+
+    def get_success_url(self):
+        return redirect('projects:details', pk=self.object.pk)

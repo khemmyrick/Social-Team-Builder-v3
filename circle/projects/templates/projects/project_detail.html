@@ -18,10 +18,11 @@
         <h4 class="circle--article--section">Project</h4>
         <h1 class="circle--article--title">{{ project.name }}</h1>
         <p class="circle--article--byline">Project Owner: <a href="{% url 'accounts:details' pk=project.creator.id %}">{{ project.creator.display_name }} </a></p>
+		<p>{{ project.url }}</p>
       </div>
 
       <div class="circle--article--body">
-		{{ project.description }}
+		{{ project.formatted_markdown|safe }}
 		<!--
 		ADDITIONAL CODE TO FORMAT LONG TEXT STRING EITHER IN TEMPLATE TAG OR IN VIEWS.
 		-->
@@ -75,9 +76,13 @@
         <ul class="circle--link--list">
 		<!-- Link goes to applications page with position as context -->
 		  {% for position in project.positions.all %}
-          <li><a>{{ position.name }}</a></li>
+          <li><a>{{ position.name }}</a><!-- If user is owner --><a href="#">[Edit]</a></li>
+		  
           {% endfor %}
         </ul>
+		<!-- If user is signed in and is owner -->
+		<a class="button button-primary" href="#">Add Position</a>
+		<!-- -->
       </div>
 
       <div class="circle--secondary--module">

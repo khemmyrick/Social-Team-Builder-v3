@@ -191,81 +191,6 @@ def skills_update_view(request, pk):
 
     return render(request, 'accounts/skill_form.html', context)
 
-"""
-@login_required
-def skills_update_view(request, pk):
-    user = User.objects.get(id=pk)
-    if request.user.id != user.id:
-        messages.error(
-            request,
-            "You must be logged in as {} to do this.".format(user.username)
-        )
-        return HttpResponseRedirect(reverse('home'))
-    template_name = 'accounts/skill_form.html'
-    heading_message = 'Skill Formset'
-    if request.method == 'GET':
-        formset = forms.SkillFormset(request.GET or None)
-    elif request.method == 'POST':
-        formset = forms.SkillFormset(request.POST)
-        if formset.is_valid():
-            for form in formset:
-                # extract name from each form and save
-                name = form.cleaned_data.get('name')
-                # save skill instance
-                if name:
-                    # Skill(name=name).save()
-                    skill, _ = Skill.objects.update_or_create(
-                        name=name,
-                        defaults={'name': name}
-                    )
-                    print('Adding {}'.format(skill))
-                    skill.users.add(user)
-            # once all skills are saved, redirect to skill list view
-            user.save()
-            return redirect('accounts:details', pk=user.id)
-    return render(request, template_name, {
-        'formset': formset,
-        'heading': heading_message,
-    })
-"""
-
-"""
-@login_required
-def skills_update_view(request, pk):
-    user = User.objects.get(id=pk)
-    if request.user.id != user.id:
-        messages.error(
-            request,
-            "You must be logged in as {} to do this.".format(user.username)
-        )
-        return HttpResponseRedirect(reverse('home'))
-    template_name = 'accounts/skill_form.html'
-    heading_message = 'Skill Formset'
-    if request.method == 'GET':
-        formset = forms.SkillFormset(request.GET or None)
-    elif request.method == 'POST':
-        formset = forms.SkillFormset(request.POST)
-        if formset.is_valid():
-            for form in formset:
-                # extract name from each form and save
-                name = form.cleaned_data.get('name')
-                # save skill instance
-                if name:
-                    # Skill(name=name).save()
-                    skill, _ = Skill.objects.update_or_create(
-                        name=name,
-                        defaults={'name': name}
-                    )
-                    print('Adding {}'.format(skill))
-                    skill.users.add(user)
-            # once all skills are saved, redirect to skill list view
-            user.save()
-            return redirect('accounts:details', pk=user.id)
-    return render(request, template_name, {
-        'formset': formset,
-        'heading': heading_message,
-    })
-"""
 
 def user_detail_view(request, pk):
     """
@@ -289,12 +214,6 @@ def user_detail_view(request, pk):
     # Is this the initial load of the edit template?
 
     return render(request, 'accounts/user_detail.html', context)
-
-
-class UserUpdateView(generic.UpdateView):
-    model = get_user_model()
-    fields = ['username', 'display_name', 'bio', 'avatar']
-    success_url = reverse_lazy('home')
 
 
 class LogInView(generic.FormView):
@@ -321,21 +240,6 @@ class LogOutView(generic.RedirectView):
     def get(self, request, *args, **kwargs):
         logout(request)
         return super().get(request, *args, **kwargs)
-
-
-class SignUpView(generic.CreateView):
-    # Model handled in form.
-    permission_classes = (permissions.AllowAny,)
-    form_class = forms.UserCreateForm
-    success_url = reverse_lazy('login')
-    template_name = 'accounts/signup.html'
-    # For EXCEEDS initiate email validation here.
-    # 1. create user as inactive by default.
-    # 2. "email" user a file with first 5 digits of token for "verification code".
-    # 2.5. or use some other django package to make that easier
-    # 3. have user enter verification code to activate account.
-    # Sim validation email with EMAIL_BACKEND and EMAIL_FILE_PATH settings
-    # *MUST ADD* actual validation email when deploying to live website. #####
 
 
 class UserDetailView(generic.DetailView):

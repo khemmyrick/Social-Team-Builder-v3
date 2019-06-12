@@ -84,13 +84,8 @@
 		{% endif %}
         <ul class="unloaded">
 		  <!-- Begin skills forloopblock here. -->
-
 		  {% for skill in target_user.skills.all %}
           <li>{{ skill.name }}</li>
-		  {% endfor %}
-		  <h5>STR SKILLS!</h5>
-		  {% for skill in skills %}
-		  <li>{{ skill.name }}</li>
 		  {% endfor %}
 		  <!-- End forloopblock. -->
         </ul>
@@ -103,7 +98,7 @@
         <h4>{{ target_user.username }}'s Projects</h4>
 		{% endif %}
 		{% if target_user.username == user.username %}
-		<a class="button icon-on-left">Update Projects</a>
+		<a class="button icon-on-left">Update Project URLs</a>
 		{% endif %}
         <ul class="circle--link--list">
 		  <!-- Begin projects where current user is creator forloopblock. -->

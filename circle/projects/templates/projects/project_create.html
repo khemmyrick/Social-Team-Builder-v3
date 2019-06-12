@@ -11,14 +11,14 @@
     </nav>
 
   </div>
-  <form method="POST" enctype="multipart/form-data" action="{% url 'projects:update' pk=project.id %}" id="project">
+  <form method="POST" enctype="multipart/form-data" action="{% url 'projects:new' %}" id="project">
     {% csrf_token %}
 	{{ formset.management_form }}
 
 	  <div class="bounds circle--page circle--article">
 		<div class="grid-70">
 		  <div class="circle--article--body">
-		    <h3>Project Title</h3>
+			<h3>Project Title</h3>
 			  {{ form.name.errors }}
 		      {{ form.name.help_text }}
 			  {{ form.name }}
