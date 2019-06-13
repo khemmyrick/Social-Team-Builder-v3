@@ -1,37 +1,42 @@
 [
   {
     "name": "Socializer",
-	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+	"url": "https://www.socializer.com",
+	"description": "Veggies sunt bona vobis, proinde vos postulo esse magis grape pea sprouts horseradish courgette maize spinach prairie turnip jícama coriander quandong gourd broccoli seakale gumbo. Parsley corn lentil zucchini radicchio maize burdock avocado sea lettuce. Garbanzo tigernut earthnut pea fennel.",
 	"creator": "PerryKinder",
-	"requirements": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+	"requirements": "I think you're all insane, but I guess I am too.  Anybody would be if they were stuck on earth with you.",
 	"time": "2 weeks."
   },
   {
     "name": "RueFire",
-	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+	"url": "https://www.ruefire.com",
+	"description": "# Rue Fire \n The path of the righteous man is beset on all sides by the iniquities of the selfish and the tyranny of evil men. Blessed is he who, in the name of charity and good will, shepherds the weak through the valley of darkness, for he is truly his brother's keeper and the finder of lost children. \n\nAnd I will strike down upon thee with great vengeance and furious anger those who would attempt to poison and destroy My brothers. And you will know My name is the Lord when I lay My vengeance upon thee.  ",
 	"creator": "GarnetDarling",
-	"requirements": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+	"requirements": "You think water moves fast? You should see ice. It moves like it has a mind.",
 	"time": "5 days."
   },
   {
     "name": "ScholarFlair",
-	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+	"url": "https://www.scholarflair.com",
+	"description": "# Dear Jamie, \nYou, dear camellia, expectantly await the light of my moon, yet my light is more of a scorching, wilting, dry desert heat, and as your metaphorical surgeon, it is with a heavy heart that I urge you to seek a second opinion. I return your heart to you... Yours, but not really, \n### Garnet.",
 	"creator": "ConnieRolek",
-	"requirements": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+	"requirements": "I'm going to bed before either of you come up with another clever idea to get us both killed.  Or worse. . . expelled!",
 	"time": "3 months."
   },
   {
     "name": "Gemtech",
-	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+	"url": "https://www.gemtech.com",
+	"description": "# Lorem \nipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
 	"creator": "EarlRose",
-	"requirements": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+	"requirements": "As long as the gemstone isn't damaged, the Gem will be able to regenerate.",
 	"time": "4 hours."
   },
   {
     "name": "SugarFans",
-	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+	"url": "https://www.sugarfans.com",
+	"description": "# Cupcake ipsum dolor sit.  \n Amet halvah danish chocolate jelly lemon drops powder chocolate cake bear claw. Marzipan icing chocolate bar bonbon cake. Bonbon biscuit jelly beans gingerbread jelly-o tart dragée. Soufflé jelly beans gingerbread tart apple pie chocolate bar. Tootsie roll pie pudding sugar plum jelly beans tootsie roll marshmallow. Wafer sesame snaps macaroon sweet roll candy canes.  \n\n### Wafer Fruitcake  \n Wafer fruitcake icing topping lemon drops bear claw caramels chocolate bar. Lollipop cookie caramels icing halvah. Dragée chupa chups candy cheesecake biscuit gingerbread bear claw. Ice cream croissant marshmallow dragée marshmallow gummies bonbon. Tiramisu ice cream brownie tart wafer cookie pudding jelly. Powder lollipop tiramisu. Powder topping oat cake sweet ice cream. Candy canes candy canes gingerbread chocolate gummi bears ice cream gummi bears halvah gummies. Sesame snaps chocolate icing jelly bonbon biscuit. Chocolate muffin bear claw ice cream dragée danish jelly-o.",
 	"creator": "AmyDietz",
-	"requirements": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+	"requirements": "Oompa loompa doompety doo: I've got a perfect puzzle for you! Oompa loompa doompety dee, if you are wise you'll listen to me!",
 	"time": "1 year."
   }
 ]

@@ -1,0 +1,15 @@
+
+{% extends "layout.html" %}
+
+{% block title_tag %}Resume {{ project.name }} | {{ block.super }}{% endblock %}
+{% block body %}
+	<!-- REACTIVATE CONFIRMATION -->
+  <div class="bounds">
+    <div class="grid-30 centered">
+      <h2>Almost there!</h2>
+	  <p>Click here to resume your project, {{ project.name }}.</p>
+	  <a class="button button-primary" href="{% url 'projects:confirmactivate' pk=project.id %}"><strong>Resume Project</strong></a>
+	  <p><a class="button button-primary" style="color: red;" href="{% url 'home' %}">Cancel</a>
+    </div>
+  </div>
+{% endblock %}

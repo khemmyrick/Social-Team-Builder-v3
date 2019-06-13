@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+
+{% block title_tag %}{% if position %}Change {{ position.name }} Details | {% else %}New Position | {% endif %}{{ block.super }}{% endblock %}
+{% block body %}
+  <div class="circle--actions--bar">
+    <nav class="bounds">
+      <ul class="circle--pill--list">
+        <li><a href="{% url 'accounts:applications' pk=user.id %}">Applications</a></li>
+        <li><a class="selected" href="{% url 'accounts:details' pk=user.id %}">Profile</a></li>
+      </ul>
+    </nav>
+  </div>
+  <form method="POST" enctype="multipart/form-data" action="{% if position %}{% url 'projects:changeposition' pk=project.id pospk=position.id %}{% else %}{% url 'projects:newposition' pk=project.id %}{% endif %}" id="profile">
+    {% csrf_token %}
+	{{ formset.management_form }}
+	  <div class="bounds circle--page">
+		<div class="circle--page--header circle--fluid">
+		  <div class="circle--fluid--cell circle--fluid--primary">
+			<h2>Change Position Details</h2>
+		  </div>
+		  <div class="circle--fluid--cell circle--fluid--secondary">
+			<button type="submit" class="button button-primary" form="profile" action="">Save Changes</button>
+		  </div>
+		</div>
+		<div class="grid-70">
+		  <!-- FORM display_name field -->
+		  {{ form.name.errors }}
+		  {{ form.name.help_text }}
+		  {{ form.name }}
+		  <div class="circle--article--body">
+			{{ form.description.help_text }}
+			{{ form.description }}
+		  </div>
+		</div>
+		<div class="grid-25 grid-push-5">
+		  <div class="circle--fluid--cell circle--fluid--secondary">
+			<h4>Your Skills</h4>
+			{% for form in formset %}
+				<div class="skill-formset">
+					{{ form.name }}
+					{% if form.name.errors %}
+						{% for error in form.name.errors %}
+							{{ error|escape }}
+						{% endfor %}
+					{% endif %}
+				</div>
+			{% endfor %}
+
+			{% if formset.non_form_errors %}
+				{% for error in formset.non_form_errors %}
+					{{ error|escape }}
+				{% endfor %}
+			{% endif %}
+			<br><br>
+		  </div>
+		</div>
+
+	  </div>
+  </form>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.formset/1.2.2/jquery.formset.js"></script>
+<script>
+    $('.skill-formset').formset({
+        addText: 'Add New Skill',
+        deleteText: 'Remove'
+    });
+	$(".skill-formset").find('.delete-row, .add-row').addClass('button button-primary');
+</script>
+  {{ form.media }}
+{% endblock %}

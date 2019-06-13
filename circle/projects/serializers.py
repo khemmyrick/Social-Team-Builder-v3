@@ -8,10 +8,12 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         fields = (
             'name',
+            'url',
             'description',
             'creator',
             'requirements',
-            'time'
+            'time',
+            'active'
         )
         model = Project
 

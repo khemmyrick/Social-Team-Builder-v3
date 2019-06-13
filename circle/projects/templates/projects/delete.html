@@ -1,0 +1,15 @@
+
+{% extends "layout.html" %}
+
+{% block title_tag %}Delete {% if project %}{{ project.name }}{% else %}{{ position.name }}{% endif %} | {{ block.super }}{% endblock %}
+{% block body %}
+	<!-- DELETE CONFIRMATION -->
+  <div class="bounds">
+    <div class="grid-30 centered">
+      <h2>Are you sure?</h2>
+	  <p><strong>CAUTION:</strong> This will {% if project %}suspend {{ project.name }}{% else %}delete {{ position.name }}{% endif %} indefinitely.</p>
+	  <a class="button button-primary" href="{%if project%}{% url 'projects:suspendconfirm' pk=project.id %}{% else %}{% url 'projects:positiondeleteconfirm' pk=position.project.id pospk=position.id %}{% endif %}" style="color: red;"><strong>Confirm Action</strong></a>
+	  <p><a class="button button-primary" href="{% url 'home' %}">Cancel</a>
+    </div>
+  </div>
+{% endblock %}

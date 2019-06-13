@@ -84,24 +84,29 @@ class SkillForm(forms.Form):
         required=False)
 
 
-class PositionShortForm(forms.Form):
-    """
-    Form for user skills
-    """
+class PositionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = pmodels.Project
+        fields = ['name', 'description']
+
     name = forms.CharField(
         max_length=100,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Position',
+            'placeholder': 'Position Title',
             }),
-        required=False)
+        required=False
+    )
     description = forms.CharField(
         max_length=500,
         widget=forms.Textarea(attrs={
-            'placeholder': 'Description',
-        })
+            'placeholder': 'Description. . . ',
+            }),
+        required=False
     )
-    pk = forms.IntegerField()
-
+    
 
 
 class ProjectForm(forms.ModelForm):
@@ -156,29 +161,6 @@ class ProjectCreateForm(forms.ModelForm):
         fields = ['name', 'url', 'description', 'requirements', 'time']
 
 
-
-'''
-class ProjectForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['name'].widget.attrs.update(
-            {'class': 'form-control'})
-        self.fields['time'].widget.attrs.update(
-            {'class': 'form-control'}) # class was formerlly form-control
-        self.fields['requirements'].widget.attrs.update(
-            {'class': 'form-control'})
-
-    class Meta:
-        model = pmodels.Project
-        fields = ['name', 'description', 'time', 'requirements']
-'''
-
-PositionFormSet = inlineformset_factory(pmodels.Project, pmodels.Position, fields=('name', 'description'))
-# prefix = 'positions'
-# project = Project.objects.get(name='Foo')
-# formset = PositionFormSet(instance=project)
-
-
 class ProjectQuickForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -186,9 +168,6 @@ class ProjectQuickForm(forms.ModelForm):
     class Meta:
         model = pmodels.Project
         fields = ['name', 'url']
-
-
-# ProjectFormSet = formset_factory(ProjectForm, extra=1)
 
 
 class BaseSkillFormSet(BaseFormSet):
@@ -215,37 +194,6 @@ class BaseSkillFormSet(BaseFormSet):
                         "You can't have the same skill twice!",
                         code='duplicate_skills'
                     )
-
-
-class BasePositionFormSet(BaseFormSet):
-    def clean(self):
-        """
-        Adds validation to check that no two positions have the same name or
-        description.
-        """
-        if any(self.errors):
-            return
-        return BaseFormSet
-        # descriptions = []
-        # duplicates = False
-
-        # for form in self.forms:
-        #    if form.cleaned_data:
-        #        description = form.cleaned_data['description']
-
-                # Check that no two links have the same anchor or URL
-        #        if description:
-        #            if description in descriptions:
-        #                duplicates = True
-        #            descriptions.append(description)
-
-        #        if duplicates:
-        #            raise forms.ValidationError(
-        #                'Positions must have unique descriptions.',
-        #                code='duplicate_positions'
-        #            )
-
-                # Check that all links have both an anchor and URL
 
 
 class BaseProjectFormSet(BaseFormSet):

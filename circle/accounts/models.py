@@ -66,7 +66,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                                upload_to=user_directory_path)
     # avatars upload to media/accounts/<user.id>/
     skills = models.ManyToManyField(Skill, related_name='users', blank=True)
-    skill_list = models.CharField(max_length=10000)
+    # skill_list = models.CharField(max_length=10000)
     date_joined = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -93,8 +93,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_long_name(self):
         return "{} (aka {})".format(self.display_name, self.username)
 
-    def get_skill_list(self):
-        return self.skill_list.split(",")
+    # def get_skill_list(self):
+    #    return self.skill_list.split(",")
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         '''

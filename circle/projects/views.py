@@ -16,65 +16,264 @@ from . import models as promodels
 
 
 # Create your views here.
-class ProjectDetailView(DetailView):
-    model = promodels.Project
-    def get_context_data(self, pk=model.pk):
-        # Call the base implementation first to get a context
-        context = super(
-            ProjectDetailView,
-            self
-        ).get_context_data(pk=pk)
-        # Add in seperate QuerySet ?
-        # context['user'] = model.objects.prefetch_related(
-        # 'positions',
-        # 'projects',
-        # 'skills'
-        # )
-        return context
+@login_required
+def position_create_view(request, pk):
+    project = promodels.Project.objects.get(id=pk)
+    if request.user != project.creator:
+        messages.error(
+            request,
+            "You must be logged in as {} to do this.".format(project.creator)
+        )
+        return HttpResponseRedirect(reverse('home'))
 
-"""
-class ProjectEditView(UpdateView):
-    form_class = forms.ProjectForm
-    model = promodels.Project
-    # fields = ['name', 'url', 'description', 'time', 'requirements']
-    template_name_suffix = '_edit'
+    positiondata = {'project': project}
+    SkillFormSet = formset_factory(forms.SkillForm,
+                                   formset=forms.BaseSkillFormSet)
+    # No skill data yet!
+    # position_skills = position.skills.all().order_by('name')
+    # skill_data = [{'name': skill.name}
+    #               for skill in position_skills]
+    if request.method == 'GET':
+        print("Request is get.")
+        form = forms.PositionForm(initial=positiondata)
+        print("User form is created.")
+        formset = SkillFormSet()
+        # GOTO BOTTOM "RETURN" LINE...
 
-    def get_success_url(self):
-        return redirect('projects:details', pk=model.pk)
-"""
+    elif request.method == 'POST':
+        form = forms.PositionForm(request.POST, request.FILES) #instance=project?
+        formset = SkillFormSet(request.POST, request.FILES)
+        # old_skills = []
+        # for skill in position.skills.all():
+        #    old_skills.append(skill.name)
+
+        if form.is_valid() and formset.is_valid():
+            print('Forms valid.')
+            positiondata['name'] = form.cleaned_data.get('name')
+            positiondata['description'] = form.cleaned_data.get('description')
+            position = promodels.Position(
+                name=positiondata['name'],
+                description=positiondata['description'],
+                project=positiondata['project']
+            )
+            position.save()
+            new_skills = []
+
+            for skill_form in formset:
+                skill_name = skill_form.cleaned_data.get('name')
+
+                if skill_name:
+                    new_skills.append(skill_name)
+
+            try:
+                with transaction.atomic():
+                    for skill in new_skills:
+                        add_skill, _ = promodels.Skill.objects.get_or_create(
+                            name=skill
+                        )
+                        add_skill.save()
+                        add_skill.positions.add(position)
+                        messages.info(
+                            request,
+                            '{} added to skills!'.format(skill)
+                        )
+                    position.save()
+
+                    messages.success(request,
+                                     'You have updated your position.')
+
+            except IntegrityError: #If the transaction failed
+                messages.error(request,
+                               'There was an error creating this position.')
+                return redirect('projects:details', pk=pk)
+
+    return render(
+        request,
+        'projects/position_form.html',
+        {'form': form, 'formset': formset, 'project': project}
+    )
+
+
+@login_required
+def position_update_view(request, pk, pospk):
+    project = promodels.Project.objects.get(id=pk)
+    if request.user != project.creator:
+        messages.error(
+            request,
+            "You must be logged in as {} to do this.".format(project.creator)
+        )
+        return HttpResponseRedirect(reverse('home'))
+    position = promodels.Position.objects.get(id=pospk)
+    positiondata = {
+        'name': position.name,
+        'description': position.description,
+        'project': project,
+        'time': position.time,
+        'id': position.id
+    }
+    SkillFormSet = formset_factory(forms.SkillForm,
+                                   formset=forms.BaseSkillFormSet)
+    position_skills = position.skills.all().order_by('name')
+    skill_data = [{'name': skill.name}
+                   for skill in position_skills]
+    if request.method == 'GET':
+        print("Request is get.")
+        form = forms.PositionForm(initial=positiondata)
+        print("User form is created.")
+        formset = SkillFormSet(initial=skill_data)
+        # GOTO BOTTOM "RETURN" LINE...
+
+    elif request.method == 'POST':
+        form = forms.PositionForm(request.POST, request.FILES, instance=position) #instance=project?
+        formset = SkillFormSet(request.POST, request.FILES)
+        old_skills = []
+        for skill in position.skills.all():
+            old_skills.append(skill.name)
+
+        if form.is_valid() and formset.is_valid():
+            print('Forms valid.')
+            # position = form.save()
+            position = promodels.Position.objects.get(id=pospk)
+            position.name = form.cleaned_data.get('name')
+            position.description = form.cleaned_data.get('description')
+            position.id = positiondata['id']
+            position.save()
+            new_skills = []
+
+            for skill_form in formset:
+                skill_name = skill_form.cleaned_data.get('name')
+
+                if skill_name:
+                    new_skills.append(skill_name)
+
+            try:
+                with transaction.atomic():
+                    for skill in new_skills:
+                        add_skill, _ = promodels.Skill.objects.get_or_create(
+                            name=skill
+                        )
+                        add_skill.save()
+                        add_skill.positions.add(position)
+                        if add_skill not in old_skills:
+                            messages.info(
+                                request,
+                                '{} added to skills!'.format(skill)
+                            )
+                    for skill in old_skills:
+                        if skill not in new_skills:
+                            old_skill = Skill.objects.get(name=skill)
+                            old_skill.save()
+                            old_skill.users.remove(user)
+                            messages.info(
+                                request,
+                                '{} removed from skills!'.format(skill)
+                            )
+                    position.save()
+
+                    messages.success(request,
+                                     'You have updated your position.')
+
+            except IntegrityError: #If the transaction failed
+                messages.error(request,
+                               'There was an error creating this position.')
+                return redirect('projects:details', pk=pk)
+
+    return render(
+        request,
+        'projects/position_form.html',
+        {'form': form, 'formset': formset, 'project': project, 'position': position}
+    )
+
 
 def project_detail_view(request, pk):
     """
     Allows a user to view a project.
     """
-    user = request.user
     project = promodels.Project.objects.get(id=pk)
-    p_list = []
-    for position in project.positions.all():
-        p_list.append(position)
-    if user.is_authenticated:
-        applicants = user.applicants.filter(
-            position__in=p_list
+    if not project.active:
+        if request.user == project.creator:
+            return render(
+                request, 
+                'projects/activate.html',
+                {'project': project}
+            )
+        messages.info(
+            request,
+            'That project is inactive.'
         )
-    else:
-        applicants = ''
-    # user_skills = user.skills.order_by('name')
-    # print("Geting skill data for target user.")
+        return redirect('home')
     context = {
-        'user': user,
         'project': project,
-        'applicants': applicants
     }
+    return render(
+        request,
+        'projects/project_detail.html',
+        {'project': project}
+    )
 
-    return render(request, 'projects/project_detail.html', context)
+
+def project_suspend_view(request, pk):
+    project = promodels.Project.objects.get(id=pk)
+    return render(
+        request,
+        'projects/delete.html',
+        {'project': project}
+    )
 
 
-def project_update_view(request, pk):
-    return HttpResponseRedirect(reverse('projects:details', args=pk))
+def project_suspend_confirm_view(request, pk):
+    project = promodels.Project.objects.get(id=pk)
+    project.active = False
+    project.save()
+    messages.success(
+        request,
+        'Your project has been suspended.'.format(project.name)
+    )
+    return redirect('home')
 
 
-def project_delete_view(request, pk):
-    return HttpResponseRedirect(reverse('projects:details', args=pk))
+# def project_activate_view(request, pk):
+#    project = promodels.Project.objects.get(id=pk)
+#    project.active = True
+#    return render(
+#        request,
+#        'projects/activate.html',
+#        {'project': project}
+#    )
+
+
+def project_confirm_activate_view(request, pk):
+    project = promodels.Project.objects.get(id=pk)
+    project.active = True
+    project.save()
+    messages.success(
+        request,
+        'Your project, {}, has resumed.'.format(project.name)
+    )
+    return render(
+        request,
+        'projects/project_detail.html',
+        {'project': project}
+    )
+
+
+def position_delete_view(request, pk, pospk):
+    position = promodels.Position.objects.get(id=pospk)
+    return render(
+        request,
+        'projects/delete.html',
+        {'position': position}
+    )
+
+
+def position_delete_confirm_view(request, pk, pospk):
+    position = promodels.Position.objects.get(id=pospk)
+    position.delete()
+    messages.success(
+        request,
+        'Position deleted successfully.'
+    )
+    return redirect('home')
 
 
 def position_name_view(request, term):
@@ -98,8 +297,7 @@ def position_name_view(request, term):
     }
     
     return render(request, 'projects/project_list.html', context)
-    
-    
+
 
 def position_list_view(request):
     """
@@ -164,11 +362,10 @@ def application_create_view(request, pk):
 
 @login_required
 def application_accept_view(request, pk):
-    session_user = request.user
     applicant = promodels.Applicant.objects.get(id=pk)
     position = applicant.position
     # Make sure signed-in user is project creator.
-    if position.project.creator != session_user:
+    if position.project.creator != request.user:
         messages.error(
             request,
             "You must be the project creator to do that!"
@@ -184,21 +381,18 @@ def application_accept_view(request, pk):
         request,
         "You accepted {} as {}.".format(position.user, position.name)
     )
-    return HttpResponseRedirect(
-        reverse(
-            'accounts:applications',
-            pk=session_user.id
-        )
+    return redirect(
+        'accounts:applications',
+        pk=request.user.id
     )
 
 
 @login_required
 def application_deny_view(request, pk):
-    session_user = request.user
     applicant = promodels.Applicant.objects.get(id=pk)
     position = applicant.position
     # Make sure signed-in user is project creator.
-    if position.project.creator != session_user:
+    if position.project.creator != request.user:
         messages.error(
             request,
             "You must be the project creator to do that!"
@@ -219,23 +413,8 @@ def application_deny_view(request, pk):
     )
     return redirect(
         'accounts:applications',
-        pk=session_user.id
+        pk=request.user.id
     )
-
-
-class ProjectListView(ListView):
-    """
-    Render list of projects, set by `self.model` or `self.queryset`.
-    `self.queryset` can actually be any iterable of items, not just a queryset.
-    """
-    # model = models.Project
-    queryset = promodels.Project.objects.all()
-
-    # def get_context_data(self, object_list=queryset,**kwargs):
-    #    context = super(ArticleListView, self).get_context_data(**kwargs)
-    #    # context['now'] = timezone.now()
-    #    # What would context['now'] have done?
-    #    return context
 
 
 @login_required
@@ -284,7 +463,6 @@ def project_update_view(request, pk):
             "You must be logged in as {} to do this.".format(project.creator)
         )
         return HttpResponseRedirect(reverse('home'))
-    print('User is {}'.format(project.creator))
     projectdata = {
         'name': project.name,
         'url': project.url,
@@ -292,39 +470,14 @@ def project_update_view(request, pk):
         'requirements': project.requirements,
         'time': project.time
     }
-
-    # PositionFormSet = formset_factory(
-    #    forms.PositionShortForm,
-    #    formset=forms.BasePositionFormSet,
-    #    extra=0
-    # )
-    project_positions = project.positions.all().order_by('name')
-    # position_data = [{'name': position.name, 
-    #                  'description': position.description,
-    #                  'pk': position.id}
-    #                 for position in project_positions]
-    # print(position_data)
     if request.method == 'GET':
         print("Request is get.")
         form = forms.ProjectForm(initial=projectdata)
         print("Project form is created.")
-        # formset = PositionFormSet(initial=position_data)
-        # print('Position formset created.')
-        # GOTO BOTTOM "RETURN" LINE...
 
     elif request.method == 'POST':
         form = forms.ProjectForm(request.POST, request.FILES, instance=project)
         setattr(form, 'name', project.name)
-        print('Project Name: {}'.format(getattr(form, 'name')))
-        # formset = PositionFormSet(request.POST, request.FILES)
-        # print('Project form and position formset created.')
-        # countit = 1
-        # for pform in formset:
-        #    print('=' * 45)
-        #    print(str(countit) + ' ' + str(pform.fields['name']))
-        #    countit += 1
-
-        # position_data is our list of dicts for initial positions
         if form.is_valid():
             print('Form is valid.')
             project = form.save()
@@ -333,63 +486,18 @@ def project_update_view(request, pk):
                 'You have updated your project.'
             )
             return redirect('projects:details', pk=pk)
-            # for position in position_data:
-            #    for form in formset:
-            #        if form.cleaned_data.get('description'):
-            #            if position['id'] == form.cleaned_data.get('pk'):
-            #                print('{} == {}'.format(position['id'], form.cleaned_data.get('pk')))
-            #                position['description'] = form.cleaned_data.get(
-            #                    'description'
-            #                )
-            #                position['name'] = position['name']
-            #                print(
-            #                    "{} added to dict.".format(
-            #                        position['description']
-            #                    )
-            #                )
-            #            else:
-            #                print('{} != {}'.format(position['id'], form.cleaned_data.get('pk')))
-            #        else:
-            #            if position['id'] == form.cleaned_data.get('id'):
-            #                position['description'] = position['description']
-            #                position['name'] = position['name']
-
-            # try:
-            #    with transaction.atomic():
-            #        for position in position_data:
-            #            print('Checking {} for update'.format(position['name']))
-            #            p_save = promodels.Position.objects.get(id=position['id'])
-            #            print('Getting {}'.format(p_save))
-            #            print('{} vs {}'.format(p_save.description, position['description']))
-            #            if p_save.description != position['description']:
-            #                print('Updating {}'.format(position['name']))
-            #                p_save.description = position['description']
-            #                p_save.save()
-            #                messages.success(
-            #                    request,
-            #                    '{} has been updated!'.format(p_save.name)
-            #                )
-            #        project.save()
-            #        messages.success(request,
-            #                         'You have updated your project.')
-            #        return redirect('projects:details', pk=pk)
-            # except IntegrityError: #If the transaction failed
-            #    print("There was an integrity error!")
-            #    messages.error(request,
-            #                   'There was an error saving your project.')
-            #    return redirect('projects:details', pk=pk)
 
         else:
-            print('Form: {}'.format(form))
-            print('#' * 80)
-            # print('Formset: {}'.format(formset))
+            messages.failure(
+                request,
+                'Something went wrong. We were unable to update your project.'
+            )
+            return redirect('projects:details', pk=pk)
             
     return render(
         request,
         'projects/project_edit.html',
         {'form': form,
-         # 'formset': formset,
-         # 'positions': project_positions,
          'project': project}
     )
 

@@ -7,7 +7,7 @@
     <div class="bounds">
       <div class="grid-100">
         <a class="button" href="{% url 'projects:update' pk=project.id %}">Edit Project</a>
-        <a class="button button-text" href="{% url 'projects:delete' pk=project.id %}">Delete Project</a>
+        <a class="button button-text:hover" href="{% url 'projects:suspend' pk=project.id %}" style="color: red;">Suspend Project</a>
       </div>
     </div>
   </div>
@@ -39,7 +39,16 @@
 				<h3>{{ position.name }}</h3>
 				{% comment %}<a href="{% url 'projects:position' pk=position.id %}" class="button">Edit Position</a>{% endcomment %}
 				<p>{{ position.description }}</p>
-				{% if position.user == user %}
+				<!-- Skills Required -->
+				<h4>Skills Desired:</h4>
+					<p>- 
+					{% for skill in position.skills.all %}
+					<strong>{{ skill.name }}</strong> - 
+					{% endfor %}
+					</p>
+				{% if project.creator == user %}
+				<a class="button button-primary" href="{% url 'projects:positiondelete' pk=position.project.id pospk=position.id %}" style="color: red;">Delete Position</a>
+				{% elif position.user == user %}
 				<a class="button button-primary button-inactive">YOU currently have this position.</a>
 				{% elif position.filled %}
 				<a class="button button-primary button-inactive">Position Filled</a>
@@ -76,12 +85,12 @@
         <ul class="circle--link--list">
 		<!-- Link goes to applications page with position as context -->
 		  {% for position in project.positions.all %}
-          <li><a>{{ position.name }}</a><!-- If user is owner --><a href="#">[Edit]</a></li>
+          <li><a>{{ position.name }}</a><!-- If user is owner --><a href="{% url 'projects:changeposition' pk=position.project.id pospk=position.id %}">[Edit]</a></li>
 		  
           {% endfor %}
         </ul>
 		<!-- If user is signed in and is owner -->
-		<a class="button button-primary" href="#">Add Position</a>
+		<a class="button button-primary" href="{% url 'projects:newposition' pk=project.id %}">Add Position</a>
 		<!-- -->
       </div>
 

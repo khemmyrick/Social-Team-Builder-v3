@@ -200,10 +200,11 @@ def user_detail_view(request, pk):
     print("1. Session user object.")
     target_user = User.objects.get(id=pk)
     print("2. Getting user user.")
-    user_skills = target_user.get_skill_list()
+    # user_skills = target_user.get_skill_list()
+    user_skills = user.skills.order_by('name')
     skill_data = [{'name': skill}
                    for skill in user_skills]
-    # user_skills = user.skills.order_by('name')
+
     # print("Geting skill data for target user.")
     context = {
         'user': user,
