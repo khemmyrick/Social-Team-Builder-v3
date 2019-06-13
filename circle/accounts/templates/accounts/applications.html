@@ -42,7 +42,11 @@
 		  Link takes project as context to reload current page.
 		  -->
 		  {% for project in user.projects.all %}
-          <li><a>{{ project.name }}</a></li>
+			  {% if project.active %}
+				<li><a>{{ project.name }}</a></li>
+			  {% else %}
+				<li>{{ project.name }} [Inactive]</li>
+			  {% endif %}
 		  {% endfor %}
 		  <!-- endfor -->
         </ul>
@@ -63,8 +67,15 @@
 		  across all projects.
 		  -->
 		  {% for position in positions %}
-
-          <li><a>{{ position.name }}</a></li>
+			  {% if position.active %}
+				  {% if position.project.active %}
+					  {% if position.filled %}
+					  {% else %}
+						  <!-- Only show if position not filled, position and project active... -->
+						  <li><a>{{ position.name }}</a></li>
+					  {% else %}
+				  {% else %}
+			  {% endif %}
 		  <!-- Link should clarify context. -->
 		  {% endfor %}
 		  <!-- endfor -->

@@ -216,6 +216,38 @@ def user_detail_view(request, pk):
 
     return render(request, 'accounts/user_detail.html', context)
 
+@login_required
+def user_deactivate_view(request, pk):
+    """Allows a user to deactivate their account."""
+    target_user = User.objects.get(id=pk)
+    if target_user != request.user:
+        messages.error(
+            request,
+            "You cannot disable someone else's account."
+        )
+        return HttpResponseRedirect(reverse('home'))
+    return render(
+        request,
+        'projects/delete.html',
+        {'target_user': target_user}
+    )
+
+
+@login_required
+def user_deactivate_confirm_view(request, pk):
+    """Confirm user account deactivation."""
+    target_user = User.objects.get(id=pk)
+    if target_user != request.user:
+        messages.error(
+            request,
+            "You cannot disable someone else's account."
+        )
+        return HttpResponseRedirect(reverse('home'))
+    target_user.is_active = False
+    target_user.save()
+    messages.success(request, 'Your account has been deactivated.')
+    return HttpResponseRedirect(reverse('accounts:logout'))
+
 
 class LogInView(generic.FormView):
     form_class = AuthenticationForm

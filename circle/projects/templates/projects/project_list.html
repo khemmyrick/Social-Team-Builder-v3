@@ -48,6 +48,7 @@
         </thead>
         <tbody>
 		  {% for position in positions %}
+		  {% if position.project.active %}
           <tr class="clickable-row" data-href="{% url 'projects:details' pk=position.project.id %}">
             <td>
               <h3>{{ position.project.name }}</h3>
@@ -58,6 +59,7 @@
               <span class="secondary-label">{{ position.name }}</span>
             </td>
           </tr>
+		  {% endif %}
 		  {% endfor %}
         </tbody>
       </table>

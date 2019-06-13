@@ -61,6 +61,7 @@ class Position(models.Model):
         blank=True
     )
     time = models.CharField(max_length=100, blank=True)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return "{} for {}.".format(self.name, self.project.name)

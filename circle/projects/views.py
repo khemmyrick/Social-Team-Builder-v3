@@ -214,6 +214,12 @@ def project_detail_view(request, pk):
 
 def project_suspend_view(request, pk):
     project = promodels.Project.objects.get(id=pk)
+    if request.user != project.creator:
+        messages.error(
+            request,
+            "You must be the project creator to do that!"
+        )
+        return HttpResponseRedirect(reverse('home'))
     return render(
         request,
         'projects/delete.html',
@@ -223,6 +229,12 @@ def project_suspend_view(request, pk):
 
 def project_suspend_confirm_view(request, pk):
     project = promodels.Project.objects.get(id=pk)
+    if request.user != project.creator:
+        messages.error(
+            request,
+            "You must be the project creator to do that!"
+        )
+        return HttpResponseRedirect(reverse('home'))
     project.active = False
     project.save()
     messages.success(
@@ -257,8 +269,14 @@ def project_confirm_activate_view(request, pk):
     )
 
 
-def position_delete_view(request, pk, pospk):
+def position_suspend_view(request, pk, pospk):
     position = promodels.Position.objects.get(id=pospk)
+    if request.user != position.project.creator:
+        messages.error(
+            request,
+            "You must be the project creator to do that!"
+        )
+        return HttpResponseRedirect(reverse('home'))
     return render(
         request,
         'projects/delete.html',
@@ -266,12 +284,19 @@ def position_delete_view(request, pk, pospk):
     )
 
 
-def position_delete_confirm_view(request, pk, pospk):
+def position_suspend_confirm_view(request, pk, pospk):
     position = promodels.Position.objects.get(id=pospk)
-    position.delete()
+    if request.user != position.project.creator:
+        messages.error(
+            request,
+            "You must be the project creator to do that!"
+        )
+        return HttpResponseRedirect(reverse('home'))
+    position.active = False
+    position.save()
     messages.success(
         request,
-        'Position deleted successfully.'
+        'Position suspended.'
     )
     return redirect('home')
 

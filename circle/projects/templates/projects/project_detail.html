@@ -30,51 +30,61 @@
 
       <div class="circle--project--positions">
         <h2>Positions</h2>
+		<table class="circle--table" style="border: 1px solid black;">
+		<!--<caption>Positions</caption>-->
+			<tr><th style="border: 1px solid #dddddd; text-align: center;"><h3>Title</h3></th><th style="border: 1px solid #dddddd; text-align: center;"><h3>Description</h3></th><th style="border: 1px solid #dddddd; text-align: center;"><h3>Skills</h3></th><th style="border: 1px solid #dddddd; text-align: center;"><h3>Options</h3></th>
+			</tr>
+        <!-- <ul class="circle--group--list"> -->
 
-        <ul class="circle--group--list">
 		<!-- 
 		Use Django forloop to LIST Position titles and brief descriptions of positions. -->
 			{% for position in project.positions.all%}
-			<li>
-				<h3>{{ position.name }}</h3>
-				{% comment %}<a href="{% url 'projects:position' pk=position.id %}" class="button">Edit Position</a>{% endcomment %}
-				<p>{{ position.description }}</p>
+			<!-- <li> -->
+				<tr><!-- <h3> --><td width="15%" style="border: 1px solid #dddddd;">{{ position.name }}</td> <!-- </h3> -->
+				<!-- <p> --><td width="25%" style="border: 1px solid #dddddd;">{{ position.description|truncatewords:10 }}</td><!-- </p> -->
 				<!-- Skills Required -->
-				<h4>Skills Desired:</h4>
-					<p>- 
-					{% for skill in position.skills.all %}
-					<strong>{{ skill.name }}</strong> - 
-					{% endfor %}
-					</p>
-				{% if project.creator == user %}
-				<a class="button button-primary" href="{% url 'projects:positiondelete' pk=position.project.id pospk=position.id %}" style="color: red;">Delete Position</a>
-				{% elif position.user == user %}
-				<a class="button button-primary button-inactive">YOU currently have this position.</a>
-				{% elif position.filled %}
-				<a class="button button-primary button-inactive">Position Filled</a>
-				{% elif applicants %}<!-- This should be checking if user has an application for this. -->
-					{% for applicant in applicants %}
-						{% if applicant.position == position %}
-							{% if applicant.status == 'u' %}
-								<!-- 'u' is for undecided.  'r' is for rejected... -->
-								<a class="button button-primary button-inactive">Your application is being processed.</a>
-							{% else %}
-								<a class="button button-primary button-inactive">This position is unavailable.</a>
-							{% endif %}
+				<!-- <h4>Skills Desired:</h4>-->
+					<td style="border: 1px solid #dddddd;">
+					<ul style="list-style:none!important;">
+						{% for skill in position.skills.all %}
+						<li style="text-align: center;">{{ skill.name }}</li>
+						{% endfor %}
+						</ul>
+					</td>
+					<td style="border: 1px solid #dddddd;">
+						{% if project.creator == user %}
+						<a href="{% url 'projects:changeposition' pk=position.project.id pospk=position.id %}" class="button">Edit</a>
+						<a href="{% url 'projects:positionsuspend' pk=position.project.id pospk=position.id %}" style="color: #FF0000;">Suspend?</a>
+						{% elif position.user == user %}
+						<a class="button button-primary button-inactive">Yours</a>
+						{% elif position.filled %}
+						<a class="button button-primary button-inactive">Unavailable</a>
+						{% elif applicants %}<!-- This should be checking if user has an application for this. -->
+							{% for applicant in applicants %}
+								{% if applicant.position == position %}
+									{% if applicant.status == 'u' %}
+										<!-- 'u' is for undecided.  'r' is for rejected... -->
+										<a class="button button-primary button-inactive">In Progress</a>
+									{% else %}
+										<a class="button button-primary button-inactive">Unavailable</a>
+									{% endif %}
+								{% endif %}
+							{% endfor %}
+						{% elif user.is_authenticated %}
+						<a href="{% url 'projects:apply' pk=position.id %}" class="button button-primary">Apply</a>
+						{% else %}
+						<a class="button button-primary" href="{% url 'accounts:login' %}">Sign In to apply.</a>
 						{% endif %}
-					{% endfor %}
-				{% elif user.is_authenticated %}
-				<a href="{% url 'projects:apply' pk=position.id %}" class="button button-primary">Apply</a>
-				{% else %}
-				<a class="button button-primary" href="{% url 'accounts:login' %}">Sign In to apply.</a>
-				{% endif %}
-			</li>
+					</td>
+				</tr>
+			<!--</li>-->
 			{% endfor %}
 		<!-- 
 		####ADD LINK FOR APPLY BUTTON IN ELSE BLOCK ###
 		-->
 		<!-- endfor  -->
-        </ul>
+		</table>
+        <!-- </ul> -->
       </div>
 
     </div>

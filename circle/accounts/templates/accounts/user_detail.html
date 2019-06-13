@@ -25,14 +25,6 @@
     </div>
 
     <div class="grid-70">
-	  {% if user.is_authenticated %}
-		{% if target_user.username == user.username %}
-		  <div class="circle--fluid--cell circle--fluid--secondary">
-			<a class="button icon-on-left" href="{% url 'accounts:edit' pk=user.id %}">Edit Your Profile</a>
-		  </div>
-		{% endif %}
-	  {% endif %}
-      <h1>{{ target_user.display_name }}</h1>
       <div class="circle--article--body">
 		{{ target_user.formatted_markdown|safe }}
       </div>
@@ -65,6 +57,14 @@
     </div>
 
     <div class="grid-25 grid-push-5">
+	  {% if user.is_authenticated %}
+		{% if target_user.username == user.username %}
+		  <div class="circle--fluid--cell circle--fluid--secondary">
+			<a class="button icon-on-left" style="float: left;" href="{% url 'accounts:edit' pk=user.id %}">Edit Profile</a>
+			<a class="button icon-on-left" href="{% url 'accounts:deactivate' pk=user.id %}" style="color: red; float: left;">Disable Account</a>
+		  </div>
+		{% endif %}
+	  {% endif %}
 
       <div class="circle--secondary--module">
         <div class="circle--primary--avatar">
@@ -97,13 +97,23 @@
 		{% else %}
         <h4>{{ target_user.username }}'s Projects</h4>
 		{% endif %}
-		{% if target_user.username == user.username %}
-		<a class="button icon-on-left">Update Project URLs</a>
-		{% endif %}
         <ul class="circle--link--list">
 		  <!-- Begin projects where current user is creator forloopblock. -->
   		  {% for project in target_user.projects.all %}
-          <li><a href="{% url 'projects:details' pk=project.id %}">{{ project.name }}</a></li>
+			  {% if project.active %}
+				<li>
+					<a href="{% url 'projects:details' pk=project.id %}">{{ project.name }}</a>
+					{% if target_user == user %}
+						<a href="{% url 'projects:update' pk=project.id %}">[Edit]</a>
+					{% endif %}
+				</li>
+			  {% else %}
+				{% if target_user == user %}
+					<li>
+						<a href="{% url 'projects:details' pk=project.id %}">Reactivate {{ project.name }}</a>
+					</li>
+				{% endif %}
+			  {% endif %}
 		  {% endfor %}
 		  <!-- End forloopblock. -->
         </ul>

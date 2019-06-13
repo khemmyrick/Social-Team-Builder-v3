@@ -11,5 +11,7 @@ urlpatterns = [
     path('<pk>/', views.user_detail_view, name='details'),
     path('<pk>/edit/', views.user_update_view, name='edit'),
     path('<pk>/skills', views.skills_update_view, name='edit_skills'),
-    path('<pk>/applications', views.applications_view, name='applications')
+    path('<pk>/applications', views.applications_view, name='applications'),
+    path('<pk>/deactivate', views.user_deactivate_view, name='deactivate'),
+    path('<pk>/deactivateconfirm', views.user_deactivate_confirm_view, name='deactivateconfirm'),    
 ]

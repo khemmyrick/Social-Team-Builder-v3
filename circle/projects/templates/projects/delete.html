@@ -1,14 +1,14 @@
 
 {% extends "layout.html" %}
 
-{% block title_tag %}Delete {% if project %}{{ project.name }}{% else %}{{ position.name }}{% endif %} | {{ block.super }}{% endblock %}
+{% block title_tag %}Suspend {% if project %}{{ project.name }}{% elif target_user %}{{ target_user.username }}{% else %}{{ position.name }}{% endif %} | {{ block.super }}{% endblock %}
 {% block body %}
-	<!-- DELETE CONFIRMATION -->
+	<!-- SUSPEND (deleting is too messy) CONFIRMATION TEMPLATE -->
   <div class="bounds">
     <div class="grid-30 centered">
       <h2>Are you sure?</h2>
-	  <p><strong>CAUTION:</strong> This will {% if project %}suspend {{ project.name }}{% else %}delete {{ position.name }}{% endif %} indefinitely.</p>
-	  <a class="button button-primary" href="{%if project%}{% url 'projects:suspendconfirm' pk=project.id %}{% else %}{% url 'projects:positiondeleteconfirm' pk=position.project.id pospk=position.id %}{% endif %}" style="color: red;"><strong>Confirm Action</strong></a>
+	  <p><strong>CAUTION:</strong> This will suspend{% if project %} {{ project.name }}{% elif target_user %} {{ target_user.username }}{% else %} {{ position.name }}{% endif %} indefinitely.</p>
+	  <a class="button button-primary" href="{%if project%}{% url 'projects:suspendconfirm' pk=project.id %}{% elif target_user %}{% url 'accounts:deactivateconfirm' pk=target_user.id %}{% else %}{% url 'projects:positionsuspendconfirm' pk=position.project.id pospk=position.id %}{% endif %}" style="color: red;"><strong>Confirm Action</strong></a>
 	  <p><a class="button button-primary" href="{% url 'home' %}">Cancel</a>
     </div>
   </div>

@@ -21,8 +21,8 @@ urlpatterns = [
     path('<pk>/apply', views.application_create_view, name='apply'),
     path('applicant/<pk>/hire', views.application_accept_view, name='hire'),
     path('applicant/<pk>/deny', views.application_deny_view, name='deny'),
-    path('<pk>/position/<pospk>/delete/', views.position_delete_view, name='positiondelete'),
-    path('<pk>/position/<pospk>/deleteconfirm', views.position_delete_confirm_view, name='positiondeleteconfirm'),
+    path('<pk>/position/<pospk>/suspend/', views.position_suspend_view, name='positionsuspend'),
+    path('<pk>/position/<pospk>/suspendconfirm', views.position_suspend_confirm_view, name='positionsuspendconfirm'),
 ]
 
 # project search might just be main project index page.
