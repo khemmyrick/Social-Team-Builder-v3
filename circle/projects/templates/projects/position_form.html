@@ -33,9 +33,17 @@
 			{{ form.description }}
 		  </div>
 		</div>
+
 		<div class="grid-25 grid-push-5">
+		  <h4>Position Timeline</h4>
+		  <div class="circle--fluid--cell">
+
+			{{ form.time }}
+		  </div>
+		  <hr>
+		  <h4>Desired Skills</h4>
 		  <div class="circle--fluid--cell circle--fluid--secondary">
-			<h4>Your Skills</h4>
+
 			{% for form in formset %}
 				<div class="skill-formset">
 					{{ form.name }}

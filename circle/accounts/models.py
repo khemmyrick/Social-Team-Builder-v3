@@ -9,7 +9,10 @@ from django.core.mail import send_mail
 
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
+
+from projects.models import Skill
 # Create your models here.
+
 
 def user_directory_path(instance, filename):
     # file will be uploaded to media/accounts/<id>/<filename>
@@ -46,27 +49,16 @@ class UserManager(BaseUserManager):
         return user
 
 
-class Skill(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-
-    def __str__(self):
-        return "{} skill".format(self.name)
-    # users = models.ManyToManyField(User, blank=True)
-    # skill.users = queuryset of all users with this skill.
-
-
 class User(AbstractBaseUser, PermissionsMixin):
     # Yes, PermissionsMixin comes 2nd in the docs, so that's how we do it.
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=40, unique=True)
     display_name = models.CharField(max_length=140, blank=True)
-    # bio = models.CharField(max_length=999999999999999, blank=True, default="")
     bio = MarkdownxField()
     avatar = models.ImageField(blank=True, null=True,
                                upload_to=user_directory_path)
     # avatars upload to media/accounts/<user.id>/
     skills = models.ManyToManyField(Skill, related_name='users', blank=True)
-    # skill_list = models.CharField(max_length=10000)
     date_joined = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -85,16 +77,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     # outside of the entry passed to USERNAME_FIELD (email) and password.
 
     def __str__(self):
+        if self.display_name:
+            return self.display_name
         return self.username
-
-    def get_short_name(self):
-        return self.display_name
-
-    def get_long_name(self):
-        return "{} (aka {})".format(self.display_name, self.username)
-
-    # def get_skill_list(self):
-    #    return self.skill_list.split(",")
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         '''

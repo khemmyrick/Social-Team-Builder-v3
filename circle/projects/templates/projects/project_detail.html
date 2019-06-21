@@ -32,59 +32,45 @@
         <h2>Positions</h2>
 		<table class="circle--table" style="border: 1px solid black;">
 		<!--<caption>Positions</caption>-->
-			<tr><th style="border: 1px solid #dddddd; text-align: center;"><h3>Title</h3></th><th style="border: 1px solid #dddddd; text-align: center;"><h3>Description</h3></th><th style="border: 1px solid #dddddd; text-align: center;"><h3>Skills</h3></th><th style="border: 1px solid #dddddd; text-align: center;"><h3>Options</h3></th>
+			<tr>
+				<th style="border: 1px solid #dddddd; text-align: center;"><h3>Title</h3></th>
+				<th style="border: 1px solid #dddddd; text-align: center;"><h3>Desired Skills</h3></th>
+				<th style="border: 1px solid #dddddd; text-align: center;"><h3>Availability</h3></th>
 			</tr>
         <!-- <ul class="circle--group--list"> -->
-
 		<!-- 
 		Use Django forloop to LIST Position titles and brief descriptions of positions. -->
 			{% for position in project.positions.all%}
-			<!-- <li> -->
-				<tr><!-- <h3> --><td width="15%" style="border: 1px solid #dddddd;">{{ position.name }}</td> <!-- </h3> -->
-				<!-- <p> --><td width="25%" style="border: 1px solid #dddddd;">{{ position.description|truncatewords:10 }}</td><!-- </p> -->
-				<!-- Skills Required -->
-				<!-- <h4>Skills Desired:</h4>-->
-					<td style="border: 1px solid #dddddd;">
-					<ul style="list-style:none!important;">
-						{% for skill in position.skills.all %}
-						<li style="text-align: center;">{{ skill.name }}</li>
-						{% endfor %}
-						</ul>
-					</td>
-					<td style="border: 1px solid #dddddd;">
-						{% if project.creator == user %}
-						<a href="{% url 'projects:changeposition' pk=position.project.id pospk=position.id %}" class="button">Edit</a>
-						<a href="{% url 'projects:positionsuspend' pk=position.project.id pospk=position.id %}" style="color: #FF0000;">Suspend?</a>
-						{% elif position.user == user %}
-						<a class="button button-primary button-inactive">Yours</a>
+				<tr class="clickable-row" data-href="{% url 'projects:positiondetails' pk=position.project.id pospk=position.id %}">
+				<td style="border: 1px solid #dddddd;">{{ position.name }}</td> <!-- </h3> -->
+					<td width="45%" style="border: 1px solid #dddddd;">- {% for skill in position.skills.all %}{{ skill.name }} -{% endfor %}</td>
+					<td width="15%" style="border: 1px solid #dddddd;">
+						{% if position.user == user %}
+							The position is yours.
 						{% elif position.filled %}
-						<a class="button button-primary button-inactive">Unavailable</a>
-						{% elif applicants %}<!-- This should be checking if user has an application for this. -->
+							Closed.
+						{% elif applicants %}<!-- This checks if user has any applications for THIS project. -->
 							{% for applicant in applicants %}
 								{% if applicant.position == position %}
 									{% if applicant.status == 'u' %}
 										<!-- 'u' is for undecided.  'r' is for rejected... -->
-										<a class="button button-primary button-inactive">In Progress</a>
+										Your application is processing.
 									{% else %}
-										<a class="button button-primary button-inactive">Unavailable</a>
+										Closed.
 									{% endif %}
+								{% else %}
+									Open.
 								{% endif %}
 							{% endfor %}
 						{% elif user.is_authenticated %}
-						<a href="{% url 'projects:apply' pk=position.id %}" class="button button-primary">Apply</a>
+							Open.
 						{% else %}
-						<a class="button button-primary" href="{% url 'accounts:login' %}">Sign In to apply.</a>
+							Sign In for more options.
 						{% endif %}
 					</td>
 				</tr>
-			<!--</li>-->
 			{% endfor %}
-		<!-- 
-		####ADD LINK FOR APPLY BUTTON IN ELSE BLOCK ###
-		-->
-		<!-- endfor  -->
 		</table>
-        <!-- </ul> -->
       </div>
 
     </div>
@@ -100,7 +86,9 @@
           {% endfor %}
         </ul>
 		<!-- If user is signed in and is owner -->
-		<a class="button button-primary" href="{% url 'projects:newposition' pk=project.id %}">Add Position</a>
+		{% if user == project.creator %}
+			<a class="button button-primary" href="{% url 'projects:newposition' pk=project.id %}">Add Position</a>
+		{% endif %}
 		<!-- -->
       </div>
 

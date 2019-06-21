@@ -79,9 +79,6 @@
 
       <div class="circle--secondary--module">
         <h4>Skill Set</h4>
-		{% if target_user.username == user.username %}
-		<a class="button icon-on-left" href="{% url 'accounts:edit_skills' pk=user.id %}">Edit Skill Set</a>
-		{% endif %}
         <ul class="unloaded">
 		  <!-- Begin skills forloopblock here. -->
 		  {% for skill in target_user.skills.all %}

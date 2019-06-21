@@ -12,10 +12,11 @@ PROJ_DIR = path.dirname(BASE_DIR)
 
 sys.path.insert(0, PROJ_DIR)
 
+
 def load_data():
     # Load models?
-    from accounts import models as acct_models
-    from projects import models as proj_models
+    from accounts.models import User
+    from projects.models import Project, Position, Skill
 
     # Load User Serializer.
     try:
@@ -43,11 +44,11 @@ def load_data():
             print(serializer.errors)
             print('load_data unsuccessful.')
         # Users generated. Passwords unhashed.
-        # Has passwords before moving on. . . 
+        # Has passwords before moving on.
         usernames = []
         for item in data:
             usernames.append(item['username'])
-        all_users = acct_models.User.objects.all()
+        all_users = User.objects.all()
         for user in all_users:
             if user.username in usernames:
                 user.set_password(user.password)
@@ -55,7 +56,7 @@ def load_data():
 
     # Load Skill Serializer.
     try:
-        from accounts.serializers import SkillSerializer
+        from projects.serializers import SkillSerializer
     except ImportError:
         raise ImportError(
             'serializers.py must contain a properly '
@@ -80,45 +81,45 @@ def load_data():
             print('load_data unsuccessful.')
 
     # Add skills to users.
-    connie = acct_models.User.objects.get(username="ConnieRolek")
+    connie = User.objects.get(username="ConnieRolek")
     print("Arming Connie.")
     connie.save()
-    djangoskill = acct_models.Skill.objects.get(name="Django")
-    pyskill = acct_models.Skill.objects.get(name="Python")
-    htmlskill = acct_models.Skill.objects.get(name="HTML")
-    cssskill = acct_models.Skill.objects.get(name="CSS")
-    javaskill = acct_models.Skill.objects.get(name="JavaScript")
+    djangoskill = Skill.objects.get(name="Django")
+    pyskill = Skill.objects.get(name="Python")
+    htmlskill = Skill.objects.get(name="HTML")
+    cssskill = Skill.objects.get(name="CSS")
+    javaskill = Skill.objects.get(name="JavaScript")
     connie.skills.add(djangoskill, pyskill, htmlskill, cssskill, javaskill)
     connie.save()
 
-    perry = acct_models.User.objects.get(username="PerryKinder")
+    perry = User.objects.get(username="PerryKinder")
     print("Arming Perry.")
     perry.save()
-    sqlskill = acct_models.Skill.objects.get(name="SQL")
+    sqlskill = Skill.objects.get(name="SQL")
     perry.skills.add(djangoskill, pyskill, sqlskill)
-    perry.save()    
+    perry.save()
 
-    garnet = acct_models.User.objects.get(username="GarnetDarling")
+    garnet = User.objects.get(username="GarnetDarling")
     print("Arming Garnet.")
-    cpp = acct_models.Skill.objects.get(name="C++")
-    java = acct_models.Skill.objects.get(name="Java")
-    xcode = acct_models.Skill.objects.get(name="Xcode")
-    obj_c = acct_models.Skill.objects.get(name="Objective-C")
+    cpp = Skill.objects.get(name="C++")
+    java = Skill.objects.get(name="Java")
+    xcode = Skill.objects.get(name="Xcode")
+    obj_c = Skill.objects.get(name="Objective-C")
     garnet.skills.add(cpp, java, xcode, obj_c)
     garnet.save()
 
-    amy = acct_models.User.objects.get(username="AmyDietz")
+    amy = User.objects.get(username="AmyDietz")
     print("Arming Amy")
     amy.save()
-    jqskill = acct_models.Skill.objects.get(name="jQuery")
+    jqskill = Skill.objects.get(name="jQuery")
     amy.skills.add(jqskill, htmlskill, xcode, sqlskill)
     amy.save()
 
-    bob = acct_models.User.objects.get(username="RobertLazuli")
+    bob = User.objects.get(username="RobertLazuli")
     print("Arming Bob")
     bob.save()
-    flaskskill = acct_models.Skill.objects.get(name="Flask")
-    phpskill = acct_models.Skill.objects.get(name="PHP")
+    flaskskill = Skill.objects.get(name="Flask")
+    phpskill = Skill.objects.get(name="PHP")
     bob.skills.add(phpskill, flaskskill, pyskill, sqlskill)
     bob.save()
 
@@ -138,11 +139,11 @@ def load_data():
         itera = 1
         for item in data:
             print(str(itera) + ': ' + item['name'])
-            item['creator'] = acct_models.User.objects.get(
+            item['creator'] = User.objects.get(
                 username=item['creator']
             ).id
             print('Created by {}.'.format(
-                acct_models.User.objects.get(
+                User.objects.get(
                     id=item['creator']
                 ).display_name)
             )
@@ -177,16 +178,16 @@ def load_data():
                 item['filled'] = True
             else:
                 item['filled'] = False
-            item['project'] = proj_models.Project.objects.get(
+            item['project'] = Project.objects.get(
                 name=item['project']
             ).id
 
             itera += 1
             # try:
-            #    item['user'] = acct_models.User.objects.get(
+            #    item['user'] = User.objects.get(
             #        username=item['user']
             #    ).id
-            # except acct_models.User.DoesNotExist:
+            # except User.DoesNotExist:
             #    item['user'] = None
             #    print('Attempting to assign unfilled position.')
             # Copy skills logic on position model from user model.
@@ -198,9 +199,9 @@ def load_data():
         else:
             print(serializer.errors)
             print('load_data unsuccessful.')
-        
+
     # Add skills/users to positions.
-    fsds = proj_models.Position.objects.filter(
+    fsds = Position.objects.filter(
         project__name="Socializer"
     ).get(
         name="Full Stack Django Specialist"
@@ -210,13 +211,13 @@ def load_data():
     fsds.skills.add(djangoskill, pyskill, htmlskill, cssskill, javaskill)
     fsds.user = connie
     fsds.save()
-    beds = proj_models.Position.objects.get(name="Backend Django Specialist")
+    beds = Position.objects.get(name="Backend Django Specialist")
     print("Getting Backend Django Specialist.")
     beds.save()
     beds.skills.add(djangoskill, pyskill, sqlskill)
     beds.user = perry
     beds.save()
-    feds = proj_models.Position.objects.get(name="Frontend Django Specialist")
+    feds = Position.objects.get(name="Frontend Django Specialist")
     print("Getting Front End Django Specialist.")
     feds.save()
     feds.skills.add(htmlskill, cssskill, javaskill)
@@ -231,16 +232,16 @@ def load_data():
         )
 
     filepath = path.join(PROJ_DIR, 'assets', 'applicant_details.json')
-    
+
     with open(filepath, 'r', encoding='utf-8') as file:
         data = json.load(file)
         itera = 1
         for item in data:
             print(str(itera) + ' Applicant: ' + item['user'])
-            item['user'] = acct_models.User.objects.get(
+            item['user'] = User.objects.get(
                 username=item['user']
             ).id
-            item['position'] = proj_models.Position.objects.get(
+            item['position'] = Position.objects.get(
                 name=item['position']
             ).id
             # if item['status'] == 'True':

@@ -1,12 +1,11 @@
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
 
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
 
-from accounts.models import Skill
+# from accounts.models import Skill
 
 
 class Project(models.Model):
@@ -17,7 +16,6 @@ class Project(models.Model):
     url = models.URLField(max_length=255, blank=True)
     # max_length of CharField classes cannot exceed 255 in certain cases.
     description = MarkdownxField()
-    # max_length of TextField CAN exceed 255.
     creator = models.ForeignKey(settings.AUTH_USER_MODEL,
                                 related_name="projects",
                                 on_delete=models.PROTECT)
@@ -35,6 +33,15 @@ class Project(models.Model):
         return markdownify(self.description)
 
 
+class Skill(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return "{} skill".format(self.name)
+    # skill.users = queuryset of all users with this skill.
+    # skill.positions = queryset of all positions with this skill.
+
+
 class Position(models.Model):
     '''As a user of the site, I should be able to specify
     the positions my project needs help in with a name,
@@ -44,7 +51,7 @@ class Position(models.Model):
     # Multiple projects should be able to have positions with identical names.
     # A single project should be able to have positions with identical names.
     # Editing a position should NOT spawn a duplicate.
-    description = models.TextField(max_length=500, blank=True)
+    description = MarkdownxField()
     filled = models.BooleanField(default=False)
     project = models.ForeignKey(Project,
                                 related_name="positions",
@@ -66,6 +73,10 @@ class Position(models.Model):
     def __str__(self):
         return "{} for {}.".format(self.name, self.project.name)
 
+    @property
+    def formatted_markdown(self):
+        return markdownify(self.description)
+
 
 class Applicant(models.Model):
     """
@@ -77,7 +88,7 @@ class Applicant(models.Model):
         status: bool indicating that the user hasn't been rejected/accepted.
         applied: time this object was created.
     """
-    # Revisit on_delete options later.
+    # Revisit on_delete options later?
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE,
                              related_name='applicants')
@@ -86,7 +97,8 @@ class Applicant(models.Model):
                                  related_name='applicants')
     applied = models.DateTimeField(default=timezone.now)
     status = models.CharField(default='u', max_length=10)
-    # status should be CHAR Field.  'a' = approved. 'r' = rejected. 'u' = processing.
+    # status args: 'a' = approved. 'r' = rejected. 'u' = processing.
+
     def __str__(self):
         if self.status is 'u':
             return "USER {} being considered for {}.".format(

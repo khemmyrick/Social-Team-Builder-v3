@@ -29,12 +29,22 @@
       <div class="circle--filter circle--secondary--module">
         <h4>Project Needs</h4>
         <ul class="circle--filter--list">
-          <li><a class="selected" href="{% url 'home' %}">All Needs</a></li>
+          <li><a {% if term %}href="{% url 'home' %}" {% else %}class="selected"{% endif %}>All Needs</a></li>
 		  {% for pname in p_names %}
-		  <li><a href="{% url 'projects:searchname' term=pname %}">{{ pname }}</a></li>
+		  <li><a {% if term == pname %}class="selected"{% else %}href="{% url 'projects:searchname' term=pname %}"{% endif %}>{{ pname }}</a></li>
 		  {% endfor %}
         </ul>
       </div>
+	  {% if user.is_authenticated %}
+	  <hr>
+      <div class="circle--filter circle--secondary--module">
+        <h4>Filter By Skills Listed</h4>
+		<ul class="circle--filter--list">
+			<li><a {% if showall %}class="selected"{% else %}href="{% url 'projects:searchall' showall=1 %}"{% endif %}>Show All Positions</a></li>
+			<li><a {% if showall %}href="{% url 'home' %}"{% else %}class="selected"{% endif %}>Show Best Matches</a></li>
+		</ul>
+	  </div>
+	  {% endif %}
     </div>
 
     <div class="grid-70 grid-push-5">
@@ -42,25 +52,46 @@
         <thead>
           <tr>
             <th>Project Title</th>
-			<th>Project Creator</th>
             <th class="circle--cell--right">Project Needs</th>
+			<th class="circle--cell--right">Skillset Compatibility</th>
           </tr>
         </thead>
         <tbody>
+		{% if showall %}
 		  {% for position in positions %}
-		  {% if position.project.active %}
-          <tr class="clickable-row" data-href="{% url 'projects:details' pk=position.project.id %}">
-            <td>
-              <h3>{{ position.project.name }}</h3>
-            </td>
-			<td><span class="secondary-label">{{ position.project.creator.display_name }}</span>
-			</td>
-            <td class="circle--cell--right">
-              <span class="secondary-label">{{ position.name }}</span>
-            </td>
-          </tr>
-		  {% endif %}
+			  {% if position.project.active %}
+			  <tr class="clickable-row" data-href="{% url 'projects:details' pk=position.project.id %}">
+				<td>
+				  <h3>{{ position.project.name }}</h3>
+				</td>
+				<td class="circle--cell--right">
+				  <span class="secondary-label">{{ position.name }}</span>
+				</td>
+				<td class="circle--cell--right">
+					{% if position.id in dslist %}<a class="button">Your skillset <strong>IS</strong> a match!</a>{% else %}Your skillset isn't a match.{% endif %}
+				</td>
+			  </tr>
+			  {% endif %}
 		  {% endfor %}
+		{% else %}
+		  {% for position in positions %}
+			  {% if position.project.active %}
+			    {% if position.id in dslist %}
+				  <tr class="clickable-row" data-href="{% url 'projects:details' pk=position.project.id %}">
+					<td>
+					  <h3>{{ position.project.name }}</h3>
+					</td>
+					<td class="circle--cell--right">
+					  <span class="secondary-label">{{ position.name }}</span>
+					</td>
+					<td class="circle--cell--right">
+						<a class="button">Your skillset <strong>IS</strong> a match!</a>
+					</td>
+				  </tr>
+			    {% endif %}
+			  {% endif %}
+		  {% endfor %}
+		{% endif %}
         </tbody>
       </table>
 

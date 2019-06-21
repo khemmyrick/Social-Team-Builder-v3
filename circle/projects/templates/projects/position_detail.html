@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block title_tag %}{{ position.name }} | {{ block.super }}{% endblock %}
+{% block body %}
+{% if user == position.project.creator %}
+  <div class="circle--actions--bar">
+    <div class="bounds">
+      <div class="grid-100">
+        <a class="button" href="{% url 'projects:changeposition' pk=position.project.id pospk=position.id %}">Edit Position</a>
+        <!-- Suspending a project should suspend its positions. -->
+      </div>
+    </div>
+  </div>
+{% endif %}
+  <div class="bounds circle--page circle--article">
+    <div class="grid-70">
+      <div class="circle--article--header">
+        <h4 class="circle--article--section">Position</h4>
+        <h1 class="circle--article--title">{{ position.name }}</h1>
+        <p class="circle--article--byline">Project: <a href="{% url 'projects:details' pk=position.project.id %}">{{ position.project.name }} </a></p>
+      </div>
+
+      <div class="circle--article--body">
+		{{ position.formatted_markdown|safe }}
+      </div>
+		{% if position.project.creator == user %}
+			<!-- Hide button.  Edit button for creator at top of page. -->
+		{% elif position.user == user %}
+				<a class="button button-primary button-inactive">You have this position.</a>
+		{% elif position.filled %}
+			<a class="button button-primary button-inactive">Unavailable</a>
+		{% elif applicants %}<!-- This should be checking if user has an application for this. -->
+			{% for applicant in applicants %}
+				{% if applicant.position == position %}
+					{% if applicant.status == 'u' %}
+						<!-- 'u' is for undecided.  'r' is for rejected... -->
+						<a class="button button-primary button-inactive">In Progress</a>
+					{% else %}
+						<a class="button button-primary button-inactive">Unavailable</a>
+						<!-- If applicant status is 'a', position.user should be user, which is further up. -->
+					{% endif %}
+				{% endif %}
+			{% endfor %}
+		{% elif user.is_authenticated %}
+			<a href="{% url 'projects:apply' pk=position.id %}" class="button button-primary">Apply</a>
+		{% else %}
+			<a class="button button-primary" href="{% url 'accounts:login' %}">Sign In to apply.</a>
+		{% endif %}
+    </div>
+
+    <div class="grid-25 grid-push-5">
+      <div class="circle--secondary--module">
+        <h3>Position Timeline</h3>
+        <p>{{ position.time }}</p>
+      </div>
+
+      <div class="circle--secondary--module">
+        <h3>Desired Skills:</h3>
+		<p>- 
+			{% for skill in position.skills.all %}
+				{{ skill.name }} -
+			{% endfor %}
+		</p>
+      </div>
+
+    </div>
+  </div>
+
+{% endblock %}

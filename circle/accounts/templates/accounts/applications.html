@@ -26,24 +26,24 @@
       <div class="circle--filter circle--secondary--module">
         <h4>Status</h4>
         <ul class="circle--filter--list">
-          <li><a class="selected">All Applications</a></li>
-          <li><a>New Applications</a></li>
-          <li><a>Accepted</a></li>
-          <li><a>Rejected</a></li>
+          <li><a {% if term %}href="{% url 'accounts:applications' pk=user.id %}"{% else %}class="selected"{% endif %}>All Applications</a></li>
+          <li><a {% if term == 'u' %}class="selected"{% else %}href="{% url 'accounts:applicationsstatus' pk=user.id term='u' %}"{% endif %}>New Applications</a></li>
+          <li><a {% if term == 'a' %}class="selected"{% else %}href="{% url 'accounts:applicationsstatus' pk=user.id term='a' %}"{% endif %}>Accepted</a></li>
+          <li><a {% if term == 'r' %}class="selected"{% else %}href="{% url 'accounts:applicationsstatus' pk=user.id term='r' %}"{% endif %}>Rejected</a></li>
         </ul>
       </div>
 
       <div class="circle--filter circle--secondary--module">
         <h4>My Projects</h4>
         <ul class="circle--filter--list">
-          <li><a class="selected">All Projects</a></li>
+          <li><a {% if term %}href="{% url 'accounts:applications' pk=user.id %}"{% else %}class="selected"{% endif %}>All Projects</a></li>
 		  <!-- forloop of projects to modify list -->
 		  <!--
 		  Link takes project as context to reload current page.
 		  -->
 		  {% for project in user.projects.all %}
 			  {% if project.active %}
-				<li><a>{{ project.name }}</a></li>
+				<li><a {% if term == project.name %}class="selected"{% else %}href="{% url 'accounts:applicationsproject' pk=user.id term=project.name %}{% endif %}">{{ project.name }}</a></li>
 			  {% else %}
 				<li>{{ project.name }} [Inactive]</li>
 			  {% endif %}
@@ -59,7 +59,7 @@
 		  Include django forloop list of Positions here.
 		  List should include all positions in all projects User has created.
 		  -->
-          <li><a class="selected">All Needs</a></li>
+          <li><a {% if term %}href="{% url 'accounts:applications' pk=user.id %}"{% else %}class="selected"{% endif %}>All Needs</a></li>
 		  <!-- forloop of positions needed across projects -->
 		  <!-- 
 		  View will consolodate all repeat positions.
@@ -69,12 +69,9 @@
 		  {% for position in positions %}
 			  {% if position.active %}
 				  {% if position.project.active %}
-					  {% if position.filled %}
-					  {% else %}
-						  <!-- Only show if position not filled, position and project active... -->
-						  <li><a>{{ position.name }}</a></li>
-					  {% else %}
-				  {% else %}
+						  <!-- Only show if position and project active... -->
+						  <li><a {% if term == position.name %}class="selected"{% else %}href="{% url 'accounts:applicationsposition' pk=user.id term=position.name %}"{% endif %}>{{ position.name }}</a></li>
+			      {% endif %}
 			  {% endif %}
 		  <!-- Link should clarify context. -->
 		  {% endfor %}
@@ -91,7 +88,7 @@
             <th><h4>Applicant</h4><br><h4>Project</h4></th>
 			<th><h4>Position<h4></th>
             <th><h4>Applied</h4></th>
-            <th class="circle--cell--right"><h4>Status</h4></th>
+            <th class="circle--cell--right"><h4>Option/Status</h4></th>
           </tr>
         </thead>
         <tbody>
