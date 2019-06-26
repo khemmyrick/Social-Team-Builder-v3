@@ -66,11 +66,15 @@
 
       <div class="circle--secondary--module">
         <h3>Desired Skills:</h3>
+		{% if position.skills.all %}
 		<p>- 
 			{% for skill in position.skills.all %}
 				{{ skill.name }} -
 			{% endfor %}
 		</p>
+		{% else %}
+		<p>Yours?</p>
+		{% endif %}
       </div>
 
     </div>

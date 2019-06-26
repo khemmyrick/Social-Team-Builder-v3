@@ -53,7 +53,7 @@
 			{% for position in project.positions.all%}
 				<tr class="clickable-row" data-href="{% url 'projects:positiondetails' pk=position.project.id pospk=position.id %}">
 				<td style="border: 1px solid #dddddd;">{{ position.name }}</td> <!-- </h3> -->
-					<td width="45%" style="border: 1px solid #dddddd;">- {% for skill in position.skills.all %}{{ skill.name }} -{% endfor %}</td>
+					<td width="45%" style="border: 1px solid #dddddd;">{% if position.skills.all %}- {% for skill in position.skills.all %}{{ skill.name }} - {% endfor %}{% else %}Yours?{% endif %}</td>
 					<td width="15%" style="border: 1px solid #dddddd;">
 						{% if position.user == user %}
 							The position is yours.
