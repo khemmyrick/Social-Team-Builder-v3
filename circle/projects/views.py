@@ -242,7 +242,7 @@ def project_suspend_view(request, pk):
     If session user is project creator,
     get confirmation for project suspension.
     Else, redirect to homepage and do nothing.
-    
+
     pk: Project's id.
     """
     project = Project.objects.get(id=pk)
@@ -379,7 +379,7 @@ def position_list_view(request, showall=None):
     p_names = [position.name for position in positions]
     p_names = set(p_names)
     p_names = list(p_names)
-    if user.is_authenticated == False:
+    if not user.is_authenticated:
         showall = '1'
     if showall:
         pass

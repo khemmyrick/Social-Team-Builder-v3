@@ -13,7 +13,7 @@ from django.views import generic
 from . import forms
 from projects import forms as pforms
 from accounts.models import User
-from projects.models import Project, Position, Applicant, Skill
+from projects.models import Project, Applicant, Skill
 from projects.utils import identify
 
 
@@ -100,7 +100,7 @@ def user_update_view(request, pk):
 def user_detail_view(request, pk):
     """
     View target user's account details.
-    
+
     pk: Target user's id.
     """
     user = request.user
@@ -128,7 +128,7 @@ def user_deactivate_view(request, pk):
     If session user is target user,
     get confirmation for account deactivation.
     Else, redirect to homepage and do nothing.
-    
+
     pk: User's id.
     """
     target_user = User.objects.get(id=pk)
@@ -187,7 +187,7 @@ class LogOutView(generic.RedirectView):
 def applications_view_byproject(request, pk, term):
     """
     Filter applicants by project.
-    
+
     pk: Session user's id.
     term: Name of the project.
     """
@@ -342,11 +342,6 @@ def avatar_update_view(request, pk):
     user = User.objects.get(id=pk)
     if identify(request, user):
         return HttpResponseRedirect(reverse('home'))
-    user_data = {
-        'display_name': user.display_name,
-        'avatar': user.avatar
-    }
-    avatar = user.avatar
     if request.method == 'POST':
         form = forms.PhotoForm(request.POST, request.FILES)
         if form.is_valid():
