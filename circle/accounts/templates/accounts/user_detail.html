@@ -1,7 +1,8 @@
 {% extends "layout.html" %}
 
 {% block title_tag %}{{ target_user.username }} Details | {{ block.super }}{% endblock %}
-{% block body %}{% if user.is_authenticated %}
+{% block body %}
+  {% if user.is_authenticated %}
   <div class="circle--actions--bar">
     <nav class="bounds">
       <ul class="circle--pill--list">
@@ -11,7 +12,6 @@
     </nav>
   </div>
   {% endif %}
-
   <div class="bounds circle--page">
     <div class="circle--page--header circle--fluid">
       <div class="circle--fluid--cell circle--fluid--primary">
@@ -21,7 +21,6 @@
         <h2>{{ target_user.username}}'s Profile</h2>
 	  {% endif %}
       </div>
-	  <!-- REMINDER: is_authenticated == signed in.  "authenticated" means the system knows who this specific user is RN  -->
     </div>
 
     <div class="grid-70">
@@ -38,8 +37,6 @@
           </tr>
         </thead>
         <tbody>
-		  <!-- Iterate through projects queryset here.  -->
-
 		  {% for position in target_user.positions.all %}
           <tr class="clickable-row" data-href="{% url 'projects:details' pk=position.project.id %}">
             <td>
@@ -50,8 +47,6 @@
             </td>
           </tr>
           {% endfor %}
-
-		  <!-- End Past Project loopblock here. -->
         </tbody>
       </table>
     </div>
@@ -72,9 +67,18 @@
 		  <img src="{{ target_user.avatar.url }}" alt="{{ target_user.display_name }}" width="200" height="200">
 		  {% else %}
 		  <img src="{{MEDIA_URL}}/media/avatars/default.png" alt="{{ target_user.display_name }}" width="200" height="200"/>
-		  <!-- Default Avatar -->
 		{% endif %}
         </div>
+		{% comment %}
+		<!-- EDIT PHOTO BUTTON -->
+		{% if target_user.avatar %}
+			{% if user.is_authenticated %}
+				{% if target_user.username == user.username %}
+				  <div><a class="circle--primary--avatar button" href="{% url 'accounts:photo' pk=user.id %}">EDIT YOUR PHOTO</a></div>
+				{% endif %}
+			{% endif %}
+		{% endif %}
+		{% endcomment %}
       </div>
 
       <div class="circle--secondary--module">

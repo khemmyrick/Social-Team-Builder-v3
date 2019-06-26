@@ -6,10 +6,9 @@
     <nav class="bounds">
       <ul class="circle--pill--list">
         <li><a href="{% url 'accounts:applications' pk=user.id %}">Applications</a></li>
-        <li><a class="selected" href="{% url 'accounts:details' pk=user.id %}">Profile</a></li>
+        <li><a href="{% url 'accounts:details' pk=user.id %}">Profile</a></li>
       </ul>
     </nav>
-
   </div>
   <form method="POST" enctype="multipart/form-data" action="{% url 'projects:new' %}" id="project">
     {% csrf_token %}

@@ -1,10 +1,12 @@
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
+from django.template.response import TemplateResponse
 from django.utils import timezone
 
 from accounts import models as amodels
 from projects import forms
 from projects import models as pmodels
 from projects import serializers
+from projects import views
 
 # May have to import User from settings...?
 # May have to doublecheck syntax for import from accounts app.
@@ -12,7 +14,10 @@ from projects import serializers
 
 # Circle Projects Tests
 class ModelSetUp(object):
+    """Preset objects for model tests."""
     def setUp(self):
+        self.factory = RequestFactory()
+    
         # 1. Account Models
         # User Models
         self.user1 = amodels.User(
@@ -78,8 +83,8 @@ class ModelSetUp(object):
         # With no name default should either be "Project 1" or "Project 0".
         self.proj1 = pmodels.Project(
             name='Project 1',
-            description='Project1 Description',
-            creator=self.user1,
+            description='## Project1 Description',
+            creator=self.user2,
             requirements='req1'
         )
         self.proj1.save()
@@ -113,13 +118,9 @@ class ModelSetUp(object):
         self.appl1 = pmodels.Applicant(
             user=self.user1,
             position=self.posi1,
-            status=True
+            status='a'
         )
         self.appl1.save()
-
-
-class ViewSetUp(object):
-    pass
 
 
 class ProjectModelTests(ModelSetUp, TestCase):
@@ -129,7 +130,7 @@ class ProjectModelTests(ModelSetUp, TestCase):
         self.assertEqual(self.appl1.user, self.user1)
         self.assertEqual(self.appl1.position, self.posi1)
         self.assertLessEqual(self.appl1.applied, timezone.now())
-        self.assertEqual(self.appl1.status, True)
+        self.assertEqual(self.appl1.status, 'a')
 
     def test_position_creation(self):
         self.assertEqual(self.posi1.name, 'Job1')
@@ -141,10 +142,11 @@ class ProjectModelTests(ModelSetUp, TestCase):
     def test_project_creation(self):
         self.assertEqual(self.proj1.name, 'Project 1')
         self.assertNotEqual(self.proj1.name, self.proj2.name)
-        self.assertEqual(self.proj1.creator.username, 'User1')
+        self.assertEqual(self.proj1.creator.username, 'User2')
 
 
 class ProjectSerializersTests(ModelSetUp, TestCase):
+    """Project serializer tests."""
     # CURRENTLY OK!
     def test_project_serializer(self):
         project_serializer = serializers.ProjectSerializer(
@@ -204,6 +206,7 @@ class ProjectSerializersTests(ModelSetUp, TestCase):
 
 
 class ProjectFormTests(TestCase):
+    """Project form tests."""
     def test_skill_form(self):
         form_data = {'name': 'name'}
         form = forms.SkillForm(data=form_data)
@@ -244,5 +247,40 @@ class ProjectFormTests(TestCase):
         pass
 
 
-class ProjectViewTests(ViewSetUp, ModelSetUp, TestCase):
-    pass
+class ProjectViewTests(ModelSetUp, TestCase):
+    """Project view tests."""
+    def test_project_detail_view(self):
+        request = self.factory.get('v3/projects/1/')
+        request.user = self.user1
+        response = views.project_detail_view(request, 1)
+        # Response from server to client.
+        self.assertEqual(response.status_code, 200)
+        context = {
+            'project': self.proj1,
+            'applicants': [self.appl1]
+        }
+        template_response = TemplateResponse(
+            request,
+            'projects/project_detail.html',
+            context)
+        template_response.render()
+        # Response rendered from actual template.
+        self.assertIn('<h2>Project1 Description</h2>', str(template_response.content))
+
+    def test_position_detail_view(self):
+        request = self.factory.get('v3/projects/1/position/1')
+        request.user = self.user2
+        response = views.position_detail_view(request, 1, 1)
+        self.assertEqual(response.status_code, 200)
+        applicants = request.user.applicants.filter(position=self.posi1)
+        context = {
+            'position': self.posi1,
+            'applicants': applicants
+        }
+        template_response = TemplateResponse(
+            request,
+            'projects/position_detail.html',
+            context
+        )
+        template_response.render()
+        self.assertIn('Job1desc', str(template_response.content))

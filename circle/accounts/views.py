@@ -20,6 +20,12 @@ from projects.utils import identify
 # Create your views here.
 @login_required
 def user_update_view(request, pk):
+    """
+    If session user is target user, update account details.
+    Else, redirect to home page.
+
+    pk: Target user's id.
+    """
     user = User.objects.get(id=pk)
     if identify(request, user):
         return HttpResponseRedirect(reverse('home'))
@@ -93,10 +99,16 @@ def user_update_view(request, pk):
 
 def user_detail_view(request, pk):
     """
-    Allows a user to update their own user.
+    View target user's account details.
+    
+    pk: Target user's id.
     """
     user = request.user
     target_user = User.objects.get(id=pk)
+    if not request.user.is_authenticated:
+        if not target_user.is_active:
+            return redirect('accounts:reactivate', pk=pk)
+
     user_skills = user.skills.order_by('name')
     skill_data = [{'name': skill}
                   for skill in user_skills]
@@ -112,7 +124,13 @@ def user_detail_view(request, pk):
 
 @login_required
 def user_deactivate_view(request, pk):
-    """Allows a user to deactivate their account."""
+    """
+    If session user is target user,
+    get confirmation for account deactivation.
+    Else, redirect to homepage and do nothing.
+    
+    pk: User's id.
+    """
     target_user = User.objects.get(id=pk)
     if identify(request, target_user):
         return HttpResponseRedirect(reverse('home'))
@@ -125,7 +143,12 @@ def user_deactivate_view(request, pk):
 
 @login_required
 def user_deactivate_confirm_view(request, pk):
-    """Confirm user account deactivation."""
+    """
+    If session user is target user, deactivate account.
+    Else, redirect to home page and do nothing.
+
+    pk: User's id.
+    """
     target_user = User.objects.get(id=pk)
     if identify(request, target_user):
         return HttpResponseRedirect(reverse('home'))
@@ -136,6 +159,7 @@ def user_deactivate_confirm_view(request, pk):
 
 
 class LogInView(generic.FormView):
+    """Log in a session user."""
     form_class = AuthenticationForm
     success_url = reverse_lazy("home")
     template_name = "accounts/signin.html"
@@ -151,6 +175,7 @@ class LogInView(generic.FormView):
 
 
 class LogOutView(generic.RedirectView):
+    """Logout a session user."""
     url = reverse_lazy('home')
 
     def get(self, request, *args, **kwargs):
@@ -160,19 +185,20 @@ class LogOutView(generic.RedirectView):
 
 @login_required
 def applications_view_byproject(request, pk, term):
+    """
+    Filter applicants by project.
+    
+    pk: Session user's id.
+    term: Name of the project.
+    """
     user = User.objects.get(id=pk)
     if identify(request, user):
         return HttpResponseRedirect(reverse('home'))
     project = Project.objects.get(name=term)
-    # position = Position.objects.get(name=term)
     position_list = []
     position_qs = project.positions.all()
     for position in position_qs:
         position_list.append(position)
-    # project_list = user.projects.all()
-    # for project in project_list:
-    #    for position in project.positions.all():
-    #        position_list.append(position)
     applicants = Applicant.objects.filter(position__in=position_list)
     context = {
         'user': user,
@@ -185,17 +211,22 @@ def applications_view_byproject(request, pk, term):
 
 @login_required
 def applications_view_byposition(request, pk, term):
+    """
+    Filter applicants by position they've applied for.
+
+    pk: Session user's id.
+    term: Name of position or positions.
+    """
     user = User.objects.get(id=pk)
     if identify(request, user):
         return HttpResponseRedirect(reverse('home'))
-    position = Position.objects.get(name=term)
     position_list = []
-    position_list.append(position)
-    # project_list = user.projects.all()
-    # for project in project_list:
-    #    for position in project.positions.all():
-    #        position_list.append(position)
-    applicants = Applicant.objects.filter(position=position)
+    project_list = user.projects.all()
+    for project in project_list:
+        for position in project.positions.all():
+            if position.name == term:
+                position_list.append(position)
+    applicants = Applicant.objects.filter(position__in=position_list)
     context = {
         'user': user,
         'applicants': applicants,
@@ -207,6 +238,15 @@ def applications_view_byposition(request, pk, term):
 
 @login_required
 def applications_view_bystatus(request, pk, term):
+    """
+    Filter applicants by application status.
+
+    pk: Session user's id.
+    term:
+        'a': accepted
+        'r': rejected
+        'u': undecided
+    """
     user = User.objects.get(id=pk)
     if identify(request, user):
         return HttpResponseRedirect(reverse('home'))
@@ -229,7 +269,11 @@ def applications_view_bystatus(request, pk, term):
 
 @login_required
 def applications_view(request, pk):
-    """Display all users applying for current user's open projects."""
+    """
+    Display all applicants for session user's open projects.
+
+    pk: Session user's id.
+    """
     user = User.objects.get(id=pk)
     if identify(request, user):
         return HttpResponseRedirect(reverse('home'))
@@ -249,3 +293,67 @@ def applications_view(request, pk):
     }
 
     return render(request, 'accounts/applications.html', context)
+
+
+def user_reactivate_view(request, pk):
+    """
+    Enable a disabled user's account.
+
+    pk: The user id.
+    """
+    # Work in progress.
+    if request.user.is_authenticated:
+        return redirect('home')
+    user = User.objects.get(id=pk)
+    userdata = {
+        'email': user.email,
+        'username': user.username,
+        'password': user.password,
+        'password2': user.password
+    }
+    if request.method == 'POST':
+        form = forms.UserRegistrationForm(request.POST)
+        if form.is_valid():
+            if userdata['username'] == form.cleaned_data.get('username') and \
+               userdata['email'] == form.cleaned_data.get('email') and \
+               userdata['password'] == user.set_password(
+                   form.cleaned_data.get('password')
+            ):
+                user.is_active = True
+                user.save()
+                messages.success(request, 'Your account is reactivated.')
+                return redirect('accounts:details', pk=pk)
+        messages.info(request, 'Credentials incorrect.')
+        return redirect('home')
+    form = forms.UserRegistrationForm()
+    context = {'form': form, 'pk': pk}
+    return render(request, 'accounts/reactivate.html', context)
+
+
+@login_required
+def avatar_update_view(request, pk):
+    """
+    Replace or transform a user's avatar.
+    If session user is not target user, redirect to home page.
+
+    pk: Target user's id.
+    """
+    # Work in progress.
+    user = User.objects.get(id=pk)
+    if identify(request, user):
+        return HttpResponseRedirect(reverse('home'))
+    user_data = {
+        'display_name': user.display_name,
+        'avatar': user.avatar
+    }
+    avatar = user.avatar
+    if request.method == 'POST':
+        form = forms.PhotoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your user photo has been updated.')
+            return redirect('accounts:details', pk=pk)
+    else:
+        form = forms.PhotoForm()
+        context = {'form': form, 'user': user}
+        return render(request, 'accounts/photo_form.html', context)

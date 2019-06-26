@@ -2,6 +2,16 @@
 
 {% block title_tag %}Home - Project List | {{ block.super }} {% endblock %}
 {% block body %}
+  {% if user.is_authenticated %}
+  <div class="circle--actions--bar">
+    <nav class="bounds">
+      <ul class="circle--pill--list">
+        <li><a href="{% url 'accounts:applications' pk=user.id %}">Applications</a></li>
+        <li><a href="{% url 'accounts:details' pk=user.id %}">Profile</a></li>
+      </ul>
+    </nav>
+  </div>
+  {% endif %}
   <div class="bounds circle--page">
     <div class="circle--page--header circle--fluid">
       <div class="circle--fluid--cell circle--fluid--primary">

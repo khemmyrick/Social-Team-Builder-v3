@@ -2,8 +2,18 @@
 
 {% block title_tag %}{{ position.name }} | {{ block.super }}{% endblock %}
 {% block body %}
-{% if user == position.project.creator %}
+{% if user.is_authenticated %}
   <div class="circle--actions--bar">
+    <nav class="bounds">
+      <ul class="circle--pill--list">
+        <li><a href="{% url 'accounts:applications' pk=user.id %}">Applications</a></li>
+        <li><a href="{% url 'accounts:details' pk=user.id %}">Profile</a></li>
+      </ul>
+    </nav>
+  </div>
+{% endif %}
+{% if user == position.project.creator %}
+  <div>
     <div class="bounds">
       <div class="grid-100">
         <a class="button" href="{% url 'projects:changeposition' pk=position.project.id pospk=position.id %}">Edit Position</a>

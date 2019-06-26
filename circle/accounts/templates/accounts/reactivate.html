@@ -1,0 +1,20 @@
+
+{% extends "layout.html" %}
+
+{% block title_tag %}Reactivate Account | {{ block.super }}{% endblock %}
+{% block body %}
+	<!-- REACTIVATE -->
+	<!-- 
+	Used to reactivate an existing disabled user account. -->
+  <div class="bounds">
+    <div class="grid-30 centered">
+      <h2>Reactivate Account</h2>
+	  <p>Enter your credentials to reactivate your account.</p>
+	  <form method="POST" action="{% url 'accounts:reactivate' pk=pk %}">
+		{% csrf_token %}
+		{{ form.as_p }}
+        <input type="submit" class="button-primary" value="Reactivate">
+	  </form>
+    </div>
+  </div>
+{% endblock %}

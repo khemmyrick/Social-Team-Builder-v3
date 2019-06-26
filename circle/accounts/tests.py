@@ -1,4 +1,4 @@
-from django.test import RequestFactory, TestCase
+from django.test import Client, RequestFactory, TestCase
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.db import IntegrityError, transaction
@@ -10,6 +10,7 @@ from accounts import forms, views
 
 # Create your tests here.
 class ModelSetUp(object):
+    """Preset objects for model tests."""
     def setUp(self):
         # 1. Account Models
         # User Models
@@ -32,6 +33,7 @@ class ModelSetUp(object):
 
 
 class ViewSetUp(object):
+    """Preset objects for view tests."""
     def setUp(self):
         self.factory = RequestFactory()
         self.user1 = User.objects.create_user(
@@ -67,33 +69,9 @@ class AccountModelTests(ModelSetUp, TestCase):
         self.assertEqual(self.user2.__str__(), self.user2.display_name)
         self.assertEqual(self.user1.formatted_markdown, '<h2>User1 Bio</h2>')
 
-    # def test_unique_constraint(self):
-    #    with transaction.atomic():
-    #        self.failed_user = User(
-    #            email='user3@example.com',
-    #            username='User3',
-    #            display_name='User 3',
-    #            bio='User3 Bio',
-    #            avatar=None,
-    #            is_staff=False,
-    #            is_active=True,
-    #            password='project12'
-    #        )
-    #    with self.assertRaises(IntegrityError):
-    #        self.failed_user.save()
-    #    # Test that creating a user with a pre-existing name raises IntegrityError
-    #    # Test exceptions for all User model validators.
-
-    def test_user_avatar(self):
-        pass
-
 
 class AccountViewTests(ViewSetUp, TestCase):
-    def test_user_update_view(self):
-        pass
-        #request = views.user_update_view(pk=1)
-        # user = self.user1
-        
+    """Account view tests."""
     def test_user_detail_view(self):
         request = self.factory.get('v3/accounts/1/')
         # Request sent from client to server...
@@ -114,17 +92,9 @@ class AccountViewTests(ViewSetUp, TestCase):
         # Response rendered from actual template.
         self.assertIn('<h2>User1 Bio</h2>', str(template_response.content))
 
-    def test_log_out_view(self):
-        request = self.factory.get('v3/accounts/logout/')
-        request.user = self.user1
-        print('User is: {}'.format(request.user))
-        view = views.LogOutView.as_view()
-        # request has no attribute "session"
-        # response = view(request)
-        # self.assertEqual(response.status_code, 200)
-
 
 class AccountFormTests(TestCase):
+    """Account form tests."""
     def test_user_form(self):
         form_data = {
             'display_name': 'Display Name',

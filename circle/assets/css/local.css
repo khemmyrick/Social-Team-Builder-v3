@@ -2,6 +2,10 @@
 
 @import 'global.css';
 
+.circle--actions--bar {
+  background-color: #99CC99;
+}
+
 .circle--article--body ul {
   list-style-type: disc;
 }

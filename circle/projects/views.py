@@ -16,6 +16,11 @@ from projects.utils import identify
 # Create your views here.
 @login_required
 def position_create_view(request, pk):
+    """
+    Create a position for the target project.
+
+    pk: Project's id.
+    """
     project = Project.objects.get(id=pk)
     if identify(request, project.creator):
         return HttpResponseRedirect(reverse('home'))
@@ -26,7 +31,6 @@ def position_create_view(request, pk):
     if request.method == 'GET':
         form = forms.PositionForm(initial=positiondata)
         formset = SkillFormSet()
-        # GOTO BOTTOM "RETURN" LINE...
 
     elif request.method == 'POST':
         form = forms.PositionForm(request.POST, request.FILES)
@@ -83,6 +87,12 @@ def position_create_view(request, pk):
 
 @login_required
 def position_update_view(request, pk, pospk):
+    """
+    Update a position.
+
+    pk: Project's id.
+    pospk: Position's id.
+    """
     project = Project.objects.get(id=pk)
     if identify(request, project.creator):
         return HttpResponseRedirect(reverse('home'))
@@ -102,7 +112,6 @@ def position_update_view(request, pk, pospk):
     if request.method == 'GET':
         form = forms.PositionForm(initial=positiondata)
         formset = SkillFormSet(initial=skill_data)
-        # GOTO BOTTOM "RETURN" LINE...
 
     elif request.method == 'POST':
         form = forms.PositionForm(
@@ -174,7 +183,9 @@ def position_update_view(request, pk, pospk):
 
 def project_detail_view(request, pk):
     """
-    Allows a user to view a project.
+    View a project's details.
+
+    pk: Project's id.
     """
     project = Project.objects.get(id=pk)
     if not project.active:
@@ -202,7 +213,12 @@ def project_detail_view(request, pk):
 
 
 def position_detail_view(request, pk, pospk):
-    """Allows a user to view a position."""
+    """
+    View a position's details.
+
+    pk: id of the project the position belongs to.
+    pospk: The position's id.
+    """
     position = Position.objects.get(id=pospk)
     if not position.active:
         if identify(request, position.project.creator):
@@ -222,6 +238,13 @@ def position_detail_view(request, pk, pospk):
 
 
 def project_suspend_view(request, pk):
+    """
+    If session user is project creator,
+    get confirmation for project suspension.
+    Else, redirect to homepage and do nothing.
+    
+    pk: Project's id.
+    """
     project = Project.objects.get(id=pk)
     if identify(request, project.creator):
         return HttpResponseRedirect(reverse('home'))
@@ -233,6 +256,12 @@ def project_suspend_view(request, pk):
 
 
 def project_suspend_confirm_view(request, pk):
+    """
+    If session user is project creator, suspend project.
+    Else, redirect to home page and do nothing.
+
+    pk: Project's id.
+    """
     project = Project.objects.get(id=pk)
     if identify(request, project.creator):
         return HttpResponseRedirect(reverse('home'))
@@ -249,6 +278,12 @@ def project_suspend_confirm_view(request, pk):
 
 
 def project_confirm_activate_view(request, pk):
+    """
+    If session user is project creator, reactivate project.
+    Else, redirect to home page and do nothing.
+
+    pk: Project's id.
+    """
     project = Project.objects.get(id=pk)
     if identify(request, project.creator):
         return HttpResponseRedirect(reverse('home'))
@@ -270,7 +305,9 @@ def project_confirm_activate_view(request, pk):
 
 def position_name_view(request, term):
     """
-    Allows users to view list of each project needing a certain position.
+    List all positions with a certain name.
+
+    term: Name of position(s) to list.
     """
     term = term
     user = request.user
@@ -307,7 +344,10 @@ def position_name_view(request, term):
 
 def position_list_view(request, showall=None):
     """
-    Allows users to view list of project positions.
+    If showall, list all open positions. Else,
+    list all positions where position skillset matches session user skillset.
+
+    showall: A str.
     """
     term = request.GET.get('q')
     user = request.user
@@ -359,6 +399,11 @@ def position_list_view(request, showall=None):
 
 @login_required
 def application_create_view(request, pk):
+    """
+    Indicate session user's interest in an open position.
+
+    pk: Position id.
+    """
     user = request.user
     position = Position.objects.get(id=pk)
     try:
@@ -380,6 +425,13 @@ def application_create_view(request, pk):
 
 @login_required
 def application_accept_view(request, pk):
+    """
+    If session user is project creator, accept target applicant,
+    and reject all other applicants.
+    Else, redirect to homepage and do nothing.
+
+    pk: Application id.
+    """
     applicant = Applicant.objects.get(id=pk)
     position = applicant.position
     if identify(request, position.project.creator):
@@ -424,6 +476,12 @@ def application_accept_view(request, pk):
 
 @login_required
 def application_deny_view(request, pk):
+    """
+    If session user is project creator, reject target applicant.
+    Else, redirect to homepage and do nothing.
+
+    pk: Application id.
+    """
     applicant = Applicant.objects.get(id=pk)
     position = applicant.position
     if identify(request, position.project.creator):
@@ -455,6 +513,7 @@ def application_deny_view(request, pk):
 
 @login_required
 def project_create_view(request):
+    """Create a new project."""
     user = request.user
     project_data = {'creator': user}
     if request.method == 'GET':
@@ -494,6 +553,12 @@ def project_create_view(request):
 
 @login_required
 def project_update_view(request, pk):
+    """
+    If session user is project creator, update project details.
+    Else, redirect to homepage and do nothing.
+
+    pk: Project id.
+    """
     project = Project.objects.get(id=pk)
     if identify(request, project.creator):
         return HttpResponseRedirect(reverse('home'))
