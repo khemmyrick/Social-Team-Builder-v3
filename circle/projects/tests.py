@@ -8,16 +8,13 @@ from projects import models as pmodels
 from projects import serializers
 from projects import views
 
-# May have to import User from settings...?
-# May have to doublecheck syntax for import from accounts app.
-
 
 # Circle Projects Tests
 class ModelSetUp(object):
     """Preset objects for model tests."""
     def setUp(self):
         self.factory = RequestFactory()
-    
+
         # 1. Account Models
         # User Models
         self.user1 = amodels.User(
@@ -113,7 +110,7 @@ class ModelSetUp(object):
             self.skill3
         )
         self.posi1.save()
-    
+
         # Applicant Models
         self.appl1 = pmodels.Applicant(
             user=self.user1,
@@ -125,30 +122,39 @@ class ModelSetUp(object):
 
 class ProjectModelTests(ModelSetUp, TestCase):
     '''Project model tests.'''
-    # CURRENTLY OK!
     def test_applicant_creation(self):
+        """Check that created applicant contains expected data."""
         self.assertEqual(self.appl1.user, self.user1)
         self.assertEqual(self.appl1.position, self.posi1)
         self.assertLessEqual(self.appl1.applied, timezone.now())
         self.assertEqual(self.appl1.status, 'a')
 
     def test_position_creation(self):
+        """Check that created position contains expected data."""
         self.assertEqual(self.posi1.name, 'Job1')
         self.assertEqual(self.posi1.project, self.proj1)
         self.assertEqual(self.posi1.user, self.user1)
         self.assertIn(self.skill1, self.posi1.skills.all())
 
-
     def test_project_creation(self):
+        """Check that created project contains expected data."""
         self.assertEqual(self.proj1.name, 'Project 1')
         self.assertNotEqual(self.proj1.name, self.proj2.name)
         self.assertEqual(self.proj1.creator.username, 'User2')
 
+    def test_skill_creation(self):
+        """Check that created skill contains expected data."""
+        self.assertEqual(self.skill1.name, 'Skill1')
+        self.assertTrue(self.skill1.users.all())
+
 
 class ProjectSerializersTests(ModelSetUp, TestCase):
     """Project serializer tests."""
-    # CURRENTLY OK!
     def test_project_serializer(self):
+        """Create project serializer.
+
+        Check that serializer contains expected key and value.
+        """
         project_serializer = serializers.ProjectSerializer(
             instance=self.proj1
         )
@@ -166,6 +172,10 @@ class ProjectSerializersTests(ModelSetUp, TestCase):
         )
 
     def test_position_serializer(self):
+        """Create position serializer.
+
+        Check that serializer contains expected key and value.
+        """
         position_serializer = serializers.PositionSerializer(
             instance=self.posi1
         )
@@ -184,6 +194,10 @@ class ProjectSerializersTests(ModelSetUp, TestCase):
         )
 
     def test_applicant_serializer(self):
+        """Create applicant serializer.
+
+        Check that serializer contains expected key and value.
+        """
         applicant_serializer = serializers.ApplicantSerializer(
             instance=self.appl1
         )
@@ -197,6 +211,10 @@ class ProjectSerializersTests(ModelSetUp, TestCase):
         )
 
     def test_skill_serializer(self):
+        """Create skill serializer.
+
+        Check that serializer contains expected key and value.
+        """
         skill_serializer = serializers.SkillSerializer(
             instance=self.skill1
         )
@@ -205,14 +223,25 @@ class ProjectSerializersTests(ModelSetUp, TestCase):
         self.assertEqual(skill_serializer.data['name'], self.skill1.name)
 
 
-class ProjectFormTests(TestCase):
+class ProjectFormTests(ModelSetUp, TestCase):
     """Project form tests."""
     def test_skill_form(self):
+        """Tests skill form.
+
+        Creates a form with sample skill data.
+        Checks that form is valid and contains expected value.
+        """
         form_data = {'name': 'name'}
         form = forms.SkillForm(data=form_data)
         self.assertTrue(form.is_valid())
+        self.assertEqual('name', form.cleaned_data.get('name'))
 
     def test_position_form(self):
+        """Tests position form.
+
+        Creates a form with sample position data.
+        Checks that form is valid and contains expected value.
+        """
         form_data = {
             'name': 'name',
             'description': 'description',
@@ -220,8 +249,14 @@ class ProjectFormTests(TestCase):
         }
         form = forms.PositionForm(data=form_data)
         self.assertTrue(form.is_valid())
+        self.assertEqual('5 hours / day', form.cleaned_data.get('time'))
 
     def test_project_form(self):
+        """Tests project form.
+
+        Creates a form with sample project data.
+        Checks that form is valid and contains expected value.
+        """
         form_data = {
             'name': 'name',
             'url': 'https://www.example.com',
@@ -231,25 +266,49 @@ class ProjectFormTests(TestCase):
         }
         form = forms.ProjectForm(data=form_data)
         self.assertTrue(form.is_valid())
+        self.assertEqual(
+            'https://www.example.com',
+            form.cleaned_data.get('url')
+        )
 
     def test_project_create_form(self):
+        """Tests project form.
+
+        Creates a form with sample project data.
+        Checks that form is valid and contains expected value.
+        Checks that form contains valid model data.
+        """
         form_data = {
             'name': 'name',
             'url': 'https://www.example.com',
             'description': 'description',
+            'creator': self.user1,
             'requirements': 'requirements',
             'time': '25 hours / week'
         }
-        form = forms.ProjectForm(data=form_data)
+        form = forms.ProjectCreateForm(data=form_data)
         self.assertTrue(form.is_valid())
-
-    def test_base_skill_formset(self):
-        pass
+        project = pmodels.Project(
+            name=form_data['name'],
+            url=form_data['url'],
+            description=form_data['description'],
+            creator=form_data['creator'],
+            requirements=form_data['requirements'],
+            time=form_data['time']
+        )
+        project.save()
+        self.assertTrue(pmodels.Project.objects.get(time='25 hours / week'))
 
 
 class ProjectViewTests(ModelSetUp, TestCase):
     """Project view tests."""
     def test_project_detail_view(self):
+        """Tests project details view.
+
+        Use RequestFactory to make a request for the view.
+        Check that view's response contains expected status code.
+        Check that template response contains expected content.
+        """
         request = self.factory.get('v3/projects/1/')
         request.user = self.user1
         response = views.project_detail_view(request, 1)
@@ -265,9 +324,18 @@ class ProjectViewTests(ModelSetUp, TestCase):
             context)
         template_response.render()
         # Response rendered from actual template.
-        self.assertIn('<h2>Project1 Description</h2>', str(template_response.content))
+        self.assertIn(
+            '<h2>Project1 Description</h2>',
+            str(template_response.content)
+        )
 
     def test_position_detail_view(self):
+        """Tests position details view.
+
+        Use RequestFactory to make a request for the view.
+        Check that view's response contains expected status code.
+        Check that template response contains expected content.
+        """
         request = self.factory.get('v3/projects/1/position/1')
         request.user = self.user2
         response = views.position_detail_view(request, 1, 1)
