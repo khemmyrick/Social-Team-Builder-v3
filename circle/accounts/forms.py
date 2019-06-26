@@ -1,9 +1,6 @@
 from PIL import Image
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm
-from django.core import validators
-from django.core.files import File
 
 from django_registration.forms import RegistrationForm
 

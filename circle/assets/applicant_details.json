@@ -5,6 +5,11 @@
 	"status": "u"
   },
   {
+    "user": "EarlRose",
+	"position": "Spammer",
+	"status": "u"
+  },
+  {
     "user": "PerryKinder",
 	"position": "Frontend Django Specialist",
 	"status": "r"
@@ -20,8 +25,18 @@
 	"status": "r"
   },
   {
+    "user": "RobertLazuli",
+	"position": "Egger",
+	"status": "r"
+  },
+  {
     "user": "GarnetDarling",
 	"position": "Mobile Developer",
+	"status": "u"
+  },
+  {
+    "user": "GarnetDarling",
+	"position": "Toaster",
 	"status": "u"
   },
   {
@@ -30,8 +45,18 @@
 	"status": "u"
   },
   {
+    "user": "AmyDietz",
+	"position": "Spammer",
+	"status": "u"
+  },
+  {
     "user": "ConnieRolek",
 	"position": "Full Stack Django Specialist",
 	"status": "a"
+  },
+  {
+    "user": "ConnieRolek",
+	"position": "Egger",
+	"status": "r"
   }
 ]

@@ -1,10 +1,5 @@
 from django import forms
-from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm
-from django.core import validators
 from django.forms.formsets import BaseFormSet
-
-from django_registration.forms import RegistrationForm
 
 from projects.models import Project, Position
 
@@ -130,4 +125,3 @@ class BaseSkillFormSet(BaseFormSet):
                         "You can't have the same skill twice!",
                         code='duplicate_skills'
                     )
-

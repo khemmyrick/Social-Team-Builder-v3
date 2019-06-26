@@ -7,6 +7,27 @@
 	"time": "20 hours/week"
   },
   {
+    "name": "Spammer",
+	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+	"filled": "False",
+	"project": "Meep Morp",
+	"time": "20 minutes/day"
+  },
+  {
+    "name": "Egger",
+	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+	"filled": "False",
+	"project": "Meep Morp",
+	"time": "32 hours/week"
+  },
+  {
+    "name": "Toaster",
+	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+	"filled": "False",
+	"project": "Meep Morp",
+	"time": "40 hours/week"
+  },
+  {
     "name": "Backend Django Specialist",
 	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
 	"filled": "True",

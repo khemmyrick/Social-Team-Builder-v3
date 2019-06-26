@@ -183,14 +183,6 @@ def load_data():
             ).id
 
             itera += 1
-            # try:
-            #    item['user'] = User.objects.get(
-            #        username=item['user']
-            #    ).id
-            # except User.DoesNotExist:
-            #    item['user'] = None
-            #    print('Attempting to assign unfilled position.')
-            # Copy skills logic on position model from user model.
 
         serializer = PositionSerializer(data=data, many=True)
         if serializer.is_valid():
