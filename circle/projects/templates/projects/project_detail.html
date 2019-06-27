@@ -38,23 +38,23 @@
 		-->
       </div>
 
-      <div class="circle--project--positions">
+      <div class="circle--project--positions"><!-- class="circle--project--positions" -->
         <h2>Positions</h2>
-		<table class="circle--table" style="border: 1px solid black;">
-		<!--<caption>Positions</caption>-->
+		<table class="djengatable"><!-- class="circle--table" --><!--style="border: 1px solid black;"-->
 			<tr>
-				<th style="border: 1px solid #dddddd; text-align: center;"><h3>Title</h3></th>
-				<th style="border: 1px solid #dddddd; text-align: center;"><h3>Desired Skills</h3></th>
-				<th style="border: 1px solid #dddddd; text-align: center;"><h3>Availability</h3></th>
+				<th class="djengath djengatl"><h3>Title</h3></th>
+				<th class="djengath"><h3>Desired Skills</h3></th>
+				<th class="djengath djengatr"><h3>Availability</h3></th>
 			</tr>
         <!-- <ul class="circle--group--list"> -->
 		<!-- 
 		Use Django forloop to LIST Position titles and brief descriptions of positions. -->
 			{% for position in project.positions.all%}
-				<tr class="clickable-row" data-href="{% url 'projects:positiondetails' pk=position.project.id pospk=position.id %}">
-				<td style="border: 1px solid #dddddd;">{{ position.name }}</td> <!-- </h3> -->
-					<td width="45%" style="border: 1px solid #dddddd;">{% if position.skills.all %}- {% for skill in position.skills.all %}{{ skill.name }} - {% endfor %}{% else %}Yours?{% endif %}</td>
+				<tr class="clickable-row djengatd" data-href="{% url 'projects:positiondetails' pk=position.project.id pospk=position.id %}">
+				<td style="border: 1px solid #dddddd;"><h4>{{ position.name }}</h4></td> <!-- </h3> -->
+					<td width="45%" style="border: 1px solid #dddddd;"><h4>{% if position.skills.all %}- {% for skill in position.skills.all %}{{ skill.name }} - {% endfor %}{% else %}Yours?{% endif %}</h4></td>
 					<td width="15%" style="border: 1px solid #dddddd;">
+						<h4>
 						{% if position.user == user %}
 							The position is yours.
 						{% elif position.filled %}
@@ -77,6 +77,7 @@
 						{% else %}
 							Sign In for more options.
 						{% endif %}
+						</h4>
 					</td>
 				</tr>
 			{% endfor %}

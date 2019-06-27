@@ -2,6 +2,35 @@
 
 @import 'global.css';
 
+.djengatable {
+  border-radius: 15px 50px;
+}
+
+.djengath {
+  /* border: 1px solid #dddddd; */
+  text-align: left;
+  background-color: #EEAAEE;
+  padding-top: 20px;
+}
+
+.djengatl {
+  border-top-left-radius: 20px;
+  padding-left: 50px;
+}
+
+.djengatr{
+  border-top-right-radius: 20px;
+  padding-right: 50px;
+}
+
+.djengatd {
+  background-color: #EEAAEE;
+}
+
+.djengatd:hover {
+  background-color: #FFCCFF;
+}
+
 .circle--actions--bar {
   background-color: #99CC99;
 }

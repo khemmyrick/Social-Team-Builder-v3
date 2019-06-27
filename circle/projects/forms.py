@@ -30,14 +30,14 @@ class PositionForm(forms.ModelForm):
         widget=forms.TextInput(attrs={
             'placeholder': 'Position Title',
             }),
-        required=False
+        required=True
     )
     description = forms.CharField(
         max_length=60000,
         widget=forms.Textarea(attrs={
             'placeholder': 'Description. . . ',
             }),
-        required=False
+        required=True
     )
     time = forms.CharField(
         max_length=150,
@@ -66,7 +66,7 @@ class ProjectCreateForm(forms.ModelForm):
         widget=forms.TextInput(attrs={
             'placeholder': 'Project Title',
             }),
-        required=False
+        required=True
     )
     url = forms.URLField(
         widget=forms.URLInput(attrs={
@@ -79,7 +79,7 @@ class ProjectCreateForm(forms.ModelForm):
         widget=forms.Textarea(attrs={
             'placeholder': 'Description. . . ',
         }),
-        required=False
+        required=True
     )
     time = forms.CharField(
         max_length=150,
