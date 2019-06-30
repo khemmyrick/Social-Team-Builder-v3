@@ -437,8 +437,15 @@ def application_accept_view(request, pk):
     if identify(request, position.project.creator):
         return HttpResponseRedirect(reverse('home'))
     applicant.status = 'a'
+    applicant.user.add_notification(
+        "Congratulations, you're the new {} for {}!".format(
+            position.name,
+            position.project.name
+        )
+    )
     applicant.save()
     position.user = applicant.user
+    position.user.save()
     position.filled = True
     position.save()
 
@@ -450,20 +457,15 @@ def application_accept_view(request, pk):
     for applicant in reject_list:
         applicant.status = 'r'
         applicant.save()
-        # Email rejections here.
-        applicant.user.email_user(
-            subject="We're going in another direction for our {}.".format(
+        # Rejection notifications.
+        applicant.user.add_notification(
+            "{} is going in another direction for their {}.".format(
+                position.project.name,
                 position.name
-            ),
-            message="Look out for other opportunities from us in the future.",
-            from_email=request.user.email
+            )
         )
+        applicant.user.save()
 
-    position.user.email_user(
-        subject="Hello, new {}!".format(position.name),
-        message="We look forward to working with you on this project.",
-        from_email=request.user.email
-    )
     messages.success(
         request,
         "You accepted {} as {}.".format(position.user, position.name)
@@ -487,21 +489,18 @@ def application_deny_view(request, pk):
     if identify(request, position.project.creator):
         return HttpResponseRedirect(reverse('home'))
     applicant.status = 'r'
-    applicant.save()
-    position.user = applicant.user
-    position.filled = True
-    position.save()
-    position.user.email_user(
-        subject="We're going in another direction for our {}.".format(
+    applicant.user.add_notification(
+        "{} is going in another direction for their {}.".format(
+            position.project.name,
             position.name
-        ),
-        message="Look out for other opportunities from us in the future.",
-        from_email=request.user.email
+        )
     )
+    applicant.save()
+    applicant.user.save()
     messages.success(
         request,
         "{} won't be joining the team as {}.".format(
-            position.user,
+            applicant.user,
             position.name
         )
     )

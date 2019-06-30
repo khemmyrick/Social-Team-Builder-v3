@@ -171,6 +171,7 @@ class LogInView(generic.FormView):
 
     def form_valid(self, form):
         login(self.request, form.get_user())
+        messages.info(self.request, form.get_user().notifications)
         return super().form_valid(form)
 
 
@@ -179,6 +180,8 @@ class LogOutView(generic.RedirectView):
     url = reverse_lazy('home')
 
     def get(self, request, *args, **kwargs):
+        request.user.notifications = ''
+        request.user.save()
         logout(request)
         return super().get(request, *args, **kwargs)
 
@@ -333,7 +336,7 @@ def user_reactivate_view(request, pk):
 @login_required
 def avatar_update_view(request, pk):
     """
-    Replace or transform a user's avatar.
+    Upload or replace a user's avatar.
     If session user is not target user, redirect to home page.
 
     pk: Target user's id.
@@ -343,12 +346,12 @@ def avatar_update_view(request, pk):
     if identify(request, user):
         return HttpResponseRedirect(reverse('home'))
     if request.method == 'POST':
-        form = forms.PhotoForm(request.POST, request.FILES)
+        form = forms.PhotoForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Your user photo has been updated.')
             return redirect('accounts:details', pk=pk)
     else:
         form = forms.PhotoForm()
-        context = {'form': form, 'user': user}
-        return render(request, 'accounts/photo_form.html', context)
+    context = {'form': form, 'user': user}
+    return render(request, 'accounts/photo_form.html', context)

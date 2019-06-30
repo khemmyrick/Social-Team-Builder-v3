@@ -62,6 +62,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    notifications = models.TextField(default='')
     # Reverse foreignkey/manytomany attributes:
     # user.skill_set = allows user to query skills
     # user.projects = queryset of projects this user created.
@@ -86,6 +87,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         Sends an email to this User.
         '''
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+    def add_notification(self, new_message):
+        '''Stores a notification.'''
+        self.notifications = self.notifications + ' | ' + new_message
 
     @property
     def formatted_markdown(self):
