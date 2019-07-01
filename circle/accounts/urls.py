@@ -10,6 +10,7 @@ urlpatterns = [
     path('<pk>/', views.user_detail_view, name='details'),
     path('<pk>/edit/', views.user_update_view, name='edit'),
     path('<pk>/photo/', views.avatar_update_view, name='photo'),
+    path('<pk>/transform/', views.avatar_manipulate_view, name='transformphoto'),
     path('<pk>/applications/', views.applications_view, name='applications'),
     path('<pk>/applications/bystatus/<term>',
          views.applications_view_bystatus,

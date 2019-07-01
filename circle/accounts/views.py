@@ -349,6 +349,7 @@ def avatar_update_view(request, pk):
 
     pk: Target user's id.
     """
+    show_messages(request)
     user = User.objects.get(id=pk)
     if identify(request, user):
         return HttpResponseRedirect(reverse('home'))
@@ -362,3 +363,31 @@ def avatar_update_view(request, pk):
         form = forms.PhotoForm()
     context = {'form': form, 'user': user}
     return render(request, 'accounts/photo_form.html', context)
+
+
+@login_required
+def avatar_manipulate_view(request, pk):
+    """
+    Upload, replace or transform a user's avatar.
+    If session user isn't target user, redirect to home page.
+    
+    pk: Target user's id.
+    """
+    show_messages(request)
+    user = User.objects.get(id=pk)
+    print('avatar width: {}'.format(user.avatar.width))
+    if identify(request, user):
+        return HttpResponseRedirect(reverse('home'))
+    if request.method == 'POST':
+        form = forms.PhotoManipulateForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your user photo has been updated.')
+            return redirect('accounts:details', pk=pk)
+        else:
+            print('No valid form yet!')
+    else:
+        form = forms.PhotoForm()
+        print(form)
+    context = {'form': form, 'user': user}
+    return render(request, 'accounts/photo_manipulation_form.html', context)
