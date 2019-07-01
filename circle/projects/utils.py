@@ -13,3 +13,15 @@ def identify(request, target_user):
         return True
     else:
         False
+
+
+def show_messages(request):
+    """Display stored user messages."""
+    if request.user.is_authenticated and request.user.notifications:
+        messages.info(
+            request,
+            request.user.notifications
+        )
+        request.user.notifications = ''
+        request.user.save()
+        return

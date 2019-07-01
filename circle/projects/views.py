@@ -10,7 +10,7 @@ from django.urls import reverse
 
 from projects import forms as forms
 from projects.models import Project, Position, Applicant, Skill
-from projects.utils import identify
+from projects.utils import identify, show_messages
 
 
 # Create your views here.
@@ -21,6 +21,7 @@ def position_create_view(request, pk):
 
     pk: Project's id.
     """
+    show_messages(request)
     project = Project.objects.get(id=pk)
     if identify(request, project.creator):
         return HttpResponseRedirect(reverse('home'))
@@ -93,6 +94,7 @@ def position_update_view(request, pk, pospk):
     pk: Project's id.
     pospk: Position's id.
     """
+    show_messages(request)
     project = Project.objects.get(id=pk)
     if identify(request, project.creator):
         return HttpResponseRedirect(reverse('home'))
@@ -187,6 +189,7 @@ def project_detail_view(request, pk):
 
     pk: Project's id.
     """
+    show_messages(request)
     project = Project.objects.get(id=pk)
     if not project.active:
         if identify(request, project.creator):
@@ -219,6 +222,7 @@ def position_detail_view(request, pk, pospk):
     pk: id of the project the position belongs to.
     pospk: The position's id.
     """
+    show_messages(request)
     position = Position.objects.get(id=pospk)
     if not position.active:
         if identify(request, position.project.creator):
@@ -245,6 +249,7 @@ def project_suspend_view(request, pk):
 
     pk: Project's id.
     """
+    show_messages(request)
     project = Project.objects.get(id=pk)
     if identify(request, project.creator):
         return HttpResponseRedirect(reverse('home'))
@@ -262,6 +267,7 @@ def project_suspend_confirm_view(request, pk):
 
     pk: Project's id.
     """
+    show_messages(request)
     project = Project.objects.get(id=pk)
     if identify(request, project.creator):
         return HttpResponseRedirect(reverse('home'))
@@ -284,6 +290,7 @@ def project_confirm_activate_view(request, pk):
 
     pk: Project's id.
     """
+    show_messages(request)
     project = Project.objects.get(id=pk)
     if identify(request, project.creator):
         return HttpResponseRedirect(reverse('home'))
@@ -309,6 +316,7 @@ def position_name_view(request, term):
 
     term: Name of position(s) to list.
     """
+    show_messages(request)
     term = term
     user = request.user
     positions = Position.objects.filter(
@@ -349,6 +357,7 @@ def position_list_view(request, showall=None):
 
     showall: A str.
     """
+    show_messages(request)
     term = request.GET.get('q')
     user = request.user
     if term:
@@ -404,6 +413,7 @@ def application_create_view(request, pk):
 
     pk: Position id.
     """
+    show_messages(request)
     user = request.user
     position = Position.objects.get(id=pk)
     try:
@@ -432,6 +442,7 @@ def application_accept_view(request, pk):
 
     pk: Application id.
     """
+    show_messages(request)
     applicant = Applicant.objects.get(id=pk)
     position = applicant.position
     if identify(request, position.project.creator):
@@ -484,6 +495,7 @@ def application_deny_view(request, pk):
 
     pk: Application id.
     """
+    show_messages(request)
     applicant = Applicant.objects.get(id=pk)
     position = applicant.position
     if identify(request, position.project.creator):
@@ -513,6 +525,7 @@ def application_deny_view(request, pk):
 @login_required
 def project_create_view(request):
     """Create a new project."""
+    show_messages(request)
     user = request.user
     project_data = {'creator': user}
     if request.method == 'GET':
@@ -558,6 +571,7 @@ def project_update_view(request, pk):
 
     pk: Project id.
     """
+    show_messages(request)
     project = Project.objects.get(id=pk)
     if identify(request, project.creator):
         return HttpResponseRedirect(reverse('home'))

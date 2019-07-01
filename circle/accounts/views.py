@@ -14,7 +14,7 @@ from . import forms
 from projects import forms as pforms
 from accounts.models import User
 from projects.models import Project, Applicant, Skill
-from projects.utils import identify
+from projects.utils import identify, show_messages
 
 
 # Create your views here.
@@ -26,6 +26,7 @@ def user_update_view(request, pk):
 
     pk: Target user's id.
     """
+    show_messages(request)
     user = User.objects.get(id=pk)
     if identify(request, user):
         return HttpResponseRedirect(reverse('home'))
@@ -103,6 +104,7 @@ def user_detail_view(request, pk):
 
     pk: Target user's id.
     """
+    show_messages(request)
     user = request.user
     target_user = User.objects.get(id=pk)
     if not request.user.is_authenticated:
@@ -131,6 +133,7 @@ def user_deactivate_view(request, pk):
 
     pk: User's id.
     """
+    show_messages(request)
     target_user = User.objects.get(id=pk)
     if identify(request, target_user):
         return HttpResponseRedirect(reverse('home'))
@@ -171,7 +174,8 @@ class LogInView(generic.FormView):
 
     def form_valid(self, form):
         login(self.request, form.get_user())
-        messages.info(self.request, form.get_user().notifications)
+        show_messages(self.request)
+        # messages.info(self.request, form.get_user().notifications)
         return super().form_valid(form)
 
 
@@ -180,8 +184,8 @@ class LogOutView(generic.RedirectView):
     url = reverse_lazy('home')
 
     def get(self, request, *args, **kwargs):
-        request.user.notifications = ''
-        request.user.save()
+        # request.user.notifications = ''
+        # request.user.save()
         logout(request)
         return super().get(request, *args, **kwargs)
 
@@ -194,6 +198,7 @@ def applications_view_byproject(request, pk, term):
     pk: Session user's id.
     term: Name of the project.
     """
+    show_messages(request)
     user = User.objects.get(id=pk)
     if identify(request, user):
         return HttpResponseRedirect(reverse('home'))
@@ -220,6 +225,7 @@ def applications_view_byposition(request, pk, term):
     pk: Session user's id.
     term: Name of position or positions.
     """
+    show_messages(request)
     user = User.objects.get(id=pk)
     if identify(request, user):
         return HttpResponseRedirect(reverse('home'))
@@ -250,6 +256,7 @@ def applications_view_bystatus(request, pk, term):
         'r': rejected
         'u': undecided
     """
+    show_messages(request)
     user = User.objects.get(id=pk)
     if identify(request, user):
         return HttpResponseRedirect(reverse('home'))
@@ -277,6 +284,7 @@ def applications_view(request, pk):
 
     pk: Session user's id.
     """
+    show_messages(request)
     user = User.objects.get(id=pk)
     if identify(request, user):
         return HttpResponseRedirect(reverse('home'))
@@ -341,7 +349,6 @@ def avatar_update_view(request, pk):
 
     pk: Target user's id.
     """
-    # Work in progress.
     user = User.objects.get(id=pk)
     if identify(request, user):
         return HttpResponseRedirect(reverse('home'))
