@@ -28,13 +28,26 @@
   <!-- JS
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-  <!-- <script type="text/javascript" src="{% static 'js/jquery-cropper.js' %}"></script> -->
-  <script type="text/javascript" src="https://disq.us/url?url=https%3A%2F%2Fcdnjs.cloudflare.com%2Fajax%2Flibs%2Fcropper%2F4.0.0%2Fcropper.min.js"></script>
+  <script type="text/javascript" src="{% static 'js/jquery-cropper.js' %}"></script>
+  <!-- <script type="text/javascript" src="https://disq.us/url?url=https%3A%2F%2Fcdnjs.cloudflare.com%2Fajax%2Flibs%2Fcropper%2F4.0.0%2Fcropper.min.js"></script> -->
   <!-- was using 2.2.0 -->
   <!-- 
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.formset/1.2.2/jquery.formset.js"</script> -->
   <script type="text/javascript" src="{% static 'js/autogrow.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/global.js' %}"></script>
+	<script>
+	$(document).ready(function() {
+		function showMess() {
+		  var x = document.getElementById("djangomess");
+		  if (x.style.display === "none") {
+			x.style.display = "block";
+		  } else {
+			x.style.display = "none";
+		  }
+		}
+	};
+	</script>
+  {% block javascript %}{% endblock %}
   <!-- 
   #### USE CUSTOMIZED JS? . . .
   <script type="text/javascript" src="{% static 'js/local.js' %}"></script>
@@ -97,16 +110,5 @@
 		  </div>
 		  {% endif %}
 {% block body %}{% endblock %}
-<script>
-function showMess() {
-  var x = document.getElementById("djangomess");
-  if (x.style.display === "none") {
-    x.style.display = "block";
-  } else {
-    x.style.display = "none";
-  }
-}
-</script>
-{% block javascript %}{% endblock %}
 </body>
 </html>
