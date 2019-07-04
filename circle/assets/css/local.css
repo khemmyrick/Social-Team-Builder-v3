@@ -27,6 +27,23 @@
   border: solid #55AA55;
 }
 
+li .profileava {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+li .profileava:hover {
+  filter:blur(5px);
+}
+
+td .profileava {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+
 .danger {
   color: #550000 !important;
 }
@@ -39,13 +56,6 @@
   font-variant: small-caps;
 }
 
-li .profileava {
-  border-radius: 50%;
-}
-
-li .profileava:hover {
-  filter:blur(5px);
-}
 
 .djengatable {
   border-radius: 15px 50px;

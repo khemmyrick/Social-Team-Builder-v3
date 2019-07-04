@@ -91,7 +91,12 @@
 		  {% for applicant in applicants %}
           <tr>
             <td>
-              <h3><a href="{% url 'accounts:details' pk=applicant.user.id %}">{{ applicant.user.display_name }}</a></h3>
+			  <a href="{% url 'accounts:details' pk=applicant.user.id %}">
+				{% if applicant.user.avatar %}
+					<img src="{{ applicant.user.avatar.url }}" class="profileava">
+				{% endif %}
+				<h3>{{ applicant.user.display_name }}</h3>
+			  </a>
               <p>{{ applicant.position.project.name }}</p>
             </td>
             <td>
