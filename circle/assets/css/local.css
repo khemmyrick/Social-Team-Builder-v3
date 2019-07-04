@@ -13,6 +13,39 @@
   overflow: auto;
 }
 */
+.yaxis {
+  border: solid #99CC99;  
+}
+
+.profileava {
+  max-width: 100%;
+  max-height: 100%;
+  border: solid #99CC99;
+}
+
+.profileava:hover{
+  border: solid #55AA55;
+}
+
+.danger {
+  color: #550000 !important;
+}
+
+.danger:hover {
+  color: red;
+  font-weight: bolder;
+  font-size: 1.2em;
+  background-color: #AADDDD;
+  font-variant: small-caps;
+}
+
+li .profileava {
+  border-radius: 50%;
+}
+
+li .profileava:hover {
+  filter:blur(5px);
+}
 
 .djengatable {
   border-radius: 15px 50px;

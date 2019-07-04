@@ -1,0 +1,41 @@
+
+{% extends "layout.html" %}
+{% load i18n %}
+
+{% block title_tag %}Edit {{ user.username }}'s Photo | {{ block.super }}{% endblock %}
+{% block photometa %}<meta http-equiv=“Expires” content=”-1″>{% endblock %}
+<!-- NEVER LOAD FROM CACHE.  USER MUST SEE **CURRENT** PHOTO. -->
+{% block body %}
+	<!-- USER PHOTO EDIT PAGE -->
+  <div class="circle--actions--bar">
+    <nav class="bounds">
+      <ul class="circle--pill--list">
+        <li><a href="{% url 'accounts:applications' pk=user.id %}">Applications</a></li>
+        <li><a href="{% url 'accounts:details' pk=user.id %}">Profile</a></li>
+      </ul>
+    </nav>
+  </div>
+  <!-- Set x axis table with  -->
+  <div class="bounds circle--page">
+	<table>
+		<tr class="yaxis"></tr>
+	</table>
+  </div>
+  <div class="bounds">
+    <div class="grid-30 centered">
+	  <h2>{{ user.username }}</h2>
+	  <form method="POST" enctype="multipart/form-data" action="{% url 'accounts:transformphoto' pk=user.id %}">
+		{{ form }}
+		{% csrf_token %}
+		  <button type="submit" class="button button-primary" action="">View New Changes</button><br>
+		  <a class="circle--primary--avatar button" href="{% url 'accounts:confirmphoto' pk=user.id %}">Confirm Current Version</a>
+		  <a class="circle--primary--avatar button" href="{% url 'accounts:photo' pk=user.id %}">Reset to Previous</a>
+		  {% if temp_path %}
+		  <img src="/{{ temp_path }}" title="New Version" alt="New Version">
+		  {% else %}
+		  <img src="{{ user.avatar.url }}" title="Original Avatar" alt="{{ user.username }}">
+		  {% endif %}
+	  </form>
+    </div>
+  </div>
+{% endblock %}

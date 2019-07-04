@@ -1,0 +1,29 @@
+
+{% extends "layout.html" %}
+{% load i18n %}
+
+{% block title_tag %}{{ target_user.username }}'s Photo | {{ block.super }}{% endblock %}
+{% block photometa %}<meta http-equiv=“Expires” content=”-1″>{% endblock %}
+{% block body %}
+	<!-- USER PHOTO PAGE -->
+  {% if user.is_authenticated %}
+  <div class="circle--actions--bar">
+    <nav class="bounds">
+      <ul class="circle--pill--list">
+        <li><a href="{% url 'accounts:applications' pk=user.id %}">Applications</a></li>
+        <li><a href="{% url 'accounts:details' pk=user.id %}">Profile</a></li>
+      </ul>
+    </nav>
+  </div>
+  {% endif %}
+  <div class="bounds">
+    <div class="grid-30 centered">
+	<img src="{{ target_user.avatar.url }}" alt="{{ target_user.display_name }}">
+      <h2>{{ target_user.username }}</h2>
+	  {% if user.username == target_user.username %}
+		  <a class="circle--primary--avatar button" href="{% url 'accounts:updatephoto' pk=user.id %}">Replace Photo</a><br>
+		  <a class="circle--primary--avatar button" href="{% url 'accounts:transformphoto' pk=user.id %}">Edit Photo</a>
+	  {% endif %}
+    </div>
+  </div>
+{% endblock %}

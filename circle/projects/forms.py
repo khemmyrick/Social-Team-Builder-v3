@@ -7,7 +7,7 @@ from projects.models import Project, Position
 # to refer to user object use  settings.AUTH_USER_MODEL?
 class SkillForm(forms.Form):
     """
-    Form for user skills
+    Form for adding user skills.
     """
     name = forms.CharField(
         max_length=100,

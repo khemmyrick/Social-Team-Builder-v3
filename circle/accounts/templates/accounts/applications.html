@@ -7,16 +7,12 @@
     <nav class="bounds">
       <ul class="circle--pill--list">
         <li><a class="selected" href="{% url 'accounts:applications' pk=user.id %}">Applications</a></li>
-		<!-- 
-		
-		THIS PAGE IS A LIST OF APPLICANTS FOR ANY OF LOGGED-IN USER's PROJECTS.
-		
-		-->
         <li><a href="{% url 'accounts:details' pk=user.id %}">Profile</a></li>
       </ul>
     </nav>
   </div>
-
+		<!-- 
+		THIS PAGE IS A LIST OF APPLICANTS FOR ANY OF LOGGED-IN USER's PROJECTS. -->
   <div class="bounds circle--page">
     <div class="circle--page--header grid-100">
       <h2>Applications</h2>
