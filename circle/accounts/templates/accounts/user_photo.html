@@ -3,7 +3,9 @@
 {% load i18n %}
 
 {% block title_tag %}{{ target_user.username }}'s Photo | {{ block.super }}{% endblock %}
-{% block photometa %}<meta http-equiv=“Expires” content=”-1″>{% endblock %}
+{% block photometa %}<meta http-equiv=“Pragma” content=”no-cache”>
+<meta http-equiv=“Expires” content=”-1″>
+<meta http-equiv=“CACHE-CONTROL” content=”NO-CACHE”>{% endblock %}
 {% block body %}
 	<!-- USER PHOTO PAGE -->
   {% if user.is_authenticated %}
