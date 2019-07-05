@@ -465,4 +465,5 @@ def avatar_confirm_view(request, pk):
     avatar.save(target_user.avatar.path)
     target_user.save()
     # Delete temporary avatar.
+    os.remove(temp_path)
     return redirect('accounts:photo', pk=pk)

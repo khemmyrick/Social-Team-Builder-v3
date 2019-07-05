@@ -94,6 +94,8 @@
 			  <a href="{% url 'accounts:details' pk=applicant.user.id %}">
 				{% if applicant.user.avatar %}
 					<img src="{{ applicant.user.avatar.url }}" class="profileava">
+				{% else %}
+					<img src="{{MEDIA_URL}}/media/avatars/default.png" class="profileava">
 				{% endif %}
 				<h3>{{ applicant.user.display_name }}</h3>
 			  </a>
