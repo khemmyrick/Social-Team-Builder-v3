@@ -16,7 +16,7 @@ from PIL import Image
 
 from . import forms
 from projects import forms as pforms
-from accounts.models import User, user_directory_path
+from accounts.models import User
 from projects.models import Project, Applicant, Skill
 from projects.utils import identify, show_messages
 
@@ -55,7 +55,6 @@ def user_update_view(request, pk):
             old_skills.append(skill.name)
 
         if form.is_valid() and formset.is_valid():
-            print('Forms valid.')
             user = form.save()
             new_skills = []
 
@@ -131,7 +130,7 @@ def user_detail_view(request, pk):
 def avatar_view(request, pk):
     """
     View target user's avatar.
-    
+
     pk: Target user's id.
     """
     show_messages(request)
@@ -322,41 +321,6 @@ def applications_view(request, pk):
     return render(request, 'accounts/applications.html', context)
 
 
-def user_reactivate_view(request, pk):
-    """
-    Enable a disabled user's account.
-
-    pk: The user id.
-    """
-    # Work in progress.
-    if request.user.is_authenticated:
-        return redirect('home')
-    user = User.objects.get(id=pk)
-    userdata = {
-        'email': user.email,
-        'username': user.username,
-        'password': user.password,
-        'password2': user.password
-    }
-    if request.method == 'POST':
-        form = forms.UserRegistrationForm(request.POST)
-        if form.is_valid():
-            if userdata['username'] == form.cleaned_data.get('username') and \
-               userdata['email'] == form.cleaned_data.get('email') and \
-               userdata['password'] == user.set_password(
-                   form.cleaned_data.get('password')
-            ):
-                user.is_active = True
-                user.save()
-                messages.success(request, 'Your account is reactivated.')
-                return redirect('accounts:details', pk=pk)
-        messages.info(request, 'Credentials incorrect.')
-        return redirect('home')
-    form = forms.UserRegistrationForm()
-    context = {'form': form, 'pk': pk}
-    return render(request, 'accounts/reactivate.html', context)
-
-
 @login_required
 def avatar_update_view(request, pk):
     """
@@ -383,7 +347,11 @@ def avatar_update_view(request, pk):
 
 @login_required
 def avatar_edit_view(request, pk):
-    """Edit avatar."""
+    """
+    If session user is target user, allow user to transform their avatar.
+
+    pk: Target user's id.
+    """
     target_user = User.objects.get(id=pk)
     avaname = target_user.username
     if identify(request, target_user):
@@ -391,16 +359,11 @@ def avatar_edit_view(request, pk):
     if not target_user.avatar:
         return redirect('accounts:updatephoto', pk=pk)
     avatype = target_user.avatar.path[-4:]
-    # check for image type
+    # Check for file suffix.
     if os.path.exists('media/avatars/{}{}'.format(avaname, avatype)):
-        print('Found temp avatar!')
-        print('User.avatar.url is: {}'.format(target_user.avatar.url))
         avatar = Image.open('media/avatars/{}{}'.format(avaname, avatype))
         temp_path = 'media/avatars/{}{}'.format(avaname, avatype)
-        # avatar = Image.open(temp_avatar)
-        # temp avatar is a str of the user's username. use to make str to path.
     else:
-        print('No temp avatar found.')
         temp_path = ''
         avatar = Image.open(target_user.avatar.path)
 
@@ -408,37 +371,29 @@ def avatar_edit_view(request, pk):
     form = forms.PhotoEditForm()
 
     if request.method == 'POST':
-        print('Request is POST.')
         temp_path = 'media/avatars/{}{}'.format(
             avaname,
             avatype
         )
-        print('temp_path set. to {}'.format(temp_path))
         form = forms.PhotoEditForm(request.POST)
-        print('Checking form. . .')
         if form.is_valid():
-            # check rotate logic if we can't get here.
-            print('Form is valid.')
-            print(form.cleaned_data)
             resize = form.cleaned_data.get('resize') / 100
-            avatar.resize((int(ava_w*resize), int(ava_h*resize)), resample=Image.NEAREST).save(temp_path)
+            avatar.resize(
+                (int(ava_w*resize), int(ava_h*resize)),
+                resample=Image.NEAREST
+            ).save(temp_path)
             # Set avatar variable to temp_avatar file.
             avatar = Image.open(temp_path)
-            print('Resized to x{}'.format(str(resize)))  # resize should be an int?
-            rotate = form.cleaned_data.get('rotation')  # rotate is a str?
-            print('Rotate var is a: {}'.format(type(rotate)))
+            rotate = form.cleaned_data.get('rotation')
             if rotate == 'vertical':
                 avatar.transpose(Image.FLIP_TOP_BOTTOM).save(temp_path)
             elif rotate == 'horizontal':
                 avatar.transpose(Image.FLIP_LEFT_RIGHT).save(temp_path)
             else:
                 avatar.rotate(int(rotate)).save(temp_path)
-                print('Rotated by {} degrees.'.format(rotate))
             if form.cleaned_data.get('blackwhite'):
                 avatar = Image.open(temp_path)
                 avatar.convert(mode='L').save(temp_path)
-                print('Greyscaled!')
-            print('Continue editing.  Send ava path back to top of view.')
             return redirect('accounts:transformphoto', pk=pk)
 
     form = forms.PhotoEditForm()
@@ -452,6 +407,13 @@ def avatar_edit_view(request, pk):
 
 @login_required
 def avatar_confirm_view(request, pk):
+    """
+    If session user is target user,
+    save temporary avatar as user's avatar.
+    Else, send to home view.
+    
+    pk: Target user's id.
+    """
     target_user = User.objects.get(id=pk)
     if identify(request, target_user):
         return HttpResponseRedirect(reverse('home'))
@@ -461,9 +423,7 @@ def avatar_confirm_view(request, pk):
         avatype
     )
     avatar = Image.open(temp_path)
-    print(avatar)
     avatar.save(target_user.avatar.path)
     target_user.save()
-    # Delete temporary avatar.
     os.remove(temp_path)
     return redirect('accounts:photo', pk=pk)

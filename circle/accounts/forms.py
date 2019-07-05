@@ -10,13 +10,11 @@ ROTATE_CHOICES = [
             ('90', 'Rotate 90 Degrees'),
             ('180', 'Rotate 180 Degrees'),
             ('270', 'Rotate 270 Degrees'),
-        )
-    ),
+    )),
     ('Flip', (
             ('vertical', 'Flip Vertical'),
             ('horizontal', 'Flip Horizontal'),
-        )
-    )
+    ))
 ]
 
 
@@ -45,37 +43,6 @@ class PhotoForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
         fields = ['avatar']
-
-
-class PhotoManipulateForm(forms.ModelForm):
-    """Form to transform user's avatar."""
-    # Work in progress.
-    x = forms.FloatField(widget=forms.HiddenInput())
-    y = forms.FloatField(widget=forms.HiddenInput())
-    width = forms.FloatField(widget=forms.HiddenInput())
-    height = forms.FloatField(widget=forms.HiddenInput())
-    # print('Form variables set.')
-    # print('X is {}.  Y is {}. W is {}. H is {}.'.format(x, y, width, height))
-
-    class Meta:
-        model = get_user_model()
-        fields = ['avatar', 'x', 'y', 'width', 'height']
-
-    def save(self):
-        user = super(PhotoManipulateForm, self).save()
-
-        x = self.cleaned_data.get('x')
-        y = self.cleaned_data.get('y')
-        w = self.cleaned_data.get('width')
-        h = self.cleaned_data.get('height')
-
-        image = Image.open(user.avatar)
-        cropped_image = image.crop((x, y, w+x, h+y))
-        resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
-        resized_image.save(user.avatar.path)
-        print('The save function ran.')
-
-        return user
 
 
 class PhotoEditForm(forms.Form):

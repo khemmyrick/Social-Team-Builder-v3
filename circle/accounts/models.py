@@ -21,6 +21,9 @@ def user_directory_path(instance, filename):
 
 class UserManager(BaseUserManager):
     def create_user(self, email, username, display_name=None, password=None):
+        """
+        Create and save a user with the given username, email, and password.
+        """
         if not email:
             raise ValueError("Users must have email address.")
         if display_name is None:
@@ -36,6 +39,10 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, username, display_name, password):
+        """
+        Create and save a user with the given username, email, display_name,
+        and password. Set is_staff and is_superuser to True.
+        """
         user = self.create_user(
             email,
             username,
@@ -50,14 +57,14 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    # Yes, PermissionsMixin comes 2nd in the docs, so that's how we do it.
+    """User model."""
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=40, unique=True)
     display_name = models.CharField(max_length=140, blank=True)
     bio = MarkdownxField()
     avatar = models.ImageField(blank=True, null=True,
                                upload_to=user_directory_path)
-    # avatars upload to media/accounts/<user.id>/
+    # avatars upload to media/accounts/<user.id>/<filename>
     skills = models.ManyToManyField(Skill, related_name='users', blank=True)
     date_joined = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
@@ -83,9 +90,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
 
     def email_user(self, subject, message, from_email=None, **kwargs):
-        '''
-        Sends an email to this User.
-        '''
+        """Sends an email to this User."""
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def add_notification(self, new_message):
@@ -94,4 +99,5 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def formatted_markdown(self):
+        """Converts markdown text characters into html tags."""
         return markdownify(self.bio)

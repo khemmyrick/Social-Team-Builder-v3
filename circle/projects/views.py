@@ -38,7 +38,6 @@ def position_create_view(request, pk):
         formset = SkillFormSet(request.POST, request.FILES)
 
         if form.is_valid() and formset.is_valid():
-            print('Forms valid.')
             positiondata['name'] = form.cleaned_data.get('name')
             positiondata['description'] = form.cleaned_data.get('description')
             positiondata['time'] = form.cleaned_data.get('time')
@@ -127,7 +126,6 @@ def position_update_view(request, pk, pospk):
             old_skills.append(skill.name)
 
         if form.is_valid() and formset.is_valid():
-            print('Forms valid.')
             position = Position.objects.get(id=pospk)
             position.name = form.cleaned_data.get('name')
             position.description = form.cleaned_data.get('description')
@@ -533,7 +531,6 @@ def project_create_view(request):
     elif request.method == 'POST':
         form = forms.ProjectCreateForm(request.POST, request.FILES)
         if form.is_valid():
-            print('Form is valid.')
             project_data['name'] = form.cleaned_data.get('name')
             project_data['url'] = form.cleaned_data.get('url')
             project_data['description'] = form.cleaned_data.get('description')
@@ -583,15 +580,12 @@ def project_update_view(request, pk):
         'time': project.time
     }
     if request.method == 'GET':
-        print("Request is get.")
         form = forms.ProjectForm(initial=projectdata)
-        print("Project form is created.")
 
     elif request.method == 'POST':
         form = forms.ProjectForm(request.POST, request.FILES, instance=project)
         setattr(form, 'name', project.name)
         if form.is_valid():
-            print('Form is valid.')
             project = form.save()
             messages.success(
                 request,

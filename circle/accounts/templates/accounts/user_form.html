@@ -64,10 +64,6 @@
 		  <div class="circle--secondary--module">
 			<div class="circle--primary--avatar">
 				{{ form.avatar }}<br>Upload Photo
-			  <!-- <a class="button">
-				Upload Photo
-				<input type="file">
-			  </a> -->
 			</div>
 		  </div>
 
@@ -91,33 +87,6 @@
 			{% endif %}
 			<br><br>
 		  </div>
-		  {% comment %}<!--
-		  <div class="circle--fluid--secondary">
-			<h4>Your Projects</h4>
-			{% for form in proformset %}
-			  <div class="project-formset">
-			    {{ form.name }}
-				{% if form.name.errors %}
-					{% for error in form.name.errors %}
-						{{ error|escape }}
-					{% endfor %}
-				{% endif %}
-				{{ form.url }}
-				{% if form.url.errors %}
-					{% for error in form.url.errors %}
-						{{ error|escape }}
-					{% endfor %}
-				{% endif %}
-			  </div>
-			{% endfor %}
-
-			{% if proformset.non_form_errors %}
-				{% for error in proformset.non_form_errors %}
-					{{ error|escape }}
-				{% endfor %}
-			{% endif %}
-		  </div> -->
-		  {% endcomment %}
 		</div>
 
 	  </div>

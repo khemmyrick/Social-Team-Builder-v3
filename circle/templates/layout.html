@@ -24,12 +24,12 @@
   <!-- CSS
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <link rel="stylesheet" href="{% static 'css/local.css' %}">
-  <link rel="stylesheet" href="{% static 'css/cropper.css' %}">
+  <!-- <link rel="stylesheet" href="{% static 'css/cropper.css' %}"> -->
 
   <!-- JS
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-  <script type="text/javascript" src="{% static 'js/jquery-cropper.js' %}"></script>
+  <!-- <script type="text/javascript" src="{% static 'js/jquery-cropper.js' %}"></script> -->
   <!-- <script type="text/javascript" src="https://disq.us/url?url=https%3A%2F%2Fcdnjs.cloudflare.com%2Fajax%2Flibs%2Fcropper%2F4.0.0%2Fcropper.min.js"></script> -->
   <!-- was using 2.2.0 -->
   <!-- 
@@ -89,11 +89,13 @@
 						<li><a href="" onclick="showMess()">Hide/Show Notifications</a></li>
 					{% endif %}
 					<li>
-						{% if user.avatar %}
-							<a href="{% url 'accounts:details' pk=user.id %}"><img src="{{ user.avatar.url }}" class="profileava" title="My Profile" alt="My Profile"></a>
-						{% else %}
-							<a href="{% url 'accounts:details' pk=user.id %}">My Profile</a>
-						{% endif %}
+						<a href="{% url 'accounts:details' pk=user.id %}">
+							{% if user.avatar %}
+								<img src="{{ user.avatar.url }}" class="profileava" title="My Profile" alt="My Profile">
+							{% else %}
+								<img src="{{MEDIA_URL}}/media/avatars/default.png" class="profileava" title="My Profile" alt="My Profile">
+							{% endif %}
+						</a>
 					</li>
 					<li><a href="{% url 'accounts:logout' %}">Sign Out</a></li>
 				{% else %}

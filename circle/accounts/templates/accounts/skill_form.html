@@ -39,8 +39,7 @@
 
 </form>
 
-<!-- Include formset plugin - including jQuery dependency --><!--
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> -->
+<!-- Include formset plugin - including jQuery dependency -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.formset/1.2.2/jquery.formset.js"></script>
 <script>
     $('.skill-formset').formset({
@@ -49,52 +48,4 @@
     });
 	$(".skill-formset").find('.delete-row, .add-row').addClass('button button-primary');
 </script>
-
-{% comment %} <!--
-  <form method="POST" enctype="multipart/form-data" action="{% url 'accounts:edit_skills' pk=user.id %}">
-    {% csrf_token %}
-	  <div class="bounds circle--page">
-		<div class="circle--page--header circle--fluid">
-		  <div class="circle--fluid--cell circle--fluid--primary">
-			<h2>Your Skills</h2>
-		  </div>
-		  <div class="circle--fluid--cell circle--fluid--secondary">
-			<button type="submit" class="button button-primary" action="">Save Changes</button>
-		  </div>
-		</div>
-		<div class="grid-70">
-			{{ formset.management_form }}
-
-			{% for form in formset %}
-			<div class="row form-row spacer">
-				<div class="col-2">
-					<label>{{ form.name.label }}</label>
-				</div>
-				<div class="col-4">
-					<div class="input-group">
-						{{ form.name }}
-						{{ form.id }}
-						<div class="input-group-append">
-							<button class="btn btn-success add-form-row">+</button>
-						</div>
-						{% if form.name.errors %}
-							{% for errors in form.name.errors %}
-								{{ error|escape }}
-							{% endfor %}
-						{% endif %}
-
-					</div>
-				</div>
-			</div>
-			{% endfor %}
-		</div>
-			<input type="hidden" value="false" name="additems" id="additems">
-			{% if formset.non_form_errors %}
-				{% for error in formset.non_form_errors %}
-					{{ error|escape }}
-				{% endfor %}
-			{% endif %}
-	  </div>
-  </form> -->
-{% endcomment %}
 {% endblock %}

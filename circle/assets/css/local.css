@@ -1,18 +1,7 @@
 /* local.css */ 
 
 @import 'global.css';
-/*
-#modalCrop {
-  display: none;
-  position: fixed;
-  z-index: 1; /* Sit on top */ /*
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-}
-*/
+
 .yaxis {
   border: solid #99CC99;  
 }
@@ -115,10 +104,9 @@ td .profileava {
   font-size: 1.4rem;
 }
 
-/* HOW CAN I GET RID OF THE LI CIRCLE STYLE IN MY PROJECT DETAIL VIEW?
-The following adds a second disc bullet atop the existing circle bullet.
-No bullet at all would be ideal.  Failing that, I prefer the filled-in disc to the hollow circle.
-.circle--group--list li {
-  list-style-type: disc;
+
+input[type=button], input[type=submit], input[type=reset], input[type=file] {
+  cursor: pointer !important;
+  color: #fff !important;
+  background-color: #689b98 !important;
 }
-*/

@@ -55,7 +55,7 @@
       <div class="circle--secondary--module">
         <div class="circle--primary--avatar">
 		{% if target_user.avatar %}
-		  <a href="{% url 'accounts:photo' pk=target_user.id %}"><img src="{{ target_user.avatar.url }}" class="profileava" alt="{{ target_user.display_name }}" title="View{% if target_user == user %}/Edit Your {% endif %} Photo"></a><!--  width="200" height="200" HEIGHT/WIDTH shouldn't be preset if photo manipulation is an option? -->
+		  <a href="{% url 'accounts:photo' pk=target_user.id %}"><img src="{{ target_user.avatar.url }}" class="profileava" alt="{{ target_user.display_name }}" title="View{% if target_user == user %}/Edit Your {% endif %} Photo"></a>
 		  {% else %}
 		  <a {% if target_user == user %}href="{% url 'accounts:updatephoto' pk=user.id %}"{% endif %}><img src="{{MEDIA_URL}}/media/avatars/default.png" alt="{{ target_user.display_name }}" width="200" height="200" {% if target_user == user %}title="Add a Photo"{% endif %}/></a>
 		{% endif %}
@@ -69,8 +69,6 @@
 				  <div>
 					<a class="circle--primary--avatar button danger" href="{% url 'accounts:deactivate' pk=user.id %}">Disable Account</a>
 				  </div>
-				{% else %}
-				<!-- CLICK MODAL FOR FULL SIZED PHOTO VIEW. -->
 				{% endif %}
 			{% endif %}
       </div>
