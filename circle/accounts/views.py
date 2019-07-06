@@ -127,18 +127,6 @@ def user_detail_view(request, pk):
     return render(request, 'accounts/user_detail.html', context)
 
 
-def avatar_view(request, pk):
-    """
-    View target user's avatar.
-
-    pk: Target user's id.
-    """
-    show_messages(request)
-    target_user = User.objects.get(id=pk)
-    context = {'user': request.user, 'target_user': target_user}
-    return render(request, 'accounts/user_photo.html', context)
-
-
 @login_required
 def user_deactivate_view(request, pk):
     """
@@ -319,6 +307,21 @@ def applications_view(request, pk):
     }
 
     return render(request, 'accounts/applications.html', context)
+
+
+def avatar_view(request, pk):
+    """
+    View target user's avatar.
+
+    pk: Target user's id.
+    """
+    show_messages(request)
+    target_user = User.objects.get(id=pk)
+    if not target_user.avatar:
+        messages.info(request, "This user has no photo.")
+        return HttpResponseRedirect(reverse('home'))
+    context = {'user': request.user, 'target_user': target_user}
+    return render(request, 'accounts/user_photo.html', context)
 
 
 @login_required

@@ -20,7 +20,7 @@
   {% endif %}
   <div class="bounds">
     <div class="grid-30 centered">
-	<img src="{{ target_user.avatar.url }}" alt="{{ target_user.display_name }}">
+	  <img src="{{ target_user.avatar.url }}" alt="{{ target_user.username }}'s photo.">
       <h2>{{ target_user.username }}</h2>
 	  {% if user.username == target_user.username %}
 		  <a class="circle--primary--avatar button" href="{% url 'accounts:updatephoto' pk=user.id %}">Replace Photo</a><br>

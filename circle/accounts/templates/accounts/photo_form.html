@@ -18,11 +18,10 @@
 		  </div>
 		</div>
 		<div class="grid-70">
-		  <!-- FORM display_name field -->
 		  <!-- FORM TO UPDATE THE IMAGE -->
 		  {% if user.avatar %}
 			  <h4>Current Photo:</h4>
-			  <img src="{{ user.avatar.url }}" alt="{{ user.username }}" width="200" height="200">
+			  <img src="{{ user.avatar.url }}" alt="{{ user.username }}" title="{{ user.username }}'s Current Photo" width="200" height="200">
 		  {% endif %}
 		  <form method="post" enctype="multipart/form-data" id="formUpload">
 		    {% csrf_token %}

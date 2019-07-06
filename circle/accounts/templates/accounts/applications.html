@@ -97,7 +97,7 @@
 				{% else %}
 					<img src="{{MEDIA_URL}}/media/avatars/default.png" class="profileava">
 				{% endif %}
-				<h3>{{ applicant.user.display_name }}</h3>
+				<h3>{% if applicant.user.display_name %}{{ applicant.user.display_name }}{% else %}{{ applicant.user.username }}{% endif %}</h3>
 			  </a>
               <p>{{ applicant.position.project.name }}</p>
             </td>

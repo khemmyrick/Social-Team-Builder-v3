@@ -27,7 +27,7 @@
       <div class="circle--article--header">
         <h4 class="circle--article--section">Project</h4>
         <h1 class="circle--article--title">{{ project.name }}</h1>
-        <p class="circle--article--byline">Project Owner: <a href="{% url 'accounts:details' pk=project.creator.id %}">{{ project.creator.display_name }} </a></p>
+        <p class="circle--article--byline">Project Owner: <a href="{% url 'accounts:details' pk=project.creator.id %}">{% if project.creator.display_name %}{{ project.creator.display_name }}{% else %}{{ project.creator.username }}{% endif %}</a></p>
 		<p>{{ project.url }}</p>
       </div>
 

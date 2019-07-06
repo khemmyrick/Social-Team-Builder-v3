@@ -55,9 +55,9 @@
       <div class="circle--secondary--module">
         <div class="circle--primary--avatar">
 		{% if target_user.avatar %}
-		  <a href="{% url 'accounts:photo' pk=target_user.id %}"><img src="{{ target_user.avatar.url }}" class="profileava" alt="{{ target_user.display_name }}" title="View{% if target_user == user %}/Edit Your {% endif %} Photo"></a>
+		  <a href="{% url 'accounts:photo' pk=target_user.id %}"><img src="{{ target_user.avatar.url }}" class="profileava" alt="{% if target_user.display_name %}{{ target_user.display_name }}{% else %}{{ target_user.username }}{% endif %}" title="View{% if target_user == user %}/Edit Your {% endif %} Photo"></a>
 		  {% else %}
-		  <a {% if target_user == user %}href="{% url 'accounts:updatephoto' pk=user.id %}"{% endif %}><img src="{{MEDIA_URL}}/media/avatars/default.png" alt="{{ target_user.display_name }}" width="200" height="200" {% if target_user == user %}title="Add a Photo"{% endif %}/></a>
+		  <a {% if target_user == user %}href="{% url 'accounts:updatephoto' pk=user.id %}"{% endif %}><img src="{{MEDIA_URL}}/media/avatars/default.png" alt="{% if target_user.display_name %}{{ target_user.display_name }}{% else %}{{ target_user.username }}{% endif %}" width="200" height="200" {% if target_user == user %}title="Add a Photo"{% endif %}/></a>
 		{% endif %}
         </div>
 		<!-- Update/Disable Account buttons. -->
